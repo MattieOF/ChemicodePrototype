@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "CameraPlaneCam.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class CHEMICODEPROTOTYPE_API ACameraPlaneCam : public AActor
 {
 	GENERATED_BODY()

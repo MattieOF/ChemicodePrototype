@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class CHEMICODEPROTOTYPE_API AChemicodeGameMode : public AGameModeBase
 {
 	GENERATED_BODY()

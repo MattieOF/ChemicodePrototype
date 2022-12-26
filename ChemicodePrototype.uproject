@@ -9,6 +9,15 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
+				"Engine",
+				"CoreUObject"
+			]
+		},
+		{
+			"Name": "ChemicodePrototypeEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit",
+			"AdditionalDependencies": [
 				"Engine"
 			]
 		}

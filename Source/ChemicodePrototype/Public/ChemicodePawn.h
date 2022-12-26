@@ -8,7 +8,7 @@
 #include "ChemicodePawn.generated.h"
 
 class AChemicodeGameMode;
-UCLASS()
+UCLASS(Blueprintable)
 class CHEMICODEPROTOTYPE_API AChemicodePawn : public APawn
 {
 	GENERATED_BODY()
@@ -54,6 +54,8 @@ private:
 	AChemicodeGameMode* GameMode;
 	UPROPERTY()
 	ACameraPlane* CurrentCamPlane;
+	UPROPERTY()
+	APlayerController* PlayerController;
 	
 	float LookCooldown = 0;
 };

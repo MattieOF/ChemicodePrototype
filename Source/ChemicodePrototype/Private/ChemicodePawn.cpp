@@ -19,8 +19,17 @@ void AChemicodePawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Init references
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	GameMode = Cast<AChemicodeGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTarget(GameMode->GetTableCamPlane()->GetCamPositionActorChecked());
+
+	// Show the cursor
+	PlayerController->bShowMouseCursor = true;
+	PlayerController->bEnableClickEvents = true;
+	PlayerController->bEnableMouseOverEvents = true;
+
+	// Set view target to initial CamPlane
+	PlayerController->SetViewTarget(GameMode->GetTableCamPlane()->GetCamPositionActorChecked());
 	CurrentCamPlane = GameMode->GetTableCamPlane();
 }
 
