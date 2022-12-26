@@ -41,7 +41,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE ACameraPlane* GetCurrentCamPlane();
+	FORCEINLINE ACameraPlane* GetCurrentCamPlane() { return CurrentCamPlane; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime = 0.75f);

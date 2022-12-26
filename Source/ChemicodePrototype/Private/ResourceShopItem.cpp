@@ -46,6 +46,7 @@ void AResourceShopItem::BeginPlay()
 	Player = UChemicodeStatics::GetChemicodePawn(GetWorld());
 }
 
+#if WITH_EDITOR
 void AResourceShopItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	if (PropertyChangedEvent.Property->GetName() == "ResourceData" && ResourceData != nullptr && (!bAllowMeshOverride || ItemMesh->GetStaticMesh() == nullptr))
@@ -55,6 +56,7 @@ void AResourceShopItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 			ItemMesh->SetMaterial(0, ResourceData->MeshMaterial);
 	}
 }
+#endif
 
  void AResourceShopItem::BeginMouseOver()
  {

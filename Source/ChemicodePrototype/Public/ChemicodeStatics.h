@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChemicodeGameMode.h"
 #include "ChemicodePawn.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "ChemicodeStatics.generated.h"
 
 /**
@@ -17,8 +19,8 @@ class CHEMICODEPROTOTYPE_API UChemicodeStatics : public UBlueprintFunctionLibrar
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "Actor References")
-	static AChemicodePawn* GetChemicodePawn(UObject* World);
+	static FORCEINLINE AChemicodePawn* GetChemicodePawn(UObject* World) { return Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(World, 0)); };
 
 	UFUNCTION(BlueprintCallable, Category = "Actor References")
-	static AChemicodeGameMode* GetChemicodeGameMode(UObject* World);
+	static FORCEINLINE AChemicodeGameMode* GetChemicodeGameMode(UObject* World) { return Cast<AChemicodeGameMode>(UGameplayStatics::GetGameMode(World)); };
 };
