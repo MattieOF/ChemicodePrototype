@@ -91,6 +91,11 @@ void AChemicodePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Vertical", this, &AChemicodePawn::MoveVertical);
 }
 
+ACameraPlane* AChemicodePawn::GetCurrentCamPlane()
+{
+	return CurrentCamPlane;
+}
+
 void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 {
 	CurrentCamPlane = NewCamPlane;

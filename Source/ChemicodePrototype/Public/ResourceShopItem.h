@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "OutlineComponent.h"
 #include "ResourceData.h"
 #include "GameFramework/Actor.h"
 #include "ResourceShopItem.generated.h"
 
+class AChemicodeGameMode;
+class AChemicodePawn;
 UCLASS()
 class CHEMICODEPROTOTYPE_API AResourceShopItem : public AActor
 {
@@ -22,6 +25,15 @@ protected:
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
+	UFUNCTION()
+	virtual void BeginMouseOver();
+
+	UFUNCTION()
+	virtual void EndMouseOver();
+
+	UFUNCTION()
+	virtual void OnClick();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,7 +44,16 @@ public:
 	UPROPERTY()
 	bool bAllowMeshOverride = false;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UStaticMeshComponent* ItemMesh;
+
+	UPROPERTY(BlueprintReadOnly)
+	UOutlineComponent* OutlineComponent;
+
+private:
+	UPROPERTY()
+	AChemicodeGameMode* GameMode;
 	
+	UPROPERTY()
+	AChemicodePawn* Player;
 };
