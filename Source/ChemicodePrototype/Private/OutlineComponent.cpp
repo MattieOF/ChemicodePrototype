@@ -12,7 +12,6 @@ UOutlineComponent::UOutlineComponent()
 
 void UOutlineComponent::ShowOutline()
 {
-	UE_LOG(LogChemicode, Log, TEXT("Outlining %i component(s)."), OutlinedComponents.Num());
 	for (const auto Component : OutlinedComponents)
 		Component->SetRenderCustomDepth(true);
 }

@@ -1,4 +1,4 @@
- // copyright lolol
+// copyright lolol
 
 
 #include "ResourceShopItem.h"
