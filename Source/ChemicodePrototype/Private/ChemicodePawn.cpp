@@ -72,8 +72,12 @@ void AChemicodePawn::LookRight()
 {
 	if (CurrentCamPlane == GameMode->GetComputerCamPlane() && LookCooldown <= 0)
 	{
-		// TODO: Possible QoL: Go back to the most recently used cam plane out of cabinet and table
-		SetCamPlane(GameMode->GetTableCamPlane());
+		ACameraPlane* Target;
+		if (!PrevCamPlane || PrevCamPlane == GameMode->GetComputerCamPlane())
+			Target = GameMode->GetTableCamPlane();
+		else
+			Target = PrevCamPlane;
+		SetCamPlane(Target);
 		LookCooldown = .75f;	
 	}
 }
@@ -98,6 +102,7 @@ ACameraPlane* AChemicodePawn::GetCurrentCamPlane()
 
 void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 {
+	PrevCamPlane = CurrentCamPlane;
 	CurrentCamPlane = NewCamPlane;
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(NewCamPlane->GetCamPositionActor(),
 		BlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, 2);

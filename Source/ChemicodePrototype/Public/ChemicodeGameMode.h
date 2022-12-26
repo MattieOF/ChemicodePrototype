@@ -18,9 +18,9 @@ class CHEMICODEPROTOTYPE_API AChemicodeGameMode : public AGameModeBase
 public:
 	AChemicodeGameMode();
 
-	ACameraPlane* GetTableCamPlane();
-	ACameraPlane* GetCabinetCamPlane();
-	ACameraPlane* GetComputerCamPlane();
+	FORCEINLINE ACameraPlane* GetTableCamPlane();
+	FORCEINLINE ACameraPlane* GetCabinetCamPlane();
+	FORCEINLINE ACameraPlane* GetComputerCamPlane();
 	
 private:
 	UPROPERTY()

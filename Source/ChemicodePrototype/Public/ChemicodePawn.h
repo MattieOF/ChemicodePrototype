@@ -58,6 +58,8 @@ private:
 	UPROPERTY()
 	ACameraPlane* CurrentCamPlane;
 	UPROPERTY()
+	ACameraPlane* PrevCamPlane;
+	UPROPERTY()
 	APlayerController* PlayerController;
 	
 	float LookCooldown = 0;
