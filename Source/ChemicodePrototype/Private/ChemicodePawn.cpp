@@ -4,6 +4,8 @@
 #include "ChemicodePawn.h"
 
 #include "ChemicodeGameMode.h"
+#include "ResourceInfoWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -31,6 +33,11 @@ void AChemicodePawn::BeginPlay()
 	// Set view target to initial CamPlane
 	PlayerController->SetViewTarget(GameMode->GetTableCamPlane()->GetCamPositionActorChecked());
 	CurrentCamPlane = GameMode->GetTableCamPlane();
+
+	// Create resource info widget and hide it
+	InfoWidget = CreateWidget<UResourceInfoWidget>(GetWorld(), ResourceInfoWidgetClass);
+	InfoWidget->AddToViewport();
+	InfoWidget->Hide(true);
 }
 
 // Called every frame
@@ -101,6 +108,18 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 	CurrentCamPlane = NewCamPlane;
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(NewCamPlane->GetCamPositionActor(),
 		BlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, 2);
+	HideResourceUI();
+}
+
+void AChemicodePawn::ShowResourceUI(UResourceData* Resource)
+{
+	InfoWidget->SetResource(Resource);
+	InfoWidget->Show();
+}
+
+void AChemicodePawn::HideResourceUI()
+{
+	InfoWidget->Hide();
 }
 
 void AChemicodePawn::MoveHorizontal(float Value)

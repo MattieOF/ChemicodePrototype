@@ -10,7 +10,8 @@
 
 class AChemicodeGameMode;
 class AChemicodePawn;
-UCLASS()
+
+UCLASS(ClassGroup=(Chemicode))
 class CHEMICODEPROTOTYPE_API AResourceShopItem : public AActor
 {
 	GENERATED_BODY()

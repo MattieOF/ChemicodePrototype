@@ -8,7 +8,7 @@
 /**
  * Basic data class for resources
  */
-UCLASS(Blueprintable)
+UCLASS(ClassGroup=(Chemicode), Blueprintable)
 class CHEMICODEPROTOTYPE_API UResourceData : public UDataAsset
 {
 	GENERATED_BODY()

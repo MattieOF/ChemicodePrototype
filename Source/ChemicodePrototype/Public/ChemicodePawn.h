@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "CameraPlane.h"
+#include "ResourceData.h"
 #include "GameFramework/Pawn.h"
 #include "ChemicodePawn.generated.h"
 
+class UResourceInfoWidget;
 class AChemicodeGameMode;
-UCLASS(Blueprintable)
+UCLASS(ClassGroup=(Chemicode), Blueprintable)
 class CHEMICODEPROTOTYPE_API AChemicodePawn : public APawn
 {
 	GENERATED_BODY()
@@ -46,8 +48,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime = 0.75f);
 
+	UFUNCTION(BlueprintCallable)
+	void ShowResourceUI(UResourceData* Resource);
+
+	UFUNCTION(BlueprintCallable)
+	void HideResourceUI();
+
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Speed = 7.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UResourceInfoWidget> ResourceInfoWidgetClass;
 
 private:
 	void MoveHorizontal(float Value);
@@ -61,6 +72,8 @@ private:
 	ACameraPlane* PrevCamPlane;
 	UPROPERTY()
 	APlayerController* PlayerController;
+	UPROPERTY()
+	UResourceInfoWidget* InfoWidget;
 	
 	float LookCooldown = 0;
 };

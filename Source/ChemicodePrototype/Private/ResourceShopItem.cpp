@@ -65,12 +65,17 @@ void AResourceShopItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 	
 	// Show outline and UI
 	OutlineComponent->ShowOutline();
+	Player->ShowResourceUI(ResourceData);
  }
 
  void AResourceShopItem::EndMouseOver()
  {
 	// Hide outline and UI
-	// TODO: Subscribe to some sort of event for player changing camnplane and then call end mouse over if the new one is not cabinet.
+	// TODO: Subscribe to some sort of event for player changing cam plane and then call end mouse over if the new one is not cabinet.
+	
+	if (Player->GetCurrentCamPlane() == GameMode->GetCabinetCamPlane())
+		Player->HideResourceUI();
+		
 	OutlineComponent->HideOutline();
  }
 
