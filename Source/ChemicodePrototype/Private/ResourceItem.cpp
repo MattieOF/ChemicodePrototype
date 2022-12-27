@@ -4,6 +4,7 @@
 #include "ResourceItem.h"
 
 #include "ResourceData.h"
+#include "ChemicodePrototype/ChemicodePrototype.h"
 
 // Sets default values
 AResourceItem::AResourceItem()
@@ -12,6 +13,7 @@ AResourceItem::AResourceItem()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetAllUseCCD(true);
 	Outline = CreateDefaultSubobject<UOutlineComponent>(TEXT("Outline"));
 
 	RootComponent = MeshComponent;
@@ -23,11 +25,17 @@ void AResourceItem::SetResource(UResourceData* ResourceData)
 	Resource = ResourceData;
 }
 
+void AResourceItem::Use()
+{
+	UE_LOG(LogChemicode, Log, TEXT("Item used!"));
+}
+
 // Called when the game starts or when spawned
 void AResourceItem::BeginPlay()
 {
 	Super::BeginPlay();
-	SetResource(Resource);
+	if (Resource)
+		SetResource(Resource);
 }
 
 // Called every frame

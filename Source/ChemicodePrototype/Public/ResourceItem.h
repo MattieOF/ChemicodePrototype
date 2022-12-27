@@ -22,7 +22,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UResourceData* Resource;
 
+	UFUNCTION(BlueprintCallable)
 	void SetResource(UResourceData* ResourceData);
+
+	UFUNCTION(BlueprintCallable)
+	void Use();
 
 protected:
 	// Called when the game starts or when spawned

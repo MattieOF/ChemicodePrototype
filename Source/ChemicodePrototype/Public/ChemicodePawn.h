@@ -60,12 +60,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Speed = 7.f;
 
+	UPROPERTY(EditAnywhere)
+	float ItemMoveSpeed = 40.f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceInfoWidget> ResourceInfoWidgetClass;
 
 private:
 	void MoveHorizontal(float Value);
 	void MoveVertical(float Value);
+
+	void OnUse();
 	
 	UPROPERTY()
 	AChemicodeGameMode* GameMode;
@@ -77,7 +82,10 @@ private:
 	APlayerController* PlayerController;
 	UPROPERTY()
 	UResourceInfoWidget* InfoWidget;
+	UPROPERTY()
+	AResourceItem* HeldItem;
 
 	bool bResourceInfoVisible = false;
 	float LookCooldown = 0;
+	FVector TargetItemPosition = FVector::Zero();
 };
