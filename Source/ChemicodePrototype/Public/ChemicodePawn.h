@@ -52,6 +52,9 @@ public:
 	bool ResourceHovered(UResourceData* Resource);
 
 	UFUNCTION(BlueprintCallable)
+	void TryBuyResource(UResourceData* Resource);
+
+	UFUNCTION(BlueprintCallable)
 	void ResourceLostHover();
 
 	UPROPERTY(EditAnywhere, Category = "Movement")

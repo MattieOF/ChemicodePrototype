@@ -19,6 +19,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FText Description;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FText ChemicalFormula;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	UTexture2D* Icon;

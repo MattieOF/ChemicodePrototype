@@ -127,6 +127,11 @@ bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
 	return true;
 }
 
+void AChemicodePawn::TryBuyResource(UResourceData* Resource)
+{
+	LookDown(); // Look back at the table
+}
+
 void AChemicodePawn::ResourceLostHover()
 {
 	if (!bResourceInfoVisible)
