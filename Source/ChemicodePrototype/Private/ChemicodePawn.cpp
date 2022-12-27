@@ -37,7 +37,7 @@ void AChemicodePawn::BeginPlay()
 	// Create resource info widget and hide it
 	InfoWidget = CreateWidget<UResourceInfoWidget>(GetWorld(), ResourceInfoWidgetClass);
 	InfoWidget->AddToViewport();
-	InfoWidget->Hide(true);
+	InfoWidget->Hide(true); // True param hides the UI instantly without animating
 }
 
 // Called every frame
@@ -108,18 +108,31 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 	CurrentCamPlane = NewCamPlane;
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(NewCamPlane->GetCamPositionActor(),
 		BlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, 2);
-	HideResourceUI();
+	ResourceLostHover();
 }
 
-void AChemicodePawn::ShowResourceUI(UResourceData* Resource)
+bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
 {
+	// Only show resource UI if in cabinet
+	if (CurrentCamPlane != GameMode->GetCabinetCamPlane())
+		return false;
+
+	// Set resource values in UI
 	InfoWidget->SetResource(Resource);
+	
+	if (bResourceInfoVisible) // Don't play show anim again if we're already visible.
+		return true;
 	InfoWidget->Show();
+	bResourceInfoVisible = true;
+	return true;
 }
 
-void AChemicodePawn::HideResourceUI()
+void AChemicodePawn::ResourceLostHover()
 {
+	if (!bResourceInfoVisible)
+		return;
 	InfoWidget->Hide();
+	bResourceInfoVisible = false;
 }
 
 void AChemicodePawn::MoveHorizontal(float Value)

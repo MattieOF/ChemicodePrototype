@@ -60,12 +60,9 @@ void AResourceShopItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 
  void AResourceShopItem::BeginMouseOver()
  {
-	if (Player->GetCurrentCamPlane() != GameMode->GetCabinetCamPlane())
-		return;
-	
 	// Show outline and UI
-	OutlineComponent->ShowOutline();
-	Player->ShowResourceUI(ResourceData);
+	if (Player->ResourceHovered(ResourceData))
+		OutlineComponent->ShowOutline();
  }
 
  void AResourceShopItem::EndMouseOver()
@@ -74,7 +71,7 @@ void AResourceShopItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 	// TODO: Subscribe to some sort of event for player changing cam plane and then call end mouse over if the new one is not cabinet.
 	
 	if (Player->GetCurrentCamPlane() == GameMode->GetCabinetCamPlane())
-		Player->HideResourceUI();
+		Player->ResourceLostHover();
 		
 	OutlineComponent->HideOutline();
  }

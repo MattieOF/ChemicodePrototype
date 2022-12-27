@@ -49,10 +49,10 @@ public:
 	void SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime = 0.75f);
 
 	UFUNCTION(BlueprintCallable)
-	void ShowResourceUI(UResourceData* Resource);
+	bool ResourceHovered(UResourceData* Resource);
 
 	UFUNCTION(BlueprintCallable)
-	void HideResourceUI();
+	void ResourceLostHover();
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Speed = 7.f;
@@ -74,6 +74,7 @@ private:
 	APlayerController* PlayerController;
 	UPROPERTY()
 	UResourceInfoWidget* InfoWidget;
-	
+
+	bool bResourceInfoVisible = false;
 	float LookCooldown = 0;
 };
