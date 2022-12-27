@@ -38,10 +38,6 @@ void AResourceShopItem::BeginPlay()
 	OnCursorLeaveDelegate.BindUFunction(this, "EndMouseOver");
 	OnEndCursorOver.Add(OnCursorLeaveDelegate);
 
-	FScriptDelegate OnClickDelegate;
-	OnClickDelegate.BindUFunction(this, "OnClicked");
-	OnClicked.Add(OnClickDelegate);
-
 	GameMode = UChemicodeStatics::GetChemicodeGameMode(GetWorld());
 	Player = UChemicodeStatics::GetChemicodePawn(GetWorld());
 }
@@ -74,11 +70,6 @@ void AResourceShopItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 		Player->ResourceLostHover();
 		
 	OutlineComponent->HideOutline();
- }
-
- void AResourceShopItem::OnClick()
- {
-	// Begin buying
  }
 
  // Called every frame

@@ -11,7 +11,7 @@
 class AChemicodeGameMode;
 class AChemicodePawn;
 
-UCLASS(ClassGroup=(Chemicode))
+UCLASS(ClassGroup=(Chemicode), Blueprintable)
 class CHEMICODEPROTOTYPE_API AResourceShopItem : public AActor
 {
 	GENERATED_BODY()
@@ -33,9 +33,6 @@ protected:
 
 	UFUNCTION()
 	virtual void EndMouseOver();
-
-	UFUNCTION()
-	virtual void OnClick();
 
 public:	
 	// Called every frame

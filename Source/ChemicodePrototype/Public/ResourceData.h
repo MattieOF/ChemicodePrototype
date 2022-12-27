@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HazardData.h"
+#include "ResourceItem.h"
 #include "ResourceData.generated.h"
 
 /**
@@ -31,4 +33,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	UMaterialInterface* MeshMaterial;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<AResourceItem> ResourceItemClass = AResourceItem::StaticClass();
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TArray<UHazardData*> Hazards; 
 };
