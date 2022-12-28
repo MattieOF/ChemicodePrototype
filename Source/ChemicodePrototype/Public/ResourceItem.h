@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "ResourceItem.generated.h"
 
+class AChemicodePawn;
 // Forward decl, if not we get a circular dependency
 class UResourceData;
 
@@ -39,6 +40,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EResourceState> ResourceState;
 
+	UFUNCTION()
+	virtual void BeginMouseOver();
+
+	UFUNCTION()
+	virtual void EndMouseOver();
+
+	FORCEINLINE UOutlineComponent* GetOutline() { return Outline; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,6 +60,9 @@ protected:
 
 	UPROPERTY()
 	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY()
+	AChemicodePawn* Player;
 
 	UPROPERTY()
 	UOutlineComponent* Outline;

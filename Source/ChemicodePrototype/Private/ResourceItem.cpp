@@ -3,8 +3,10 @@
 
 #include "ResourceItem.h"
 
+#include "ChemicodePawn.h"
 #include "ResourceData.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AResourceItem::AResourceItem()
@@ -15,9 +17,29 @@ AResourceItem::AResourceItem()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComponent->BodyInstance.SetResponseToChannel(COLLISION_CHANNEL_BLOCKITEM, ECR_Block);	
 	MeshComponent->SetAllUseCCD(true);
+	MeshComponent->ComponentTags.Add("Outline");
 	Outline = CreateDefaultSubobject<UOutlineComponent>(TEXT("Outline"));
 
 	RootComponent = MeshComponent;
+}
+
+// Called when the game starts or when spawned
+void AResourceItem::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	Player = Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	
+	if (Resource)
+		SetResource(Resource);
+
+	/*FScriptDelegate OnCursorOverDelegate;
+	OnCursorOverDelegate.BindUFunction(this, "BeginMouseOver");
+	OnBeginCursorOver.Add(OnCursorOverDelegate);
+
+	FScriptDelegate OnCursorLeaveDelegate;
+	OnCursorLeaveDelegate.BindUFunction(this, "EndMouseOver");
+	OnEndCursorOver.Add(OnCursorLeaveDelegate);*/
 }
 
 void AResourceItem::SetResource(UResourceData* ResourceData)
@@ -33,12 +55,16 @@ void AResourceItem::Use_Implementation()
 	UE_LOG(LogChemicode, Log, TEXT("Item of %s used!"), *Resource->Name.ToString());
 }
 
-// Called when the game starts or when spawned
-void AResourceItem::BeginPlay()
+void AResourceItem::BeginMouseOver()
 {
-	Super::BeginPlay();
-	if (Resource)
-		SetResource(Resource);
+	if (Player->GetHeldItem() == nullptr)
+		Outline->ShowOutline();
+}
+
+void AResourceItem::EndMouseOver()
+{
+	if (Player->GetHeldItem() != this)
+		Outline->HideOutline();
 }
 
 // Called every frame

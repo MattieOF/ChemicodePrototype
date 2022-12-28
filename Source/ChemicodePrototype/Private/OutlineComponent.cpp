@@ -2,8 +2,6 @@
 
 #include "OutlineComponent.h"
 
-#include "ChemicodePrototype/ChemicodePrototype.h"
-
 // Sets default values for this component's properties
 UOutlineComponent::UOutlineComponent()
 {
@@ -13,13 +11,19 @@ UOutlineComponent::UOutlineComponent()
 void UOutlineComponent::ShowOutline()
 {
 	for (const auto Component : OutlinedComponents)
-		Component->SetRenderCustomDepth(true);
+	{
+		if (Component) // Component seems to be occasionally null?
+			Component->SetRenderCustomDepth(true);
+	}
 }
 
 void UOutlineComponent::HideOutline()
 {
 	for (const auto Component : OutlinedComponents)
-		Component->SetRenderCustomDepth(false);
+	{
+		if (Component) // Component seems to be occasionally null?
+			Component->SetRenderCustomDepth(false);
+	}
 }
 
 void UOutlineComponent::RefreshOutlinedComponents()

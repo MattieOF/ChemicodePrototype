@@ -57,6 +57,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResourceLostHover();
 
+	UFUNCTION(BlueprintCallable)
+	void HighlightItem(AResourceItem* Item);
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE AResourceItem* GetHeldItem() { return HeldItem; }
+
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Speed = 7.f;
 
@@ -65,6 +71,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceInfoWidget> ResourceInfoWidgetClass;
+
 
 private:
 	void MoveHorizontal(float Value);
@@ -85,6 +92,11 @@ private:
 	UResourceInfoWidget* InfoWidget;
 	UPROPERTY()
 	AResourceItem* HeldItem;
+	UPROPERTY()
+	AResourceItem* HighlightedItem;
+
+	UPROPERTY()
+	TArray<TEnumAsByte<EObjectTypeQuery>> ItemObjectTypeArray;
 
 	bool bResourceInfoVisible = false;
 	float LookCooldown = 0;

@@ -26,6 +26,9 @@ void AChemicodePawn::BeginPlay()
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	GameMode = Cast<AChemicodeGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
+	// Initialise array of object types used by traces checking for item objects
+	ItemObjectTypeArray.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
+	
 	// Show the cursor
 	PlayerController->bShowMouseCursor = true;
 	PlayerController->bEnableClickEvents = true;
@@ -60,21 +63,16 @@ void AChemicodePawn::Tick(float DeltaTime)
 			auto Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed * DeltaTime);
 			FVector Center, Bounds;
 			HeldItem->GetActorBounds(true, Center, Bounds);
-			Position.Z = TargetItemPosition.Z + Bounds.Z + 1;
+			// DrawDebugBox(GetWorld(), Center, Bounds, FColor::Red, false, 0);
+			Position.Z = TargetItemPosition.Z + Bounds.Z;
 
 			// Check if target position is valid (it is if there are no ResourceItems blocking the position)
-			
-			// TODO: Move this out of the function and into a member variable + beginplay init
-			// so we only construct this once per pawn over per frame
-			TArray<TEnumAsByte<EObjectTypeQuery>> TraceObjectTypes;
-			TraceObjectTypes.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
-
 			TArray<AActor*> IgnoredActors;
 			IgnoredActors.Add(HeldItem);
 
 			TArray<AActor*> OutActors;
 			
-			UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, TraceObjectTypes,
+			UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
 			                                       AResourceItem::StaticClass(), IgnoredActors, OutActors);
 			//DrawDebugBox(GetWorld(), Position, Bounds, FColor::Red);
 			
@@ -82,15 +80,19 @@ void AChemicodePawn::Tick(float DeltaTime)
 				HeldItem->SetActorLocation(Position);
 			else
 			{
+				// If the target position is blocked, move further in the direction until there is a valid ppsition
+				// Only do this up to the distance between current position and target position so we don't overshoot
+				// However, add 50 to max distance so we do overshoot a tiny bit, decreasing how far away the cursor
+				// has to be from a blocking item to allow the object to move, which feels better.
 				auto Distance = FVector::Dist(HeldItem->GetActorLocation(), HitResult.ImpactPoint);
 				for (float i = 50.f; i < Distance + 50; i += 30.f)
 				{
 					Position = HeldItem->GetActorLocation() + (Direction * i);
-					Position.Z = TargetItemPosition.Z + Bounds.Z + 1;
+					Position.Z = TargetItemPosition.Z + Bounds.Z;
 					// DrawDebugString(GetWorld(), Position + FVector(0, 0, 30), FString::SanitizeFloat(i, 2), nullptr, FColor::White, 1);
 					// DrawDebugPoint(GetWorld(), Position, 5, FColor::Red, false, 1);
 					OutActors.Empty();
-					UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, TraceObjectTypes,
+					UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
 														   AResourceItem::StaticClass(), IgnoredActors, OutActors);
 					if (OutActors.Num() == 0)
 					{
@@ -101,7 +103,26 @@ void AChemicodePawn::Tick(float DeltaTime)
 			}
 		}
 	}
-	
+
+	// Check for hovered resource items
+	if (!HeldItem && CurrentCamPlane == GameMode->GetTableCamPlane())
+	{
+		ItemObjectTypeArray.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
+
+		FHitResult Result;
+		
+		bool DidHit = PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result);
+		if (DidHit)
+		{
+			auto Item = Cast<AResourceItem>(Result.GetActor());
+			if (Item)
+				HighlightItem(Item);
+			else
+				HighlightItem(nullptr);
+		}
+		else
+			HighlightItem(nullptr);
+	}
 }
 
 void AChemicodePawn::LookUp()
@@ -167,6 +188,7 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(NewCamPlane->GetCamPositionActor(),
 		BlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, 2);
 	ResourceLostHover();
+	HighlightItem(nullptr);
 }
 
 bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
@@ -193,6 +215,7 @@ void AChemicodePawn::TryBuyResource(UResourceData* Resource)
 	HeldItem->GetActorBounds(true, Center, Bounds);
 	HeldItem->AddActorLocalOffset(FVector(0, 0, Bounds.Z + 1));
 	HeldItem->SetResource(Resource);
+	HighlightItem(HeldItem);
 }
 
 void AChemicodePawn::ResourceLostHover()
@@ -201,6 +224,15 @@ void AChemicodePawn::ResourceLostHover()
 		return;
 	InfoWidget->Hide();
 	bResourceInfoVisible = false;
+}
+
+void AChemicodePawn::HighlightItem(AResourceItem* Item)
+{
+	if (HighlightedItem)
+		HighlightedItem->GetOutline()->HideOutline();
+	HighlightedItem = Item;
+	if (HighlightedItem)
+		HighlightedItem->GetOutline()->ShowOutline();
 }
 
 void AChemicodePawn::MoveHorizontal(float Value)
@@ -223,5 +255,21 @@ void AChemicodePawn::OnUse()
 void AChemicodePawn::OnInteract()
 {
 	if (HeldItem != nullptr)
+	{
 		HeldItem = nullptr;
+		HighlightItem(nullptr);
+	}
+	else if (CurrentCamPlane == GameMode->GetTableCamPlane())
+	{
+		ItemObjectTypeArray.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
+
+		FHitResult Result;
+		
+		bool DidHit = PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result);
+		if (DidHit)
+		{
+			HeldItem = Cast<AResourceItem>(Result.GetActor());
+			HighlightItem(HeldItem);
+		}
+	}
 }
