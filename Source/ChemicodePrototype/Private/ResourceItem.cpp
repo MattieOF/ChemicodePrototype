@@ -13,6 +13,7 @@ AResourceItem::AResourceItem()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->BodyInstance.SetResponseToChannel(COLLISION_CHANNEL_BLOCKITEM, ECR_Block);	
 	MeshComponent->SetAllUseCCD(true);
 	Outline = CreateDefaultSubobject<UOutlineComponent>(TEXT("Outline"));
 

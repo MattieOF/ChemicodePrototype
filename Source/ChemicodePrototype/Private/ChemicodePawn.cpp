@@ -6,6 +6,7 @@
 #include "ChemicodeGameMode.h"
 #include "ResourceInfoWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -48,18 +49,56 @@ void AChemicodePawn::Tick(float DeltaTime)
 	LookCooldown -= DeltaTime;
 
 	FHitResult HitResult;
-	if (PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_GameTraceChannel1, false, HitResult))
+	if (PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
 	{
 		TargetItemPosition = HitResult.ImpactPoint;
+		
 		if (HeldItem)
 		{
 			// Move the item in direction
 			const auto Direction = (HitResult.ImpactPoint - HeldItem->GetActorLocation()).GetUnsafeNormal();
-			auto Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed);
+			auto Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed * DeltaTime);
 			FVector Center, Bounds;
 			HeldItem->GetActorBounds(true, Center, Bounds);
 			Position.Z = TargetItemPosition.Z + Bounds.Z + 1;
-			HeldItem->SetActorLocation(Position);
+
+			// Check if target position is valid (it is if there are no ResourceItems blocking the position)
+			
+			// TODO: Move this out of the function and into a member variable + beginplay init
+			// so we only construct this once per pawn over per frame
+			TArray<TEnumAsByte<EObjectTypeQuery>> TraceObjectTypes;
+			TraceObjectTypes.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
+
+			TArray<AActor*> IgnoredActors;
+			IgnoredActors.Add(HeldItem);
+
+			TArray<AActor*> OutActors;
+			
+			UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, TraceObjectTypes,
+			                                       AResourceItem::StaticClass(), IgnoredActors, OutActors);
+			//DrawDebugBox(GetWorld(), Position, Bounds, FColor::Red);
+			
+			if (OutActors.Num() == 0)
+				HeldItem->SetActorLocation(Position);
+			else
+			{
+				auto Distance = FVector::Dist(HeldItem->GetActorLocation(), HitResult.ImpactPoint);
+				for (float i = 50.f; i < Distance; i += 30.f)
+				{
+					Position = HeldItem->GetActorLocation() + (Direction * i);
+					Position.Z = TargetItemPosition.Z + Bounds.Z + 1;
+					// DrawDebugString(GetWorld(), Position + FVector(0, 0, 30), FString::SanitizeFloat(i, 2), nullptr, FColor::White, 1);
+					// DrawDebugPoint(GetWorld(), Position, 5, FColor::Red, false, 1);
+					OutActors.Empty();
+					UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, TraceObjectTypes,
+														   AResourceItem::StaticClass(), IgnoredActors, OutActors);
+					if (OutActors.Num() == 0)
+					{
+						HeldItem->SetActorLocation(Position);
+						break;
+					}
+				}
+			}
 		}
 	}
 	
@@ -116,6 +155,7 @@ void AChemicodePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("LookLeft", EInputEvent::IE_DoubleClick, this, &AChemicodePawn::LookLeft);
 	PlayerInputComponent->BindAction("LookRight", EInputEvent::IE_DoubleClick, this, &AChemicodePawn::LookRight);
 	PlayerInputComponent->BindAction("Use", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnUse);
+	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnInteract);
 	PlayerInputComponent->BindAxis("Horizontal", this, &AChemicodePawn::MoveHorizontal);
 	PlayerInputComponent->BindAxis("Vertical", this, &AChemicodePawn::MoveVertical);
 }
@@ -177,4 +217,10 @@ void AChemicodePawn::OnUse()
 {
 	if (HeldItem)
 		HeldItem->Use();
+}
+
+void AChemicodePawn::OnInteract()
+{
+	if (HeldItem != nullptr)
+		HeldItem = nullptr;
 }

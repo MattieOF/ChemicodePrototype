@@ -61,7 +61,7 @@ public:
 	float Speed = 7.f;
 
 	UPROPERTY(EditAnywhere)
-	float ItemMoveSpeed = 40.f;
+	float ItemMoveSpeed = 1700.f; // Units per second to move
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceInfoWidget> ResourceInfoWidgetClass;
@@ -71,6 +71,7 @@ private:
 	void MoveVertical(float Value);
 
 	void OnUse();
+	void OnInteract();
 	
 	UPROPERTY()
 	AChemicodeGameMode* GameMode;
