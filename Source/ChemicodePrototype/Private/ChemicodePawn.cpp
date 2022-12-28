@@ -147,6 +147,14 @@ void AChemicodePawn::LookLeft()
 {
 	if ((CurrentCamPlane == GameMode->GetCabinetCamPlane() || CurrentCamPlane == GameMode->GetTableCamPlane()) && LookCooldown <= 0)
 	{
+		if (!GameMode->bComputerEnabled)
+		{
+			GameMode->AddNotification(FNotification(FText::FromString("Computer disabled"),
+			                                        FText::FromString("This is not an automation assignment!"), 3,
+			                                        Error));
+			return;
+		}
+		
 		SetCamPlane(GameMode->GetComputerCamPlane());
 		LookCooldown = .75f;	
 	}
@@ -189,6 +197,7 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 		BlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, 2);
 	ResourceLostHover();
 	HighlightItem(nullptr);
+	HeldItem = nullptr;
 }
 
 bool AChemicodePawn::ResourceHovered(UResourceData* Resource)

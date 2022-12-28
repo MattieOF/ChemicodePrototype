@@ -18,6 +18,9 @@ AChemicodeGameMode::AChemicodeGameMode()
 void AChemicodeGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	NotificationPanel = Cast<UNotificationPanelWidget>(CreateWidget(GetWorld(), NotificationPanelWidgetClass));
+	NotificationPanel->AddToViewport();
 }
 
 ACameraPlane* AChemicodeGameMode::GetTableCamPlane()
