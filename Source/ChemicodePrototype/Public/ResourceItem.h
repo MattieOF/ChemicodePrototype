@@ -10,6 +10,14 @@
 // Forward decl, if not we get a circular dependency
 class UResourceData;
 
+UENUM(BlueprintType)
+enum EResourceState
+{
+	Usable UMETA(DisplayName = "Usable"),
+	HasLid UMETA(DisplayName = "Has Lid"),
+	Empty  UMETA(DisplayName = "Empty"),
+};
+
 UCLASS(ClassGroup=(Chemicode), Blueprintable)
 class CHEMICODEPROTOTYPE_API AResourceItem : public AActor
 {
@@ -25,8 +33,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetResource(UResourceData* ResourceData);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent)
 	void Use();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EResourceState> ResourceState;
 
 protected:
 	// Called when the game starts or when spawned

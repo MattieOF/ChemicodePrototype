@@ -22,13 +22,15 @@ AResourceItem::AResourceItem()
 
 void AResourceItem::SetResource(UResourceData* ResourceData)
 {
-	MeshComponent->SetStaticMesh(ResourceData->Mesh);
 	Resource = ResourceData;
+	MeshComponent->SetStaticMesh(ResourceData->Mesh);
+	if (ResourceData->MeshMaterial)
+		MeshComponent->SetMaterial(0, Resource->MeshMaterial);
 }
 
-void AResourceItem::Use()
+void AResourceItem::Use_Implementation()
 {
-	UE_LOG(LogChemicode, Log, TEXT("Item used!"));
+	UE_LOG(LogChemicode, Log, TEXT("Item of %s used!"), *Resource->Name.ToString());
 }
 
 // Called when the game starts or when spawned

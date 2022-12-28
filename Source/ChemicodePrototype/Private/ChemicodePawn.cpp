@@ -83,7 +83,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 			else
 			{
 				auto Distance = FVector::Dist(HeldItem->GetActorLocation(), HitResult.ImpactPoint);
-				for (float i = 50.f; i < Distance; i += 30.f)
+				for (float i = 50.f; i < Distance + 50; i += 30.f)
 				{
 					Position = HeldItem->GetActorLocation() + (Direction * i);
 					Position.Z = TargetItemPosition.Z + Bounds.Z + 1;
@@ -217,6 +217,7 @@ void AChemicodePawn::OnUse()
 {
 	if (HeldItem)
 		HeldItem->Use();
+	// else play invalid use sound
 }
 
 void AChemicodePawn::OnInteract()
