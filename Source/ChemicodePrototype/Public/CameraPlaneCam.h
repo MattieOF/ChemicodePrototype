@@ -20,6 +20,9 @@ public:
 	void SetFOV(float NewFOV);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE float GetFOV() { return CameraComponent->FieldOfView; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UCameraComponent* GetCameraComponent();
 	
 private:

@@ -28,10 +28,10 @@ public:
 	FRotator GetTargetCameraRotation();
 	
 	UFUNCTION(BlueprintCallable, Category = "Camera Plane", BlueprintPure)
-	AActor* GetCamPositionActor();
+	ACameraPlaneCam* GetCamPositionActor();
 	
 	UFUNCTION(BlueprintCallable, Category = "Camera Plane")
-	AActor* GetCamPositionActorChecked();
+	ACameraPlaneCam* GetCamPositionActorChecked();
 	
 	UFUNCTION(BlueprintCallable, Category = "Camera Plane")
 	void ResetCameraPosition();

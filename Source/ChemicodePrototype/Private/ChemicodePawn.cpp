@@ -187,6 +187,7 @@ void AChemicodePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnInteract);
 	PlayerInputComponent->BindAxis("Horizontal", this, &AChemicodePawn::MoveHorizontal);
 	PlayerInputComponent->BindAxis("Vertical", this, &AChemicodePawn::MoveVertical);
+	PlayerInputComponent->BindAxis("Scroll", this, &AChemicodePawn::OnScroll);
 }
 
 void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
@@ -252,6 +253,11 @@ void AChemicodePawn::MoveHorizontal(float Value)
 void AChemicodePawn::MoveVertical(float Value)
 {
 	CurrentCamPlane->MoveOnPlane(0, Value * Speed);
+}
+
+void AChemicodePawn::OnScroll(float Value)
+{
+	CurrentCamPlane->GetCamPositionActor()->SetFOV(FMath::Clamp(CurrentCamPlane->GetCamPositionActor()->GetFOV() + (Value * 5), FOVMin, FOVMax));
 }
 
 void AChemicodePawn::OnUse()

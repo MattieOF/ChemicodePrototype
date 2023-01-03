@@ -69,6 +69,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	float ItemMoveSpeed = 1700.f; // Units per second to move
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
+	float FOVMin = 80;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera")
+	float FOVMax = 135;
+
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceInfoWidget> ResourceInfoWidgetClass;
 
@@ -76,6 +81,8 @@ public:
 private:
 	void MoveHorizontal(float Value);
 	void MoveVertical(float Value);
+
+	void OnScroll(float Value);
 
 	void OnUse();
 	void OnInteract();

@@ -43,12 +43,12 @@ FRotator ACameraPlane::GetTargetCameraRotation()
 	return (-Up).ToOrientationRotator();
 }
 
-AActor* ACameraPlane::GetCamPositionActor()
+ACameraPlaneCam* ACameraPlane::GetCamPositionActor()
 {
 	return CamPosition;
 }
 
-AActor* ACameraPlane::GetCamPositionActorChecked()
+ACameraPlaneCam* ACameraPlane::GetCamPositionActorChecked()
 {
 	if (!IsValid(CamPosition))
 		InitialiseCamPlane();
