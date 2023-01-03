@@ -42,6 +42,11 @@ void AChemicodePawn::BeginPlay()
 	InfoWidget = CreateWidget<UResourceInfoWidget>(GetWorld(), ResourceInfoWidgetClass);
 	InfoWidget->AddToViewport();
 	InfoWidget->Hide(true); // True param hides the UI instantly without animating
+
+	// Create resource tooltip widget and hide it
+	TooltipWidget = CreateWidget<UResourceItemTooltipWidget>(GetWorld(), ResourceTooltipWidgetClass);
+	TooltipWidget->AddToViewport();
+	TooltipWidget->Hide(true); // True param hides the UI instantly without animating
 }
 
 // Called every frame
@@ -116,7 +121,11 @@ void AChemicodePawn::Tick(float DeltaTime)
 		{
 			auto Item = Cast<AResourceItem>(Result.GetActor());
 			if (Item)
+			{
 				HighlightItem(Item);
+				TooltipWidget->SetResource(Item->Resource);
+				TooltipWidget->Show();
+			}
 			else
 				HighlightItem(nullptr);
 		}
@@ -240,6 +249,8 @@ void AChemicodePawn::HighlightItem(AResourceItem* Item)
 {
 	if (HighlightedItem)
 		HighlightedItem->GetOutline()->HideOutline();
+	if (TooltipWidget->IsShown())
+		TooltipWidget->Hide();
 	HighlightedItem = Item;
 	if (HighlightedItem)
 		HighlightedItem->GetOutline()->ShowOutline();

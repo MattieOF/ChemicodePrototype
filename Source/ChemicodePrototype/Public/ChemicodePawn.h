@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CameraPlane.h"
 #include "ResourceData.h"
+#include "ResourceItemTooltipWidget.h"
 #include "GameFramework/Pawn.h"
 #include "ChemicodePawn.generated.h"
 
@@ -77,6 +78,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceInfoWidget> ResourceInfoWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UResourceItemTooltipWidget> ResourceTooltipWidgetClass;
 
 private:
 	void MoveHorizontal(float Value);
@@ -101,6 +104,8 @@ private:
 	AResourceItem* HeldItem;
 	UPROPERTY()
 	AResourceItem* HighlightedItem;
+	UPROPERTY()
+	UResourceItemTooltipWidget* TooltipWidget;
 
 	UPROPERTY()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ItemObjectTypeArray;
