@@ -18,10 +18,10 @@ class CHEMICODEPROTOTYPE_API UChemicodeStatics : public UBlueprintFunctionLibrar
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = "Actor References", BlueprintPure)
+	UFUNCTION(BlueprintCallable, Category = "Actor References", BlueprintPure, meta=(WorldContext="World"))
 	static FORCEINLINE AChemicodePawn* GetChemicodePawn(UObject* World) { return Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(World, 0)); };
 
-	UFUNCTION(BlueprintCallable, Category = "Actor References", BlueprintPure)
+	UFUNCTION(BlueprintCallable, Category = "Actor References", BlueprintPure, meta=(WorldContext="World"))
 	static FORCEINLINE AChemicodeGameMode* GetChemicodeGameMode(UObject* World) { return Cast<AChemicodeGameMode>(UGameplayStatics::GetGameMode(World)); };
 
 	UFUNCTION(BlueprintCallable, Category = "Math", BlueprintPure)
