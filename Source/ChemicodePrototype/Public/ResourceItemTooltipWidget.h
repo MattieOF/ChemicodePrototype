@@ -31,12 +31,12 @@ public:
 	FORCEINLINE UCanvasPanel* GetRootCanvas() { return RootCanvas; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool IsShown() { return bIsVisible; }
+	FORCEINLINE bool IsShown() { return bIsShown; }
 
 protected:
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	UCanvasPanel* RootCanvas;
 
-	UPROPERTY()
-	bool bIsVisible;
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsShown;
 };

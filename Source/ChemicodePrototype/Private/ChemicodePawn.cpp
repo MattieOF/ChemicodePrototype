@@ -120,13 +120,13 @@ void AChemicodePawn::Tick(float DeltaTime)
 		if (DidHit)
 		{
 			auto Item = Cast<AResourceItem>(Result.GetActor());
-			if (Item)
+			if (Item && HighlightedItem != Item)
 			{
 				HighlightItem(Item);
 				TooltipWidget->SetResource(Item->Resource);
 				TooltipWidget->Show();
 			}
-			else
+			else if (Item == nullptr)
 				HighlightItem(nullptr);
 		}
 		else

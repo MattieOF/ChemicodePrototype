@@ -5,8 +5,9 @@
 
 #include "ChemicodeGameMode.h"
 #include "ChemicodeStatics.h"
+#include "ChemicodePrototype/ChemicodePrototype.h"
 
- // Sets default values
+// Sets default values
 AResourceShopItem::AResourceShopItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.

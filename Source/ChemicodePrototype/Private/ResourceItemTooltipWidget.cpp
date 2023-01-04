@@ -9,13 +9,13 @@
 void UResourceItemTooltipWidget::Show_Implementation(bool bInstant)
 {
 	RootCanvas->SetVisibility(ESlateVisibility::HitTestInvisible);
-	bIsVisible = true;
+	bIsShown = true;
 }
 
 void UResourceItemTooltipWidget::Hide_Implementation(bool bInstant)
 {
-	RootCanvas->SetVisibility(ESlateVisibility::Visible);
-	bIsVisible = false;
+	RootCanvas->SetVisibility(ESlateVisibility::Hidden);
+	bIsShown = false;
 }
 
 void UResourceItemTooltipWidget::SetResource_Implementation(UResourceData* Resource)
