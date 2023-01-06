@@ -293,6 +293,14 @@ void AChemicodePawn::DropItem()
 	HeldItem = nullptr;
 }
 
+void AChemicodePawn::RefreshTooltip()
+{
+	if (!TooltipWidget || !HighlightedItem || !HighlightedItem->Resource)
+		return;
+
+	TooltipWidget->SetResource(HighlightedItem->Resource);
+}
+
 void AChemicodePawn::MoveHorizontal(float Value)
 {
 	CurrentCamPlane->MoveOnPlane(Value * Speed, 0);

@@ -87,6 +87,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceItemTooltipWidget> ResourceTooltipWidgetClass;
 
+	UFUNCTION(BlueprintCallable)
+	void RefreshTooltip();
+
 private:
 	void MoveHorizontal(float Value);
 	void MoveVertical(float Value);

@@ -4,6 +4,7 @@
 #include "ResourceItem.h"
 
 #include "ChemicodePawn.h"
+#include "ChemicodeStatics.h"
 #include "ResourceData.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,6 +44,7 @@ void AResourceItem::SetResource(UResourceData* ResourceData)
 	MeshComponent->SetStaticMesh(ResourceData->Mesh);
 	if (ResourceData->MeshMaterial)
 		MeshComponent->SetMaterial(0, Resource->MeshMaterial);
+	UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 }
 
 void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewType)
