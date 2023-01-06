@@ -86,7 +86,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 			HeldItem->SetActorLocation(Position);
 		else
 		{
-			// If the target position is blocked, move further in the direction until there is a valid ppsition
+			// If the target position is blocked, move further in the direction until there is a valid position
 			// Only do this up to the distance between current position and target position so we don't overshoot
 			// However, add 50 to max distance so we do overshoot a tiny bit, decreasing how far away the cursor
 			// has to be from a blocking item to allow the object to move, which feels better.
@@ -117,9 +117,8 @@ void AChemicodePawn::Tick(float DeltaTime)
 		TArray<AActor*> IgnoredActors;
 		if (HeldItem)
 			IgnoredActors.Add(HeldItem);
-		
-		bool DidHit = UChemicodeStatics::GetHitResultAtCursor(PlayerController, ItemObjectTypeArray, false, Result, IgnoredActors);
-		if (DidHit)
+
+		if (UChemicodeStatics::GetHitResultAtCursor(PlayerController, ItemObjectTypeArray, false, Result, IgnoredActors))
 		{
 			auto Item = Cast<AResourceItem>(Result.GetActor());
 			if (Item && HighlightedItem != Item)
@@ -273,9 +272,12 @@ void AChemicodePawn::HighlightItem(AResourceItem* Item)
  */
 void AChemicodePawn::HoldItem(AResourceItem* Item)
 {
+	if (!Item)
+		return;
+	
 	if (HeldItem)
 		HeldItem->GetOutline()->HideOutline();
-	HighlightItem(nullptr); // Dehighlight now so it doesn't happen later and remain unhighlighted
+	HighlightItem(nullptr); // De-highlight now so it doesn't happen later and remain un-highlighted
 	HeldItem = Item;
 	HeldItem->GetOutline()->ShowOutline();
 }
@@ -309,7 +311,7 @@ void AChemicodePawn::OnScroll(float Value)
 void AChemicodePawn::OnUse()
 {
 	if (HeldItem)
-		HeldItem->Use();
+		HeldItem->Interact();
 	// else play invalid use sound
 }
 
@@ -317,7 +319,7 @@ void AChemicodePawn::OnInteract()
 {
 	if (HeldItem != nullptr && HighlightedItem != nullptr)
 	{
-		HighlightedItem->UseWithItem(HeldItem);
+		HighlightedItem->InteractWith(HeldItem);
 	}
 	else if (HeldItem != nullptr)
 	{
@@ -325,12 +327,8 @@ void AChemicodePawn::OnInteract()
 	}
 	else if (CurrentCamPlane == GameMode->GetTableCamPlane())
 	{
-		ItemObjectTypeArray.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
-
 		FHitResult Result;
-		
-		bool DidHit = PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result);
-		if (DidHit)
+		if (PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result))
 			HoldItem(Cast<AResourceItem>(Result.GetActor()));
 	}
 }

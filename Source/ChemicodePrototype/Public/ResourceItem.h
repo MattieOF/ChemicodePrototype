@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InteractionComponent.h"
 #include "OutlineComponent.h"
 #include "GameFramework/Actor.h"
 #include "ResourceItem.generated.h"
 
-class AChemicodePawn;
 // Forward decl, if not we get a circular dependency
 class UResourceData;
+class AChemicodePawn;
 
 UENUM(BlueprintType)
 enum EResourceState
@@ -33,24 +34,20 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetResource(UResourceData* ResourceData);
-		
-	// TODO: Maybe make these multicast delegates?
-	UFUNCTION(BlueprintNativeEvent)
-	void Use();
-
-	UFUNCTION(BlueprintNativeEvent)
-	void UseWithItem(AResourceItem* Item);
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EResourceState> ResourceState;
 
-	UFUNCTION()
-	virtual void BeginMouseOver();
+	UFUNCTION(BlueprintCallable)
+	void SetInteractionType(TSubclassOf<UInteractionComponent> NewType);
 
-	UFUNCTION()
-	virtual void EndMouseOver();
+	UFUNCTION(BlueprintCallable)
+	bool Interact();
 
-	FORCEINLINE UOutlineComponent* GetOutline() { return Outline; }
+	UFUNCTION(BlueprintCallable)
+	bool InteractWith(AResourceItem* Item);
+	
+	FORCEINLINE UOutlineComponent* GetOutline() const { return Outline; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -70,5 +67,8 @@ protected:
 
 	UPROPERTY()
 	UOutlineComponent* Outline;
+
+	UPROPERTY()
+	UInteractionComponent* InteractionComponent;
 	
 };

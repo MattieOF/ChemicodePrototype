@@ -8,6 +8,8 @@
 #include "ResourceItem.h"
 #include "ResourceData.generated.h"
 
+class UInteractionComponent;
+
 /**
  * Basic data class for resources
  */
@@ -37,6 +39,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TSubclassOf<AResourceItem> ResourceItemClass = AResourceItem::StaticClass();
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TSubclassOf<UInteractionComponent> DefaultInteraction = UInteractionComponent::StaticClass();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<UHazardData*> Hazards;

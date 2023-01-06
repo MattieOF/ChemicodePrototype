@@ -33,13 +33,8 @@ void AResourceItem::BeginPlay()
 	if (Resource)
 		SetResource(Resource);
 
-	/*FScriptDelegate OnCursorOverDelegate;
-	OnCursorOverDelegate.BindUFunction(this, "BeginMouseOver");
-	OnBeginCursorOver.Add(OnCursorOverDelegate);
-
-	FScriptDelegate OnCursorLeaveDelegate;
-	OnCursorLeaveDelegate.BindUFunction(this, "EndMouseOver");
-	OnEndCursorOver.Add(OnCursorLeaveDelegate);*/
+	if (!InteractionComponent && Resource)
+		SetInteractionType(Resource->DefaultInteraction);
 }
 
 void AResourceItem::SetResource(UResourceData* ResourceData)
@@ -50,26 +45,28 @@ void AResourceItem::SetResource(UResourceData* ResourceData)
 		MeshComponent->SetMaterial(0, Resource->MeshMaterial);
 }
 
-void AResourceItem::UseWithItem_Implementation(AResourceItem* Item)
+void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewType)
 {
-	UE_LOG(LogChemicode, Log, TEXT("Default ResourceItem::UseWithItem() Impl: Item of %s used!"), *Resource->Name.ToString());
+	if (InteractionComponent)
+		InteractionComponent->DestroyComponent();
+	InteractionComponent = NewObject<UInteractionComponent>(this, NewType);
+	InteractionComponent->RegisterComponent();
 }
 
-void AResourceItem::Use_Implementation()
+bool AResourceItem::Interact()
 {
-	UE_LOG(LogChemicode, Log, TEXT("Default ResourceItem::Use() Impl: Item of %s used!"), *Resource->Name.ToString());
+	if (!InteractionComponent)
+		return false;
+	InteractionComponent->OnInteract();
+	return true;
 }
 
-void AResourceItem::BeginMouseOver()
+bool AResourceItem::InteractWith(AResourceItem* Item)
 {
-	if (Player->GetHeldItem() == nullptr)
-		Outline->ShowOutline();
-}
-
-void AResourceItem::EndMouseOver()
-{
-	if (Player->GetHeldItem() != this)
-		Outline->HideOutline();
+	if (!InteractionComponent)
+		return false;
+	InteractionComponent->OnInteractWith(Item);
+	return true;
 }
 
 // Called every frame
