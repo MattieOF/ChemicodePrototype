@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "HazardData.h"
+#include "Interaction.h"
 #include "ResourceItem.h"
 #include "ResourceData.generated.h"
 
@@ -38,5 +39,8 @@ public:
 	TSubclassOf<AResourceItem> ResourceItemClass = AResourceItem::StaticClass();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<UHazardData*> Hazards; 
+	TArray<UHazardData*> Hazards;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TMap<UResourceData*, FInteraction> Interactions;
 };

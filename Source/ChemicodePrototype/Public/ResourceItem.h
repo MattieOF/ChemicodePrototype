@@ -33,9 +33,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetResource(UResourceData* ResourceData);
-
+		
+	// TODO: Maybe make these multicast delegates?
 	UFUNCTION(BlueprintNativeEvent)
 	void Use();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void UseWithItem(AResourceItem* Item);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EResourceState> ResourceState;

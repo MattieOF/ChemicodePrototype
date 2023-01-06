@@ -50,9 +50,14 @@ void AResourceItem::SetResource(UResourceData* ResourceData)
 		MeshComponent->SetMaterial(0, Resource->MeshMaterial);
 }
 
+void AResourceItem::UseWithItem_Implementation(AResourceItem* Item)
+{
+	UE_LOG(LogChemicode, Log, TEXT("Default ResourceItem::UseWithItem() Impl: Item of %s used!"), *Resource->Name.ToString());
+}
+
 void AResourceItem::Use_Implementation()
 {
-	UE_LOG(LogChemicode, Log, TEXT("Item of %s used!"), *Resource->Name.ToString());
+	UE_LOG(LogChemicode, Log, TEXT("Default ResourceItem::Use() Impl: Item of %s used!"), *Resource->Name.ToString());
 }
 
 void AResourceItem::BeginMouseOver()

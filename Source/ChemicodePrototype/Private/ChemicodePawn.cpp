@@ -202,10 +202,10 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 	PrevCamPlane = CurrentCamPlane;
 	CurrentCamPlane = NewCamPlane;
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(NewCamPlane->GetCamPositionActor(),
-		BlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, 2);
+		BlendTime, VTBlend_EaseInOut, 2);
 	ResourceLostHover();
 	HighlightItem(nullptr);
-	HeldItem = nullptr;
+	DropItem();
 }
 
 bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
@@ -285,6 +285,8 @@ void AChemicodePawn::HoldItem(AResourceItem* Item)
  */
 void AChemicodePawn::DropItem()
 {
+	if (!HeldItem)
+		return;
 	HeldItem->GetOutline()->HideOutline();
 	HeldItem = nullptr;
 }
@@ -313,7 +315,11 @@ void AChemicodePawn::OnUse()
 
 void AChemicodePawn::OnInteract()
 {
-	if (HeldItem != nullptr)
+	if (HeldItem != nullptr && HighlightedItem != nullptr)
+	{
+		HighlightedItem->UseWithItem(HeldItem);
+	}
+	else if (HeldItem != nullptr)
 	{
 		DropItem();
 	}
