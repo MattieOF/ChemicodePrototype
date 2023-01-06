@@ -4,6 +4,7 @@
 #include "ChemicodePawn.h"
 
 #include "ChemicodeGameMode.h"
+#include "ChemicodeStatics.h"
 #include "ResourceInfoWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
@@ -54,78 +55,75 @@ void AChemicodePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Tick cooldowns
 	LookCooldown -= DeltaTime;
 
+	// If holding an item, move it towards the cursors position over the table
 	FHitResult HitResult;
-	if (PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
+	if (HeldItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
 	{
 		TargetItemPosition = HitResult.ImpactPoint;
 		
-		if (HeldItem)
+		// Move the item in direction
+		const auto Direction = (HitResult.ImpactPoint - HeldItem->GetActorLocation()).GetUnsafeNormal();
+		auto Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed * DeltaTime);
+		FVector Center, Bounds;
+		HeldItem->GetActorBounds(true, Center, Bounds);
+		// DrawDebugBox(GetWorld(), Center, Bounds, FColor::Red, false, 0);
+		Position.Z = TargetItemPosition.Z + Bounds.Z;
+
+		// Check if target position is valid (it is if there are no ResourceItems blocking the position)
+		TArray<AActor*> IgnoredActors;
+		IgnoredActors.Add(HeldItem);
+
+		TArray<AActor*> OutActors;
+		
+		UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
+		                                       AResourceItem::StaticClass(), IgnoredActors, OutActors);
+		//DrawDebugBox(GetWorld(), Position, Bounds, FColor::Red);
+		
+		if (OutActors.Num() == 0)
+			HeldItem->SetActorLocation(Position);
+		else
 		{
-			// Move the item in direction
-			const auto Direction = (HitResult.ImpactPoint - HeldItem->GetActorLocation()).GetUnsafeNormal();
-			auto Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed * DeltaTime);
-			FVector Center, Bounds;
-			HeldItem->GetActorBounds(true, Center, Bounds);
-			// DrawDebugBox(GetWorld(), Center, Bounds, FColor::Red, false, 0);
-			Position.Z = TargetItemPosition.Z + Bounds.Z;
-
-			// Check if target position is valid (it is if there are no ResourceItems blocking the position)
-			TArray<AActor*> IgnoredActors;
-			IgnoredActors.Add(HeldItem);
-
-			TArray<AActor*> OutActors;
-			
-			UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
-			                                       AResourceItem::StaticClass(), IgnoredActors, OutActors);
-			//DrawDebugBox(GetWorld(), Position, Bounds, FColor::Red);
-			
-			if (OutActors.Num() == 0)
-				HeldItem->SetActorLocation(Position);
-			else
+			// If the target position is blocked, move further in the direction until there is a valid ppsition
+			// Only do this up to the distance between current position and target position so we don't overshoot
+			// However, add 50 to max distance so we do overshoot a tiny bit, decreasing how far away the cursor
+			// has to be from a blocking item to allow the object to move, which feels better.
+			auto Distance = FVector::Dist(HeldItem->GetActorLocation(), HitResult.ImpactPoint);
+			for (float i = 50.f; i < Distance + 50; i += 30.f)
 			{
-				// If the target position is blocked, move further in the direction until there is a valid ppsition
-				// Only do this up to the distance between current position and target position so we don't overshoot
-				// However, add 50 to max distance so we do overshoot a tiny bit, decreasing how far away the cursor
-				// has to be from a blocking item to allow the object to move, which feels better.
-				auto Distance = FVector::Dist(HeldItem->GetActorLocation(), HitResult.ImpactPoint);
-				for (float i = 50.f; i < Distance + 50; i += 30.f)
+				Position = HeldItem->GetActorLocation() + (Direction * i);
+				Position.Z = TargetItemPosition.Z + Bounds.Z;
+				// DrawDebugString(GetWorld(), Position + FVector(0, 0, 30), FString::SanitizeFloat(i, 2), nullptr, FColor::White, 1);
+				// DrawDebugPoint(GetWorld(), Position, 5, FColor::Red, false, 1);
+				OutActors.Empty();
+				UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
+													   AResourceItem::StaticClass(), IgnoredActors, OutActors);
+				if (OutActors.Num() == 0)
 				{
-					Position = HeldItem->GetActorLocation() + (Direction * i);
-					Position.Z = TargetItemPosition.Z + Bounds.Z;
-					// DrawDebugString(GetWorld(), Position + FVector(0, 0, 30), FString::SanitizeFloat(i, 2), nullptr, FColor::White, 1);
-					// DrawDebugPoint(GetWorld(), Position, 5, FColor::Red, false, 1);
-					OutActors.Empty();
-					UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
-														   AResourceItem::StaticClass(), IgnoredActors, OutActors);
-					if (OutActors.Num() == 0)
-					{
-						HeldItem->SetActorLocation(Position);
-						break;
-					}
+					HeldItem->SetActorLocation(Position);
+					break;
 				}
 			}
 		}
 	}
 
 	// Check for hovered resource items
-	if (!HeldItem && CurrentCamPlane == GameMode->GetTableCamPlane())
+	if (CurrentCamPlane == GameMode->GetTableCamPlane())
 	{
-		ItemObjectTypeArray.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
-
 		FHitResult Result;
 		
-		bool DidHit = PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result);
+		TArray<AActor*> IgnoredActors;
+		if (HeldItem)
+			IgnoredActors.Add(HeldItem);
+		
+		bool DidHit = UChemicodeStatics::GetHitResultAtCursor(PlayerController, ItemObjectTypeArray, false, Result, IgnoredActors);
 		if (DidHit)
 		{
 			auto Item = Cast<AResourceItem>(Result.GetActor());
 			if (Item && HighlightedItem != Item)
-			{
 				HighlightItem(Item);
-				TooltipWidget->SetResource(Item->Resource);
-				TooltipWidget->Show();
-			}
 			else if (Item == nullptr)
 				HighlightItem(nullptr);
 		}
@@ -229,12 +227,12 @@ bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
 void AChemicodePawn::TryBuyResource(UResourceData* Resource)
 {
 	LookDown(); // Look back at the table
-	HeldItem = Cast<AResourceItem>(GetWorld()->SpawnActor(Resource->ResourceItemClass, &TargetItemPosition, &FRotator::ZeroRotator));
+	const auto Item = Cast<AResourceItem>(GetWorld()->SpawnActor(Resource->ResourceItemClass, &TargetItemPosition, &FRotator::ZeroRotator));
 	FVector Center, Bounds;
-	HeldItem->GetActorBounds(true, Center, Bounds);
-	HeldItem->AddActorLocalOffset(FVector(0, 0, Bounds.Z + 1));
-	HeldItem->SetResource(Resource);
-	HighlightItem(HeldItem);
+	Item->GetActorBounds(true, Center, Bounds);
+	Item->AddActorLocalOffset(FVector(0, 0, Bounds.Z + 1));
+	Item->SetResource(Resource);
+	HoldItem(Item);
 }
 
 void AChemicodePawn::ResourceLostHover()
@@ -247,13 +245,48 @@ void AChemicodePawn::ResourceLostHover()
 
 void AChemicodePawn::HighlightItem(AResourceItem* Item)
 {
+	// Hide outline on previous item
 	if (HighlightedItem)
 		HighlightedItem->GetOutline()->HideOutline();
-	if (TooltipWidget->IsShown())
-		TooltipWidget->Hide();
+
+	// Do tooltip
+	if (Item)
+	{
+		if (!TooltipWidget->IsShown())
+			TooltipWidget->Show();
+		TooltipWidget->SetResource(Item->Resource);
+	} else
+	{
+		if (TooltipWidget->IsShown())
+			TooltipWidget->Hide();
+	}
+
+	// Set new highlighted item and highlight it
 	HighlightedItem = Item;
 	if (HighlightedItem)
 		HighlightedItem->GetOutline()->ShowOutline();
+}
+
+/**
+ * @brief Sets an item as the currently held item. This also removes highlight from the previous item, and adds it to the new one. 
+ * @param Item Item to hold
+ */
+void AChemicodePawn::HoldItem(AResourceItem* Item)
+{
+	if (HeldItem)
+		HeldItem->GetOutline()->HideOutline();
+	HighlightItem(nullptr); // Dehighlight now so it doesn't happen later and remain unhighlighted
+	HeldItem = Item;
+	HeldItem->GetOutline()->ShowOutline();
+}
+
+/**
+ * @brief Drops the currently held item. This also removes highlight from it.
+ */
+void AChemicodePawn::DropItem()
+{
+	HeldItem->GetOutline()->HideOutline();
+	HeldItem = nullptr;
 }
 
 void AChemicodePawn::MoveHorizontal(float Value)
@@ -282,8 +315,7 @@ void AChemicodePawn::OnInteract()
 {
 	if (HeldItem != nullptr)
 	{
-		HeldItem = nullptr;
-		HighlightItem(nullptr);
+		DropItem();
 	}
 	else if (CurrentCamPlane == GameMode->GetTableCamPlane())
 	{
@@ -293,9 +325,6 @@ void AChemicodePawn::OnInteract()
 		
 		bool DidHit = PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result);
 		if (DidHit)
-		{
-			HeldItem = Cast<AResourceItem>(Result.GetActor());
-			HighlightItem(HeldItem);
-		}
+			HoldItem(Cast<AResourceItem>(Result.GetActor()));
 	}
 }

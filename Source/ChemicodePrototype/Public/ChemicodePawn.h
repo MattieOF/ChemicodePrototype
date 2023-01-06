@@ -60,6 +60,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HighlightItem(AResourceItem* Item);
+
+	UFUNCTION(BlueprintCallable)
+	void HoldItem(AResourceItem* Item);
+
+	UFUNCTION(BlueprintCallable)
+	void DropItem();
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE AResourceItem* GetHeldItem() { return HeldItem; }

@@ -26,4 +26,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Math", BlueprintPure)
 	static FVector2D ClampVector2D(FVector2D Vector, FVector2D Min, FVector2D Max);
+
+	UFUNCTION()
+	static bool GetHitResultAtCursor(const APlayerController* Controller, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, FHitResult& HitResult, const TArray<AActor*>& IgnoredActors);
 };
