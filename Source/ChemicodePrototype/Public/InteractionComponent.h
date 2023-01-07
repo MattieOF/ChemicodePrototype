@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "InteractionComponent.generated.h"
 
+class UResourceData;
 class AResourceItem;
 
 UDELEGATE()
@@ -25,8 +26,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnInteract"), Category = Events)
 	void OnInteract();
 
-	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnInteractWith"), Category = Events)
+	UFUNCTION(BlueprintNativeEvent, meta = (DisplayName = "OnInteractWith"), Category = Events)
 	void OnInteractWith(AResourceItem* Item);
+
+	UPROPERTY(EditAnywhere, Category = Events,
+		meta=(ToolTip=
+			"Resource types mapped to the name of a function to be called when it is used. Function should have 1 parameter of type AResourceItem."
+		))
+	TMap<UResourceData*, FName> ItemInteractions;
 	
 	UPROPERTY(BlueprintReadWrite)
 	AResourceItem* OwnerItem;

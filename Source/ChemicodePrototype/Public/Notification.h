@@ -6,10 +6,10 @@
 UENUM(BlueprintType)
 enum ENotificationType
 {
-	Success UMETA(DisplayName = "Success"),
-	Info    UMETA(DisplayName = "Info"),
-	Warning UMETA(DisplayName = "Warning"),
-	Error   UMETA(DisplayName = "Error"),
+	NTSuccess UMETA(DisplayName = "Success"),
+	NTInfo    UMETA(DisplayName = "Info"),
+	NTWarning UMETA(DisplayName = "Warning"),
+	NTError   UMETA(DisplayName = "Error"),
 };
 
 USTRUCT(BlueprintType)
@@ -30,17 +30,17 @@ struct FNotification
 	float DisplayTime = 4;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Notification")
-	TEnumAsByte<ENotificationType> NotificationType = Info;
+	TEnumAsByte<ENotificationType> NotificationType = NTInfo;
 
 	FNotification()
 	{
 		Title = FText::FromString("Default Notification");
 		Description = FText::FromString("This shouldn't happen!");
 		DisplayTime = 0;
-		NotificationType = Error;
+		NotificationType = NTError;
 	}
 	
-	FNotification(FText NewTitle, FText NewDesc, float NewDisplayTime = 0, ENotificationType NewType = Info)
+	FNotification(FText NewTitle, FText NewDesc, float NewDisplayTime = 0, ENotificationType NewType = NTInfo)
 	{
 		Title = NewTitle;
 		Description = NewDesc;

@@ -157,7 +157,7 @@ void AChemicodePawn::LookLeft()
 		{
 			GameMode->AddNotification(FNotification(FText::FromString("Computer disabled"),
 			                                        FText::FromString("This is not an automation assignment!"), 3,
-			                                        Error));
+			                                        NTError));
 			return;
 		}
 		
