@@ -3,6 +3,7 @@
 #include "InteractionComponent.h"
 
 #include "ChemicodeStatics.h"
+#include "ResourceData.h"
 #include "ResourceItem.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 

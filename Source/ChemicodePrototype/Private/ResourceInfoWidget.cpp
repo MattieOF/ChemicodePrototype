@@ -4,7 +4,7 @@
 #include "ResourceInfoWidget.h"
 
 #include "ChemicodePrototype/ChemicodePrototype.h"
-#include "Components/TextBlock.h"
+#include "Components/CanvasPanel.h"
 
 void UResourceInfoWidget::Show_Implementation(bool bInstant)
 {

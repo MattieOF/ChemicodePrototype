@@ -9,9 +9,9 @@
 class UResourceData;
 class AResourceItem;
 
-UDELEGATE()
+// Signature for the interaction event
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractSignature);
-UDELEGATE()
+// Signature for the interact with event. Parameter is the item used on this item.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractWithSignature, AResourceItem*, Item);
 
 UCLASS( ClassGroup=(Chemicode), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType )
@@ -19,27 +19,48 @@ class CHEMICODEPROTOTYPE_API UInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+	/**
+	 * @brief Set default values
+	 */
 	UInteractionComponent();
 
+	/**
+	 * @brief On interact event to be implemented by blueprints
+	 */
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnInteract"), Category = Events)
 	void OnInteract();
 
+	/**
+	 * @brief Event called when an item is used on this item.
+	 * This event can be overridden by child classes, but the default behaviour is generally good enough;
+	 * it uses the ItemInteractions map to find a function to be called depending on the resource data of Item.
+	 * @param Item Item used on this item
+	 */
 	UFUNCTION(BlueprintNativeEvent, meta = (DisplayName = "OnInteractWith"), Category = Events)
 	void OnInteractWith(AResourceItem* Item);
 
+	/**
+	 * @brief Map of resource data -> function names. If using the default behaviour of OnInteractWith(),
+	 * when an item is used on this item the map is checked for the corresponding resource data and if it exists,
+	 * the corresponding function is called. The functions should have 1 parameter of type AResourceItem.
+	 */
 	UPROPERTY(EditAnywhere, Category = Events,
 		meta=(ToolTip=
 			"Resource types mapped to the name of a function to be called when it is used. Function should have 1 parameter of type AResourceItem."
 		))
 	TMap<UResourceData*, FName> ItemInteractions;
-	
+
+	/**
+	 * @brief Item that owns this interaction component
+	 */
 	UPROPERTY(BlueprintReadWrite)
 	AResourceItem* OwnerItem;
 	
 protected:
-	// Called when the game starts
+	/**
+	 * @brief Sets owner item variable and checks its valid
+	 */
 	virtual void BeginPlay() override;
 
 };

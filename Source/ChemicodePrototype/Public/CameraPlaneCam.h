@@ -12,20 +12,35 @@ class CHEMICODEPROTOTYPE_API ACameraPlaneCam : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
+public:
+	/**
+	 * @brief Initialise default object 
+	 */
 	ACameraPlaneCam();
 
+	/**
+	 * @brief Set the field of view of the camera.
+	 * @param NewFOV New FOV
+	 */
 	UFUNCTION(BlueprintCallable)
 	void SetFOV(float NewFOV);
 
+	/**
+	 * @return Field of view of the camera
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE float GetFOV() { return CameraComponent->FieldOfView; }
+	FORCEINLINE float GetFOV() const { return CameraComponent->FieldOfView; }
 
+	/**
+	 * @return Internal camera component
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	UCameraComponent* GetCameraComponent();
+	FORCEINLINE UCameraComponent* GetCameraComponent() const { return CameraComponent; };
 	
 private:
+	/**
+	 * @brief Internal camera component
+	 */
 	UPROPERTY()
 	UCameraComponent* CameraComponent;
 

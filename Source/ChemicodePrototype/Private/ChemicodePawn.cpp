@@ -3,19 +3,22 @@
 
 #include "ChemicodePawn.h"
 
+#include "CameraPlane.h"
+#include "CameraPlaneCam.h"
 #include "ChemicodeGameMode.h"
 #include "ChemicodeStatics.h"
+#include "OutlineComponent.h"
+#include "ResourceData.h"
 #include "ResourceInfoWidget.h"
+#include "ResourceItem.h"
+#include "ResourceItemTooltipWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 AChemicodePawn::AChemicodePawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -275,8 +278,7 @@ void AChemicodePawn::HoldItem(AResourceItem* Item)
 	if (!Item)
 		return;
 	
-	if (HeldItem)
-		HeldItem->GetOutline()->HideOutline();
+	DropItem();
 	HighlightItem(nullptr); // De-highlight now so it doesn't happen later and remain un-highlighted
 	HeldItem = Item;
 	HeldItem->GetOutline()->ShowOutline();

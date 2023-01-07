@@ -5,7 +5,8 @@
 
 #include "ChemicodeGameMode.h"
 #include "ChemicodeStatics.h"
-#include "ChemicodePrototype/ChemicodePrototype.h"
+#include "OutlineComponent.h"
+#include "ResourceData.h"
 
 // Sets default values
 AResourceShopItem::AResourceShopItem()
@@ -55,27 +56,18 @@ void AResourceShopItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 }
 #endif
 
- void AResourceShopItem::BeginMouseOver()
- {
+void AResourceShopItem::BeginMouseOver()
+{
 	// Show outline and UI
 	if (Player->ResourceHovered(ResourceData))
 		OutlineComponent->ShowOutline();
- }
+}
 
- void AResourceShopItem::EndMouseOver()
- {
+void AResourceShopItem::EndMouseOver()
+{
 	// Hide outline and UI
-	// TODO: Subscribe to some sort of event for player changing cam plane and then call end mouse over if the new one is not cabinet.
-	
 	if (Player->GetCurrentCamPlane() == GameMode->GetCabinetCamPlane())
 		Player->ResourceLostHover();
 		
 	OutlineComponent->HideOutline();
- }
-
- // Called every frame
-void AResourceShopItem::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }

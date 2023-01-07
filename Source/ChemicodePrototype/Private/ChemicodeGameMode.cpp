@@ -2,6 +2,7 @@
 
 #include "ChemicodeGameMode.h"
 
+#include "CameraPlane.h"
 #include "ChemicodePawn.h"
 #include "Kismet/GameplayStatics.h"
 

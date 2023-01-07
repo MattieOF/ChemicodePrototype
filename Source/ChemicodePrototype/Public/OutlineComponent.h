@@ -6,32 +6,51 @@
 #include "Components/ActorComponent.h"
 #include "OutlineComponent.generated.h"
 
-
 UCLASS( ClassGroup=(Chemicode), meta=(BlueprintSpawnableComponent) )
 class CHEMICODEPROTOTYPE_API UOutlineComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+	/**
+	 * @brief Sets default values
+	 */
 	UOutlineComponent();
 
+	/**
+	 * @brief Shows the outline for all outlined components
+	 */
 	UFUNCTION(BlueprintCallable, Category="Outline")
 	void ShowOutline();
 
+	/**
+	 * @brief Hides the outline for all outlined components
+	 */
 	UFUNCTION(BlueprintCallable, Category="Outline")
 	void HideOutline();
 
+	/**
+	 * @brief Looks for all other child components with the tag OutlineTag (variable) and adds them to the internal array.
+	 * This function does not show or hide the outline.
+	 */
 	UFUNCTION(BlueprintCallable, Category="Outline")
 	void RefreshOutlinedComponents();
 
+	/**
+	 * @brief Tag used when searching for primitive components to be outlined.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Outline")
 	FName OutlineTag = "Outline";
 	
 protected:
-	// Called when the game starts
+	/**
+	 * @brief Calls RefreshOutlinedComponents()
+	 */
 	virtual void BeginPlay() override;
 
+	/**
+	 * @brief Array of components that should be outlined.
+	 */
 	UPROPERTY()
 	TArray<UPrimitiveComponent*> OutlinedComponents;
 	

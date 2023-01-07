@@ -5,6 +5,8 @@
 
 #include "ChemicodePawn.h"
 #include "ChemicodeStatics.h"
+#include "InteractionComponent.h"
+#include "OutlineComponent.h"
 #include "ResourceData.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
@@ -55,7 +57,7 @@ void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewTyp
 	InteractionComponent->RegisterComponent();
 }
 
-bool AResourceItem::Interact()
+bool AResourceItem::Interact() const
 {
 	if (!InteractionComponent)
 		return false;
@@ -63,19 +65,12 @@ bool AResourceItem::Interact()
 	return true;
 }
 
-bool AResourceItem::InteractWith(AResourceItem* Item)
+bool AResourceItem::InteractWith(AResourceItem* Item) const
 {
 	if (!InteractionComponent)
 		return false;
 	InteractionComponent->OnInteractWith(Item);
 	return true;
-}
-
-// Called every frame
-void AResourceItem::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 #if WITH_EDITOR

@@ -16,6 +16,10 @@ class CHEMICODEPROTOTYPE_API UNotificationPanelWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	/**
+	 * @brief Adds a notification to the panel. Once this is done, the timer starts.
+	 * @param Notification Notification to be added
+	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void AddNotification(FNotification Notification);
 };

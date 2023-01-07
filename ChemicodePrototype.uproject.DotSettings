@@ -2,4 +2,5 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=NT/@EntryIndexedValue">NT</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Chemicode/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=cooldowns/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=gamemode/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=lolol/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

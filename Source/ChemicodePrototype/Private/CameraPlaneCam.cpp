@@ -14,8 +14,3 @@ void ACameraPlaneCam::SetFOV(float NewFOV)
 {
 	CameraComponent->SetFieldOfView(NewFOV);
 }
-
-UCameraComponent* ACameraPlaneCam::GetCameraComponent()
-{
-	return CameraComponent;
-}

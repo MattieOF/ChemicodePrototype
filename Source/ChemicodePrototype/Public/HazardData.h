@@ -14,12 +14,21 @@ class CHEMICODEPROTOTYPE_API UHazardData : public UDataAsset
 {
 	GENERATED_BODY()
 public:
+	/**
+	 * @brief Name of the hazard
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText Name;
 
+	/**
+	 * @brief Description of the hazard
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText Description;
 
+	/**
+	 * @brief Icon used by hazard UI
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UTexture2D* Icon;
 };
