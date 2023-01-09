@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ChemicodeGameMode.h"
 #include "ChemicodePawn.h"
+#include "Interaction.h"
 #include "Notification.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -68,6 +69,9 @@ public:
 	 * @param IgnoredActors Array of actors (AActor pointers) to be ignored by the trace
 	 * @return True if the trace hit something, false if not OR if there was an error.
 	 */
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	static bool GetHitResultAtCursor(const APlayerController* Controller, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, FHitResult& HitResult, const TArray<AActor*>& IgnoredActors);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FORCEINLINE FInteraction GetInvalidInteraction() { return FInteraction(); }
 };

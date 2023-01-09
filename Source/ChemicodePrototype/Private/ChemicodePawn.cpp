@@ -257,6 +257,15 @@ void AChemicodePawn::HighlightItem(AResourceItem* Item)
 		if (!TooltipWidget->IsShown())
 			TooltipWidget->Show();
 		TooltipWidget->SetResource(Item->Resource);
+		if (HeldItem)
+		{
+			if (const FInteraction Interaction = Item->GetInteractionComponent()->GetInteractionWith(HeldItem->Resource); Interaction.bIsValid)
+				TooltipWidget->SetInteraction(Interaction);
+			else
+				TooltipWidget->ClearInteraction();
+		}
+		else
+			TooltipWidget->ClearInteraction();
 	} else
 	{
 		if (TooltipWidget->IsShown())

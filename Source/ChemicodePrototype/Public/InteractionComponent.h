@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interaction.h"
 #include "InteractionComponent.generated.h"
 
 class UResourceData;
@@ -39,6 +40,14 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent, meta = (DisplayName = "OnInteractWith"), Category = Events)
 	void OnInteractWith(AResourceItem* Item);
+
+	/**
+	 * @brief Get interaction data for a resource
+	 * @param Resource Resource to query for interaction with
+	 * @return Interaction data. bIsValid will be false if not valid.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	FInteraction GetInteractionWith(UResourceData* Resource);
 
 	/**
 	 * @brief Map of resource data -> function names. If using the default behaviour of OnInteractWith(),

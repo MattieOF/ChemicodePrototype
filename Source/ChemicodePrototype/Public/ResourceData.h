@@ -72,10 +72,4 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<UHazardData*> Hazards;
-
-	/**
-	 * @brief Interaction data used by the shop item tooltip.
-	 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TMap<UResourceData*, FInteraction> Interactions;
 };

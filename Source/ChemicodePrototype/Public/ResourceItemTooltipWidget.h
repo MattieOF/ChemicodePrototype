@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interaction.h"
 #include "Blueprint/UserWidget.h"
 #include "ResourceItemTooltipWidget.generated.h"
 
@@ -38,6 +39,12 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void SetResource(UResourceData* Resource);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetInteraction(FInteraction Interaction);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ClearInteraction();
 
 	/**
 	 * @return The root canvas

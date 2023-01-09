@@ -79,6 +79,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE UOutlineComponent* GetOutline() const { return Outline; }
 
+	/**
+	 * @return The interaction component for this item. Can be nullptr! 
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE UInteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
+
 protected:
 	/**
 	 * @brief Initialises the item
