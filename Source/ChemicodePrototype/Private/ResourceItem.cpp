@@ -40,21 +40,32 @@ void AResourceItem::BeginPlay()
 		SetInteractionType(Resource->DefaultInteraction);
 }
 
-void AResourceItem::SetResource(UResourceData* ResourceData)
+void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshTooltip)
 {
 	Resource = ResourceData;
 	MeshComponent->SetStaticMesh(ResourceData->Mesh);
 	if (ResourceData->MeshMaterial)
 		MeshComponent->SetMaterial(0, Resource->MeshMaterial);
-	UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
+	if (bRefreshTooltip)
+		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 }
 
-void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewType)
+void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewType, bool bRefreshTooltip)
 {
 	if (InteractionComponent)
 		InteractionComponent->DestroyComponent();
 	InteractionComponent = NewObject<UInteractionComponent>(this, NewType);
 	InteractionComponent->RegisterComponent();
+	if (bRefreshTooltip)
+		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
+}
+
+void AResourceItem::SetResourceAndInteraction(UResourceData* NewResource,
+	TSubclassOf<UInteractionComponent> NewInteraction)
+{
+	SetResource(NewResource, false);
+	SetInteractionType(NewInteraction, false);
+	UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 }
 
 bool AResourceItem::Interact() const

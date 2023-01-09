@@ -165,7 +165,7 @@ public:
 	TSubclassOf<UResourceItemTooltipWidget> ResourceTooltipWidgetClass;
 
 	/**
-	 * @brief Refresh the resource item tooltip
+	 * @brief Refresh the resource item tooltip.
 	 * Use this if the currently hovered item has changed resource data
 	 */
 	UFUNCTION(BlueprintCallable)

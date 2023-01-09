@@ -251,31 +251,12 @@ void AChemicodePawn::HighlightItem(AResourceItem* Item)
 	if (HighlightedItem)
 		HighlightedItem->GetOutline()->HideOutline();
 
-	// Do tooltip
-	if (Item)
-	{
-		if (!TooltipWidget->IsShown())
-			TooltipWidget->Show();
-		TooltipWidget->SetResource(Item->Resource);
-		if (HeldItem)
-		{
-			if (const FInteraction Interaction = Item->GetInteractionComponent()->GetInteractionWith(HeldItem->Resource); Interaction.bIsValid)
-				TooltipWidget->SetInteraction(Interaction);
-			else
-				TooltipWidget->ClearInteraction();
-		}
-		else
-			TooltipWidget->ClearInteraction();
-	} else
-	{
-		if (TooltipWidget->IsShown())
-			TooltipWidget->Hide();
-	}
-
 	// Set new highlighted item and highlight it
 	HighlightedItem = Item;
 	if (HighlightedItem)
 		HighlightedItem->GetOutline()->ShowOutline();
+	
+	RefreshTooltip();
 }
 
 /**
@@ -306,10 +287,36 @@ void AChemicodePawn::DropItem()
 
 void AChemicodePawn::RefreshTooltip()
 {
-	if (!TooltipWidget || !HighlightedItem || !HighlightedItem->Resource)
+	// Prevent deref of nullptr if tooltip widget is null for some reason
+	if (!TooltipWidget)
 		return;
 
+	// Hide tooltip if we're not hovering anything
+	if (!HighlightedItem || !HighlightedItem->Resource)
+	{
+		if (TooltipWidget->IsShown())
+			TooltipWidget->Hide();
+		return;
+	}
+
+	// Show the tooltip if it's hidden
+	if (!TooltipWidget->IsShown())
+		TooltipWidget->Show();
+
+	// Set resource to account for changes
 	TooltipWidget->SetResource(HighlightedItem->Resource);
+
+	// Also check for changes in interactions
+	if (HeldItem && HeldItem->Resource)
+	{
+		const FInteraction Interaction = HighlightedItem->GetInteractionComponent()->GetInteractionWith(HeldItem->Resource); 
+		if (Interaction.bIsValid)
+			TooltipWidget->SetInteraction(Interaction);
+		else
+			TooltipWidget->ClearInteraction();
+	}
+	else
+		TooltipWidget->ClearInteraction();
 }
 
 void AChemicodePawn::MoveHorizontal(float Value)

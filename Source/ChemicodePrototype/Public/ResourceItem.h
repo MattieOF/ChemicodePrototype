@@ -38,25 +38,35 @@ public:
 	UResourceData* Resource;
 
 	/**
-	 * @brief Sets the resource, including setting the mesh and material.
-	 * @param ResourceData Resource to use
-	 */
-	UFUNCTION(BlueprintCallable)
-	void SetResource(UResourceData* ResourceData);
-
-	/**
 	 * @brief State of this resource item
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EResourceState> ResourceState;
 
 	/**
+	 * @brief Sets the resource, including setting the mesh and material.
+	 * @param ResourceData Resource to use
+	 */
+	UFUNCTION(BlueprintCallable, meta=(AdvancedDisplay="1"))
+	void SetResource(UResourceData* ResourceData, bool bRefreshTooltip = true);
+
+	/**
 	 * @brief Destroys current interaction component if it exists and creates a new one of the provided class.
-	 * use this to change how an item behaves during runtime.
+	 * Use this to change how an item behaves during runtime.
 	 * @param NewType Class of the new interaction type
 	 */
+	UFUNCTION(BlueprintCallable, meta=(AdvancedDisplay="1"))
+	void SetInteractionType(TSubclassOf<UInteractionComponent> NewType, bool bRefreshTooltip = true);
+
+	/**
+	 * @brief Sets the resource of the item and then the interaction type.
+	 * This is the same as calling SetResource() and SetInteractionType() consecutively, but skips a second call to
+	 * refresh tooltip.
+	 * @param NewResource The new resource
+	 * @param NewInteraction The class of the new interaction type
+	 */
 	UFUNCTION(BlueprintCallable)
-	void SetInteractionType(TSubclassOf<UInteractionComponent> NewType);
+	void SetResourceAndInteraction(UResourceData* NewResource, TSubclassOf<UInteractionComponent> NewInteraction);
 
 	/**
 	 * @brief Interacts with the item.
