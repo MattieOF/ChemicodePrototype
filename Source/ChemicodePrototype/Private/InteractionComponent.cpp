@@ -18,15 +18,27 @@ void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 	{
 		const FName FuncName = ItemInteractions[Item->Resource];
 		const auto Function = FindFunction(FuncName);
-		if (!Function || Function->NumParms != 1)
+
+		if (!Function)
 		{
 			UE_LOG(LogChemicode, Error, TEXT("Failed to find function %s for interaction with resource %s"),
 			       *FuncName.ToString(), *Item->Resource->Name.ToString());
 			UChemicodeStatics::DebugErrorNotification(
-				GetWorld(), "Non-existent or invalid function provided in interaction map",
+				GetWorld(), "Non-existent function provided in interaction map",
 				"Check output log for more info");
 			return;
 		}
+
+		if (Function->NumParms != 1)
+		{
+			UE_LOG(LogChemicode, Error, TEXT("Function %s for interaction with %s is invalid. It has %d parameters, but should have 1 of type AResourceItem."),
+			       *FuncName.ToString(), *Item->Resource->Name.ToString(), Function->NumParms);
+			UChemicodeStatics::DebugErrorNotification(
+				GetWorld(), "Invalid function provided in interaction map",
+				"Check output log for more info");
+			return;
+		}
+		
 		ProcessEvent(Function, Item);
 	}
 }
