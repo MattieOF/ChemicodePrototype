@@ -1,49 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "Util/ColorConstants.h"
+#include "ResourceMeasurement.h"
 #include "Interaction.generated.h"
-
-UENUM()
-enum EMeasurementUnit
-{
-	MUMillilitres UMETA(DisplayName = "Millilitres"),
-	MULitres      UMETA(DisplayName = "Litres"),
-	MUMilligrams  UMETA(DisplayName = "Milligrams"),
-	MUGrams       UMETA(DisplayName = "Grams"),
-	MUKilograms   UMETA(DisplayName = "Kilograms")
-};
-
-// Struct used to define the cost of an interaction, in volume or weight of material.
-USTRUCT(BlueprintType)
-struct FCost
-{
-	GENERATED_BODY()
-
-	/**
-	 * @brief Unit of the cost
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Cost")
-	TEnumAsByte<EMeasurementUnit> Unit;
-
-	/**
-	 * @brief Value of the cost
-	 */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Interaction")
-	float Value;
-
-	FCost()
-	{
-		Unit = MUMillilitres;
-		Value = 0;
-	}
-
-	FCost(TEnumAsByte<EMeasurementUnit> NewUnit, float NewValue)
-	{
-		Unit = NewUnit;
-		Value = NewValue;
-	}
-};
 
 USTRUCT(BlueprintType)
 struct FInteraction
@@ -67,7 +26,7 @@ public:
 	 * @brief Cost of the measurement in terms of volume/weight of material
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Interaction")
-	FCost Cost;
+	FResourceMeasurement Cost;
 
 	/**
 	 * @brief If the interaction was valid or not
@@ -82,14 +41,14 @@ public:
 	{
 		InteractionName = FText::GetEmpty();
 		InteractionDescription = FText::GetEmpty();
-		Cost = FCost();
+		Cost = FResourceMeasurement();
 		bIsValid = false;
 	}
 
 	/**
 	 * @brief Create a new interaction
 	 */
-	FInteraction(FText NewName, FText NewDesc, FCost NewCost)
+	FInteraction(FText NewName, FText NewDesc, FResourceMeasurement NewCost)
 	{
 		InteractionName = NewName;
 		InteractionDescription = NewDesc;

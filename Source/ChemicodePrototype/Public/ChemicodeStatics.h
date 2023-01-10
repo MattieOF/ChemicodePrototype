@@ -74,4 +74,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FORCEINLINE FInteraction GetInvalidInteraction() { return FInteraction(); }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FString MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand = false);
 };

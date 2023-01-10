@@ -45,7 +45,9 @@ public:
 
 	/**
 	 * @brief Sets the resource, including setting the mesh and material.
-	 * @param ResourceData Resource to use
+	* @param ResourceData Resource to use
+	 * @param bRefreshTooltip If true, the players tooltip is refreshed, to reflect any changes that happened due to
+	 * the change of resource type.
 	 */
 	UFUNCTION(BlueprintCallable, meta=(AdvancedDisplay="1"))
 	void SetResource(UResourceData* ResourceData, bool bRefreshTooltip = true);
@@ -53,7 +55,9 @@ public:
 	/**
 	 * @brief Destroys current interaction component if it exists and creates a new one of the provided class.
 	 * Use this to change how an item behaves during runtime.
-	 * @param NewType Class of the new interaction type
+	 * @param NewType Class of the new interaction type.
+	 * @param bRefreshTooltip If true, the players tooltip is refreshed, to reflect any changes that happened due to
+	 * the change of interaction type.
 	 */
 	UFUNCTION(BlueprintCallable, meta=(AdvancedDisplay="1"))
 	void SetInteractionType(TSubclassOf<UInteractionComponent> NewType, bool bRefreshTooltip = true);

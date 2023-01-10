@@ -28,3 +28,23 @@ bool UChemicodeStatics::GetHitResultAtCursor(const APlayerController* Controller
 
 	return false;
 }
+
+FString UChemicodeStatics::MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand)
+{
+	switch (Measurement.Unit)
+	{
+		// Ternary hell incoming, sorry
+		case MUMilligrams:
+			return FString::Printf(TEXT("%f%s"), Measurement.Value, bShorthand ? TEXT("mg") : (Measurement.Value == 1 ? TEXT(" Milligram") : TEXT(" Milligrams")));
+		case MUGrams:
+			return FString::Printf(TEXT("%f%s"), Measurement.Value, bShorthand ? TEXT("g") : (Measurement.Value == 1 ? TEXT(" Gram") : TEXT(" Grams")));
+		case MUKilograms:
+			return FString::Printf(TEXT("%f%s"), Measurement.Value, bShorthand ? TEXT("kg") : (Measurement.Value == 1 ? TEXT(" Kilogram") : TEXT(" Kilograms")));
+		case MUMillilitres:
+			return FString::Printf(TEXT("%f%s"), Measurement.Value, bShorthand ? TEXT("mL") : (Measurement.Value == 1 ? TEXT(" Millilitre") : TEXT(" Millilitres")));
+		case MULitres:
+			return FString::Printf(TEXT("%f%s"), Measurement.Value, bShorthand ? TEXT("L") : (Measurement.Value == 1 ? TEXT(" Litre") : TEXT(" Litres")));
+		default:
+			return "Invalid";
+	}
+}
