@@ -72,15 +72,40 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static bool GetHitResultAtCursor(const APlayerController* Controller, const TArray<TEnumAsByte<EObjectTypeQuery> > & ObjectTypes, bool bTraceComplex, FHitResult& HitResult, const TArray<AActor*>& IgnoredActors);
 
+	/**
+	 * @return An FInteraction object that is invalid. Useful for when there is no interaction.
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FORCEINLINE FInteraction GetInvalidInteraction() { return FInteraction(); }
 
+	/**
+	 * @brief Returns an FString representing an FResourceMeasurement.\n
+	 * For example, take an FResourceMeasurement with a unit of Millilitres and a value of 123.4.\n
+	 * If bShorthand is false, the output will be "123.4 Millilitres".
+	 * If bShorthand is true, the output will be "123.4mL".
+	 * @param Measurement Measurement to process
+	 * @param bShorthand Use shorthand measurement symbols. See brief for more info
+	 * @return FString containing the processed string
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FString MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand = false);
 
+	/**
+	 * @brief Iterates through all actors in the world until it finds one with the provided tag, and returns it. Expensive function; don't call every frame!
+	 * @param WorldContext World context object
+	 * @param Tag Tag to look for
+	 * @return If one was found, the relevant AActor pointer. If not, nullptr.
+	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta=(WorldContext="WorldContext"))
 	static AActor* GetFirstActorWithTag(UObject* WorldContext, FName Tag);
-	
+
+	/**
+	 * @brief Enables or disables all outlines by enabling or disabling the outline post process volume.
+	 * @param WorldContext World context object
+	 * @param NewOutlinesEnabled If the outlines should be enabled or not
+	 * @param OutlineVolumeTag Tag on the outline post process volume, by default "OutlinePPVolume".
+	 * Only the volume should have this tag, as only 1 actor with this tag is considered.
+	 */
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContext"))
 	static void SetOutlinesEnabled(UObject* WorldContext, bool NewOutlinesEnabled, FName OutlineVolumeTag = "OutlinePPVolume");
 };

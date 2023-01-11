@@ -129,9 +129,15 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE AResourceItem* GetHeldItem() const { return HeldItem; }
 
-	UFUNCTION(BlueprintCallable)
+	/**
+	 * @brief Disables the pawns ability to interact with, move, and hover over items.
+	 */
+	 UFUNCTION(BlueprintCallable)
 	void DisableInteraction();
 
+	/**
+	 * @brief Enables the pawns ability to interact with, move, and hover over items.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void EnableInteraction();
 
@@ -199,7 +205,7 @@ private:
 	void OnInteract();
 
 	/**
-	 * @brief 
+	 * @brief Controls if the pawn can interact with, move, and hover over items or not.
 	 */
 	UPROPERTY()
 	bool bInteractionEnabled = true;

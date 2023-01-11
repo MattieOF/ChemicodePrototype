@@ -15,6 +15,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractSignature);
 // Signature for the interact with event. Parameter is the item used on this item.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractWithSignature, AResourceItem*, Item);
 
+/**
+ * @brief Parameter struct for interaction functions.
+ * Used by ProcessEvent().
+ */
 struct FInteractionFuncParams
 {
 	// Inputs
@@ -81,9 +85,15 @@ protected:
 	 */
 	virtual void BeginPlay() override;
 
+	/**
+	 * @brief Begin a latent event; by default, stops the player interacting so an animation can play.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void BeginLatentInteraction();
-	
+
+	/**
+	 * @brief End a latent event; by default, enables player interaction.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void EndLatentInteraction();
 
