@@ -63,7 +63,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 
 	// If holding an item, move it towards the cursors position over the table
 	FHitResult HitResult;
-	if (HeldItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
+	if (bInteractionEnabled && HeldItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
 	{
 		TargetItemPosition = HitResult.ImpactPoint;
 		
@@ -113,7 +113,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 	}
 
 	// Check for hovered resource items
-	if (CurrentCamPlane == GameMode->GetTableCamPlane())
+	if (bInteractionEnabled && CurrentCamPlane == GameMode->GetTableCamPlane())
 	{
 		FHitResult Result;
 		
@@ -136,6 +136,9 @@ void AChemicodePawn::Tick(float DeltaTime)
 
 void AChemicodePawn::LookUp()
 {
+	if (!bInteractionEnabled)
+		return;
+	
 	if (CurrentCamPlane == GameMode->GetTableCamPlane() && LookCooldown <= 0)
 	{
 		SetCamPlane(GameMode->GetCabinetCamPlane());
@@ -145,6 +148,9 @@ void AChemicodePawn::LookUp()
 
 void AChemicodePawn::LookDown()
 {
+	if (!bInteractionEnabled)
+		return;
+	
 	if (CurrentCamPlane == GameMode->GetCabinetCamPlane() && LookCooldown <= 0)
 	{
 		SetCamPlane(GameMode->GetTableCamPlane());
@@ -154,6 +160,9 @@ void AChemicodePawn::LookDown()
 
 void AChemicodePawn::LookLeft()
 {
+	if (!bInteractionEnabled)
+		return;
+	
 	if ((CurrentCamPlane == GameMode->GetCabinetCamPlane() || CurrentCamPlane == GameMode->GetTableCamPlane()) && LookCooldown <= 0)
 	{
 		if (!GameMode->bComputerEnabled)
@@ -171,6 +180,9 @@ void AChemicodePawn::LookLeft()
 
 void AChemicodePawn::LookRight()
 {
+	if (!bInteractionEnabled)
+		return;
+	
 	if (CurrentCamPlane == GameMode->GetComputerCamPlane() && LookCooldown <= 0)
 	{
 		ACameraPlane* Target;
@@ -285,6 +297,18 @@ void AChemicodePawn::DropItem()
 	HeldItem = nullptr;
 }
 
+void AChemicodePawn::DisableInteraction()
+{
+	bInteractionEnabled = false;
+	UChemicodeStatics::SetOutlinesEnabled(GetWorld(), false);
+}
+
+void AChemicodePawn::EnableInteraction()
+{
+	bInteractionEnabled = true;
+	UChemicodeStatics::SetOutlinesEnabled(GetWorld(), true);
+}
+
 void AChemicodePawn::RefreshTooltip()
 {
 	// Prevent deref of nullptr if tooltip widget is null for some reason
@@ -336,6 +360,9 @@ void AChemicodePawn::OnScroll(float Value)
 
 void AChemicodePawn::OnUse()
 {
+	if (!bInteractionEnabled)
+		return;
+	
 	if (HeldItem)
 		HeldItem->Interact();
 	// else play invalid use sound
@@ -343,6 +370,9 @@ void AChemicodePawn::OnUse()
 
 void AChemicodePawn::OnInteract()
 {
+	if (!bInteractionEnabled)
+		return;
+	
 	if (HeldItem != nullptr && HighlightedItem != nullptr)
 	{
 		HighlightedItem->InteractWith(HeldItem);

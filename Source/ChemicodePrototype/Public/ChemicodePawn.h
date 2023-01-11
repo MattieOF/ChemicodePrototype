@@ -129,6 +129,19 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE AResourceItem* GetHeldItem() const { return HeldItem; }
 
+	UFUNCTION(BlueprintCallable)
+	void DisableInteraction();
+
+	UFUNCTION(BlueprintCallable)
+	void EnableInteraction();
+
+	/**
+	 * @brief Refresh the resource item tooltip.
+	 * Use this if the currently hovered item has changed resource data
+	 */
+	UFUNCTION(BlueprintCallable)
+	void RefreshTooltip();
+	
 	/**
 	 * @brief Speed of the movement along the current cam plane
 	 */
@@ -164,13 +177,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceItemTooltipWidget> ResourceTooltipWidgetClass;
 
-	/**
-	 * @brief Refresh the resource item tooltip.
-	 * Use this if the currently hovered item has changed resource data
-	 */
-	UFUNCTION(BlueprintCallable)
-	void RefreshTooltip();
-
 private:
 	// Movement input functions
 	void MoveHorizontal(float Value);
@@ -191,6 +197,12 @@ private:
 	 * Else, try and pick up the currently highlighted item
 	 */
 	void OnInteract();
+
+	/**
+	 * @brief 
+	 */
+	UPROPERTY()
+	bool bInteractionEnabled = true;
 
 	/**
 	 * @brief Reference to the game mode object

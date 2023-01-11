@@ -29,17 +29,32 @@ void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 			return;
 		}
 
-		if (Function->NumParms != 1)
+		if (Function->NumParms != 2)
 		{
-			UE_LOG(LogChemicode, Error, TEXT("Function %s for interaction with %s is invalid. It has %d parameters, but should have 1 of type AResourceItem."),
+			UE_LOG(LogChemicode, Error, TEXT("Function %s for interaction with %s is invalid. It has %d parameters, but should have 2: an input of type AResourceItem (the other item in the interaction), and a return of type bool (representing success)."),
 			       *FuncName.ToString(), *Item->Resource->Name.ToString(), Function->NumParms);
 			UChemicodeStatics::DebugErrorNotification(
 				GetWorld(), "Invalid function provided in interaction map",
-				"Check output log for more info");
+				"Incorrect amount of parameters. Check output log for more info");
 			return;
 		}
-		
-		ProcessEvent(Function, Item);
+
+		if (Function->ParmsSize != sizeof(FInteractionFuncParams))
+		{
+			UE_LOG(LogChemicode, Error, TEXT("Function %s for interaction with %s has incorrect parameter types. The parameters total %d bytes, but it should be %d bytes. The parameters should be an input of type AResourceItem (the other item in the interaction), and a return of type bool (representing success)."),
+				   *FuncName.ToString(), *Item->Resource->Name.ToString(), Function->ParmsSize, sizeof(FInteractionFuncParams));
+			UChemicodeStatics::DebugErrorNotification(
+				GetWorld(), "Invalid function provided in interaction map",
+				"Incorrect parameter types. Check output log for more info");
+			return;
+		}
+
+		FInteractionFuncParams Params;
+		Params.Item = Item;
+		ProcessEvent(Function, &Params);
+		const auto Interaction = GetInteractionWith(Item->Resource);
+		if (Params.OutSuccess && Interaction.bIsValid && Interaction.Time > 0)
+			BeginLatentInteraction();
 	}
 }
 
@@ -50,4 +65,14 @@ void UInteractionComponent::BeginPlay()
 	OwnerItem = Cast<AResourceItem>(GetOwner());
 	if (!OwnerItem)
 		UE_LOG(LogChemicode, Error, TEXT("Interaction component on %s is not a child of an AResourceItem!"), *AActor::GetDebugName(GetOwner()));
+}
+
+void UInteractionComponent::BeginLatentInteraction()
+{
+	UChemicodeStatics::GetChemicodePawn(GetWorld())->DisableInteraction();
+}
+
+void UInteractionComponent::EndLatentInteraction()
+{
+	UChemicodeStatics::GetChemicodePawn(GetWorld())->EnableInteraction();
 }

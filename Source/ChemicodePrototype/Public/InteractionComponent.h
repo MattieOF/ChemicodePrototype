@@ -15,6 +15,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractSignature);
 // Signature for the interact with event. Parameter is the item used on this item.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractWithSignature, AResourceItem*, Item);
 
+struct FInteractionFuncParams
+{
+	// Inputs
+	AResourceItem* Item;
+
+	// Outputs
+	bool OutSuccess;
+};
+
 UCLASS( ClassGroup=(Chemicode), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType )
 class CHEMICODEPROTOTYPE_API UInteractionComponent : public UActorComponent
 {
@@ -71,5 +80,11 @@ protected:
 	 * @brief Sets owner item variable and checks its valid
 	 */
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void BeginLatentInteraction();
+	
+	UFUNCTION(BlueprintCallable)
+	void EndLatentInteraction();
 
 };

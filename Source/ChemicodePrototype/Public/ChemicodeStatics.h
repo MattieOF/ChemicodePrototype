@@ -77,4 +77,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FString MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand = false);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta=(WorldContext="WorldContext"))
+	static AActor* GetFirstActorWithTag(UObject* WorldContext, FName Tag);
+	
+	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContext"))
+	static void SetOutlinesEnabled(UObject* WorldContext, bool NewOutlinesEnabled, FName OutlineVolumeTag = "OutlinePPVolume");
 };

@@ -29,6 +29,12 @@ public:
 	FResourceMeasurement Cost;
 
 	/**
+	 * @brief Amount of time taken by the animation for this interaction. 0 means no animation.
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Interaction")
+	float Time = 0;
+
+	/**
 	 * @brief If the interaction was valid or not
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Interaction")
@@ -42,17 +48,19 @@ public:
 		InteractionName = FText::GetEmpty();
 		InteractionDescription = FText::GetEmpty();
 		Cost = FResourceMeasurement();
+		Time = 0;
 		bIsValid = false;
 	}
 
 	/**
 	 * @brief Create a new interaction
 	 */
-	FInteraction(FText NewName, FText NewDesc, FResourceMeasurement NewCost)
+	FInteraction(FText NewName, FText NewDesc, FResourceMeasurement NewCost, float NewTime = 0)
 	{
 		InteractionName = NewName;
 		InteractionDescription = NewDesc;
 		Cost = NewCost;
+		Time = NewTime;
 		bIsValid = true;
 	}
 };
