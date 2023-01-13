@@ -25,7 +25,7 @@ struct FInteractionFuncParams
 	AResourceItem* Item;
 
 	// Outputs
-	bool OutSuccess;
+	bool bOutSuccess;
 };
 
 UCLASS( ClassGroup=(Chemicode), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType )
