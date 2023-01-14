@@ -331,7 +331,7 @@ void AChemicodePawn::RefreshTooltip()
 	TooltipWidget->SetResource(HighlightedItem->Resource);
 
 	// Also check for changes in interactions
-	if (HeldItem && HeldItem->Resource)
+	if (HeldItem && HeldItem->Resource && HighlightedItem->GetInteractionComponent())
 	{
 		const FInteraction Interaction = HighlightedItem->GetInteractionComponent()->GetInteractionWith(HeldItem->Resource); 
 		if (Interaction.bIsValid)
