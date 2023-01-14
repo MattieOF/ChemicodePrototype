@@ -28,6 +28,7 @@ public:
 	ACameraPlane* GetTableCamPlane();
 	ACameraPlane* GetCabinetCamPlane();
 	ACameraPlane* GetComputerCamPlane();
+	ACameraPlane* GetBinCamPlane();
 
 	/**
 	 * @return Current notification panel object 
@@ -62,7 +63,9 @@ private:
 	ACameraPlane *CabinetCamPlane;
 	UPROPERTY()
 	ACameraPlane *ComputerCamPlane;
-
+	UPROPERTY()
+	ACameraPlane *BinCamPlane;
+	
 	/**
 	 * @brief Current notification panel object
 	 */

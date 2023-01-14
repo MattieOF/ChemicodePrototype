@@ -175,6 +175,13 @@ void AChemicodePawn::LookLeft()
 		
 		SetCamPlane(GameMode->GetComputerCamPlane());
 		LookCooldown = .75f;	
+	} else if (CurrentCamPlane == GameMode->GetBinCamPlane() && LookCooldown <= 0)
+	{
+		if (PrevCamPlane != GameMode->GetTableCamPlane() && PrevCamPlane != GameMode->GetCabinetCamPlane())
+			SetCamPlane(GameMode->GetTableCamPlane());
+		else
+			SetCamPlane(PrevCamPlane);
+		LookCooldown = .75f;
 	}
 }
 
@@ -186,12 +193,16 @@ void AChemicodePawn::LookRight()
 	if (CurrentCamPlane == GameMode->GetComputerCamPlane() && LookCooldown <= 0)
 	{
 		ACameraPlane* Target;
-		if (!PrevCamPlane || PrevCamPlane == GameMode->GetComputerCamPlane())
+		if (PrevCamPlane != GameMode->GetTableCamPlane() && PrevCamPlane != GameMode->GetCabinetCamPlane())
 			Target = GameMode->GetTableCamPlane();
 		else
 			Target = PrevCamPlane;
 		SetCamPlane(Target);
 		LookCooldown = .75f;	
+	} else if ((CurrentCamPlane == GameMode->GetTableCamPlane() || CurrentCamPlane == GameMode->GetCabinetCamPlane()) && LookCooldown <= 0)
+	{
+		SetCamPlane(GameMode->GetBinCamPlane());
+		LookCooldown = .75f;
 	}
 }
 

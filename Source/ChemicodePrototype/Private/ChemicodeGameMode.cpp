@@ -45,6 +45,13 @@ ACameraPlane* AChemicodeGameMode::GetComputerCamPlane()
 	return ComputerCamPlane;
 }
 
+ACameraPlane* AChemicodeGameMode::GetBinCamPlane()
+{
+	if (!BinCamPlane)
+		FindCamPlanes();
+	return BinCamPlane;
+}
+
 void AChemicodeGameMode::FindCamPlanes()
 {
 	// Get Cam Plane references
@@ -58,4 +65,7 @@ void AChemicodeGameMode::FindCamPlanes()
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACameraPlane::StaticClass(), "ComputerCamPlane", Result);
 	check(Result.Num() == 1);
 	ComputerCamPlane = Cast<ACameraPlane>(Result[0]);
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACameraPlane::StaticClass(), "BinCamPlane", Result);
+	check(Result.Num() == 1);
+	BinCamPlane = Cast<ACameraPlane>(Result[0]);
 }
