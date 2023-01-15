@@ -21,6 +21,7 @@ AResourceItem::AResourceItem()
 	MeshComponent->BodyInstance.SetResponseToChannel(COLLISION_CHANNEL_BLOCKITEM, ECR_Block);	
 	MeshComponent->SetAllUseCCD(true);
 	MeshComponent->ComponentTags.Add("Outline");
+	MeshComponent->ComponentTags.Add("MainMesh");
 	Outline = CreateDefaultSubobject<UOutlineComponent>(TEXT("Outline"));
 
 	RootComponent = MeshComponent;

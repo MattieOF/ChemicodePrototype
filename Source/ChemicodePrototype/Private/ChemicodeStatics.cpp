@@ -34,7 +34,7 @@ bool UChemicodeStatics::GetHitResultAtCursor(const APlayerController* Controller
 
 FString UChemicodeStatics::MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand)
 {
-	auto ValueAsString = FString::SanitizeFloat(Measurement.Value);
+	const auto ValueAsString = FString::SanitizeFloat(Measurement.Value);
 	
 	switch (Measurement.Unit)
 	{

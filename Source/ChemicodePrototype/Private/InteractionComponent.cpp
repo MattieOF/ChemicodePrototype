@@ -73,7 +73,6 @@ void UInteractionComponent::BeginLatentInteraction(float Length)
 	auto Pawn = UChemicodeStatics::GetChemicodePawn(GetWorld());
 	Pawn->DisableInteraction();
 
-	UE_LOG(LogChemicode, Log, TEXT("Setting timer for length %f"), Length);
 	FTimerDelegate TimerDelegate;
 	// Using the bind UFunction method doesn't work, for some reason. I have no idea why. So we use a lambda instead.
 	// TimerDelegate.BindUFunction(this, TEXT("EndLatentInteraction"));
@@ -83,7 +82,6 @@ void UInteractionComponent::BeginLatentInteraction(float Length)
 
 void UInteractionComponent::EndLatentInteraction()
 {
-	UE_LOG(LogChemicode, Log, TEXT("End latent int called"));
 	UChemicodeStatics::GetChemicodePawn(GetWorld())->EnableInteraction();
 	GetWorld()->GetTimerManager().ClearTimer(UChemicodeStatics::GetChemicodePawn(GetWorld())->CurrentInteractionTimer);
 }
