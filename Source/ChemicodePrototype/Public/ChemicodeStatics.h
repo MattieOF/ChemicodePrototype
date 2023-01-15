@@ -108,4 +108,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContext"))
 	static void SetOutlinesEnabled(UObject* WorldContext, bool NewOutlinesEnabled, FName OutlineVolumeTag = "OutlinePPVolume");
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta=(WorldContext="WorldContext"))
+	static float GetCurrentInteractionProgress(UObject* WorldContext);
 };

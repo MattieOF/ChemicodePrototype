@@ -55,7 +55,7 @@ void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 		ProcessEvent(Function, &Params);
 		const auto Interaction = GetInteractionWith(Item->Resource);
 		if (Params.bOutSuccess && Interaction.bIsValid && Interaction.Time > 0)
-			BeginLatentInteraction();
+			BeginLatentInteraction(Interaction.Time);
 	}
 }
 
@@ -68,12 +68,22 @@ void UInteractionComponent::BeginPlay()
 		UE_LOG(LogChemicode, Error, TEXT("Interaction component on %s is not a child of an AResourceItem!"), *AActor::GetDebugName(GetOwner()));
 }
 
-void UInteractionComponent::BeginLatentInteraction()
+void UInteractionComponent::BeginLatentInteraction(float Length)
 {
-	UChemicodeStatics::GetChemicodePawn(GetWorld())->DisableInteraction();
+	auto Pawn = UChemicodeStatics::GetChemicodePawn(GetWorld());
+	Pawn->DisableInteraction();
+
+	UE_LOG(LogChemicode, Log, TEXT("Setting timer for length %f"), Length);
+	FTimerDelegate TimerDelegate;
+	// Using the bind UFunction method doesn't work, for some reason. I have no idea why. So we use a lambda instead.
+	// TimerDelegate.BindUFunction(this, TEXT("EndLatentInteraction"));
+	TimerDelegate.BindLambda([this] { EndLatentInteraction(); });
+	GetWorld()->GetTimerManager().SetTimer(Pawn->CurrentInteractionTimer, TimerDelegate, Length, false, -1);
 }
 
 void UInteractionComponent::EndLatentInteraction()
 {
+	UE_LOG(LogChemicode, Log, TEXT("End latent int called"));
 	UChemicodeStatics::GetChemicodePawn(GetWorld())->EnableInteraction();
+	GetWorld()->GetTimerManager().ClearTimer(UChemicodeStatics::GetChemicodePawn(GetWorld())->CurrentInteractionTimer);
 }

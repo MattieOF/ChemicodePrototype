@@ -183,6 +183,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UResourceItemTooltipWidget> ResourceTooltipWidgetClass;
 
+	UPROPERTY(BlueprintReadWrite)
+	FTimerHandle CurrentInteractionTimer;
+
 private:
 	// Movement input functions
 	void MoveHorizontal(float Value);

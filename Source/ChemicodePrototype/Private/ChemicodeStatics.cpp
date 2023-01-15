@@ -82,3 +82,15 @@ void UChemicodeStatics::SetOutlinesEnabled(UObject* WorldContext, bool NewOutlin
 	if (const auto OutlineVolume = GetFirstActorWithTag(WorldContext, OutlineVolumeTag))
 		Cast<APostProcessVolume>(OutlineVolume)->bEnabled = NewOutlinesEnabled;
 }
+
+float UChemicodeStatics::GetCurrentInteractionProgress(UObject* WorldContext)
+{
+	if (const auto Pawn = GetChemicodePawn(WorldContext))
+	{
+		const FTimerManager* TimerManager = &WorldContext->GetWorld()->GetTimerManager();
+		if (TimerManager->TimerExists(Pawn->CurrentInteractionTimer))
+		{
+			return TimerManager->GetTimerElapsed(Pawn->CurrentInteractionTimer) / TimerManager->GetTimerRate(Pawn->CurrentInteractionTimer);
+		} else return 0;
+	} else return 0;
+}

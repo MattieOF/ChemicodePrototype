@@ -79,7 +79,6 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	AResourceItem* OwnerItem;
 	
-protected:
 	/**
 	 * @brief Sets owner item variable and checks its valid
 	 */
@@ -89,7 +88,7 @@ protected:
 	 * @brief Begin a latent event; by default, stops the player interacting so an animation can play.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void BeginLatentInteraction();
+	void BeginLatentInteraction(float Length);
 
 	/**
 	 * @brief End a latent event; by default, enables player interaction.
