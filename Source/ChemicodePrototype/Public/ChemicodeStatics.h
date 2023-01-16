@@ -116,4 +116,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static bool MeasurementIsSameType(FResourceMeasurement A, FResourceMeasurement B);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static float ConvertMeasurementType(float Value, EMeasurementUnit FromUnit, EMeasurementUnit ToUnit);
 };

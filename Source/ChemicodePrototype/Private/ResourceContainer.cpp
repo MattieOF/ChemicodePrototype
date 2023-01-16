@@ -31,7 +31,12 @@ bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Am
 	if (!UChemicodeStatics::MeasurementIsSameType(Contents.begin().Value(), Amount))
 		return false;
 
-	return false;
+	if (!HasResource(Res))
+		Contents.Add(Res, Amount);
+	else
+		Contents[Res] += Amount;
+	
+	return true;
 }
 
 bool AResourceContainer::RemoveResource(UResourceData* Res, FResourceMeasurement Amount)
@@ -39,12 +44,23 @@ bool AResourceContainer::RemoveResource(UResourceData* Res, FResourceMeasurement
 	if (!HasAtLeastAmountOfResource(Res, Amount))
 		return false;
 	
-	return false;
+	Contents[Res] -= Amount;
+	
+	if (UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Res]) <= 0)
+		Contents.Remove(Res);
+	
+	return true;
 }
 
 bool AResourceContainer::Transfer(AResourceContainer* Target, UResourceData* Res, FResourceMeasurement Amount)
 {
 	if (!HasAtLeastAmountOfResource(Res, Amount))
+		return false;
+
+	// TODO: Check target can contain amount
+	if (Target->AddResource(Res, Amount))
+		RemoveResource(Res, Amount);
+	else
 		return false;
 
 	return true;

@@ -4,7 +4,7 @@
 
 #include "ChemicodeStatics.h"
 
-bool FResourceMeasurement::operator==(const FResourceMeasurement Other) const
+bool FResourceMeasurement::operator==(const FResourceMeasurement& Other) const
 {
 	if (Unit == MULitres || Unit == MUMillilitres) // Litres
 	{
@@ -21,7 +21,7 @@ bool FResourceMeasurement::operator==(const FResourceMeasurement Other) const
 	}
 }
 
-bool FResourceMeasurement::operator<(const FResourceMeasurement Other) const
+bool FResourceMeasurement::operator<(const FResourceMeasurement& Other) const
 {
 	if (!UChemicodeStatics::MeasurementIsSameType(*this, Other))
 		return false;
@@ -29,7 +29,7 @@ bool FResourceMeasurement::operator<(const FResourceMeasurement Other) const
 	return UChemicodeStatics::MeasurementAsMinimumUnit(*this) < UChemicodeStatics::MeasurementAsMinimumUnit(Other);
 }
 
-bool FResourceMeasurement::operator>(const FResourceMeasurement Other) const
+bool FResourceMeasurement::operator>(const FResourceMeasurement& Other) const
 {
 	if (!UChemicodeStatics::MeasurementIsSameType(*this, Other))
 		return false;
@@ -37,7 +37,7 @@ bool FResourceMeasurement::operator>(const FResourceMeasurement Other) const
 	return UChemicodeStatics::MeasurementAsMinimumUnit(*this) > UChemicodeStatics::MeasurementAsMinimumUnit(Other);
 }
 
-bool FResourceMeasurement::operator<=(const FResourceMeasurement Other) const
+bool FResourceMeasurement::operator<=(const FResourceMeasurement& Other) const
 {
 	if (!UChemicodeStatics::MeasurementIsSameType(*this, Other))
 		return false;
@@ -45,10 +45,22 @@ bool FResourceMeasurement::operator<=(const FResourceMeasurement Other) const
 	return UChemicodeStatics::MeasurementAsMinimumUnit(*this) <= UChemicodeStatics::MeasurementAsMinimumUnit(Other);
 }
 
-bool FResourceMeasurement::operator>=(const FResourceMeasurement Other) const
+bool FResourceMeasurement::operator>=(const FResourceMeasurement& Other) const
 {
 	if (!UChemicodeStatics::MeasurementIsSameType(*this, Other))
 		return false;
 
 	return UChemicodeStatics::MeasurementAsMinimumUnit(*this) >= UChemicodeStatics::MeasurementAsMinimumUnit(Other);
+}
+
+FResourceMeasurement& FResourceMeasurement::operator+=(const FResourceMeasurement& Other)
+{
+	Value += UChemicodeStatics::ConvertMeasurementType(Other.Value, Other.Unit, Unit);
+	return *this;
+}
+
+FResourceMeasurement& FResourceMeasurement::operator-=(const FResourceMeasurement& Other)
+{
+	Value -= UChemicodeStatics::ConvertMeasurementType(Other.Value, Other.Unit, Unit);
+	return *this;
 }

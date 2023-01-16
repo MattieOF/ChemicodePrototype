@@ -144,3 +144,49 @@ bool UChemicodeStatics::MeasurementIsSameType(FResourceMeasurement A, FResourceM
 	else
 		return B.Unit == MULitres || B.Unit == MUMillilitres;
 }
+
+float UChemicodeStatics::ConvertMeasurementType(float Value, EMeasurementUnit FromUnit, EMeasurementUnit ToUnit)
+{
+	switch (FromUnit)
+	{
+	case MUMillilitres:
+		switch (ToUnit)
+		{
+			case MUMillilitres: return Value;
+			case MULitres: return Value / 1000;
+			default: return Value;
+		}
+	case MULitres: 
+		switch (ToUnit)
+		{
+			case MUMillilitres: return Value * 1000;
+			case MULitres: return Value;
+			default: return Value;
+		}
+	case MUMilligrams: 
+		switch (ToUnit)
+		{
+			case MUMilligrams: return Value;
+			case MUGrams: return Value / 1000;
+			case MUKilograms: return Value / 1000000;
+			default: return Value;
+		}
+	case MUGrams: 
+		switch (ToUnit)
+		{
+			case MUMilligrams: return Value * 1000;
+			case MUGrams: return Value;
+			case MUKilograms: return Value / 1000;
+			default: return Value;
+		}
+	case MUKilograms: 
+		switch (ToUnit)
+		{
+			case MUMilligrams: return Value * 1000000;
+			case MUGrams: return Value * 1000;
+			case MUKilograms: return Value;
+			default: return Value;
+		}
+	default: return Value;
+	}
+}

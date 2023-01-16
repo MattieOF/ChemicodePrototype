@@ -43,13 +43,17 @@ struct FResourceMeasurement
 		Value = NewValue;
 	}
 
-	bool operator==(const FResourceMeasurement Other) const;
+	bool operator==(const FResourceMeasurement& Other) const;
 
-	bool operator<(const FResourceMeasurement Other) const;
+	bool operator<(const FResourceMeasurement& Other) const;
 
-	bool operator>(const FResourceMeasurement Other) const;
+	bool operator>(const FResourceMeasurement& Other) const;
 
-	bool operator<=(const FResourceMeasurement Other) const;
+	bool operator<=(const FResourceMeasurement& Other) const;
 
-	bool operator>=(const FResourceMeasurement Other) const;
+	bool operator>=(const FResourceMeasurement& Other) const;
+	
+	FResourceMeasurement& operator+=(const FResourceMeasurement& Other);
+	
+	FResourceMeasurement& operator-=(const FResourceMeasurement& Other);
 };
