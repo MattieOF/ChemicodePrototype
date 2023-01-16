@@ -7,8 +7,8 @@
 float AResourceContainer::GetTotalAmount()
 {
 	float Sum = 0;
-	for (const TPair<UResourceData*, FResourceMeasurement>& Resource : Contents)
-		Sum += UChemicodeStatics::MeasurementAsMinimumUnit(Resource.Value);
+	for (const TPair<UResourceData*, FResourceMeasurement>& Res : Contents)
+		Sum += UChemicodeStatics::MeasurementAsMinimumUnit(Res.Value);
 	return Sum;
 }
 
