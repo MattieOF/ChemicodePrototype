@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "ResourceItem.h"
-#include "Interaction.h"
 #include "InteractionComponent.h"
 #include "ResourceData.generated.h"
 

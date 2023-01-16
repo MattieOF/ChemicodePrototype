@@ -4,6 +4,7 @@
 #include "ResourceShopItem.h"
 
 #include "ChemicodeGameMode.h"
+#include "ChemicodePawn.h"
 #include "ChemicodeStatics.h"
 #include "OutlineComponent.h"
 #include "ResourceData.h"

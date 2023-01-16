@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "ChemicodeGameMode.h"
-#include "ChemicodePawn.h"
-#include "Interaction.h"
 #include "Notification.h"
+#include "Interaction.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "ChemicodeStatics.generated.h"
@@ -26,7 +25,7 @@ public:
 	 * @return The chemicode pawn object
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Actor References", BlueprintPure, meta=(WorldContext="World"))
-	static FORCEINLINE AChemicodePawn* GetChemicodePawn(UObject* World) { return Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(World, 0)); };
+	static AChemicodePawn* GetChemicodePawn(UObject* World);
 
 	/**
 	 * @brief Gets the current gamemode object as a Chemicode gamemode object
@@ -76,7 +75,7 @@ public:
 	 * @return An FInteraction object that is invalid. Useful for when there is no interaction.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static FORCEINLINE FInteraction GetInvalidInteraction() { return FInteraction(); }
+	static FInteraction GetInvalidInteraction();
 
 	/**
 	 * @brief Returns an FString representing an FResourceMeasurement.\n
@@ -111,4 +110,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta=(WorldContext="WorldContext"))
 	static float GetCurrentInteractionProgress(UObject* WorldContext);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static float MeasurementAsMinimumUnit(FResourceMeasurement Measurement);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static bool MeasurementIsSameType(FResourceMeasurement A, FResourceMeasurement B);
 };

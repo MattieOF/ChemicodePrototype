@@ -42,4 +42,14 @@ struct FResourceMeasurement
 		Unit = NewUnit;
 		Value = NewValue;
 	}
+
+	bool operator==(const FResourceMeasurement Other) const;
+
+	bool operator<(const FResourceMeasurement Other) const;
+
+	bool operator>(const FResourceMeasurement Other) const;
+
+	bool operator<=(const FResourceMeasurement Other) const;
+
+	bool operator>=(const FResourceMeasurement Other) const;
 };

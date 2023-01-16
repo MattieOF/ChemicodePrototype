@@ -2,8 +2,14 @@
 
 #include "ChemicodeStatics.h"
 
+#include "ChemicodePawn.h"
 #include "EngineUtils.h"
 #include "Engine/PostProcessVolume.h"
+
+AChemicodePawn* UChemicodeStatics::GetChemicodePawn(UObject* World)
+{
+	return Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(World, 0));
+}
 
 FVector2D UChemicodeStatics::ClampVector2D(FVector2D Vector, FVector2D Min, FVector2D Max)
 {
@@ -30,6 +36,11 @@ bool UChemicodeStatics::GetHitResultAtCursor(const APlayerController* Controller
 	}
 
 	return false;
+}
+
+FInteraction UChemicodeStatics::GetInvalidInteraction()
+{
+	return FInteraction();
 }
 
 FString UChemicodeStatics::MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand)
@@ -93,4 +104,43 @@ float UChemicodeStatics::GetCurrentInteractionProgress(UObject* WorldContext)
 			return TimerManager->GetTimerElapsed(Pawn->CurrentInteractionTimer) / TimerManager->GetTimerRate(Pawn->CurrentInteractionTimer);
 		} else return 0;
 	} else return 0;
+}
+
+float UChemicodeStatics::MeasurementAsMinimumUnit(const FResourceMeasurement Measurement)
+{
+	if (Measurement.Unit == MULitres || Measurement.Unit == MUMillilitres) // Litres
+	{
+		switch (Measurement.Unit)
+		{
+		case MULitres:
+			return Measurement.Value * 1000;
+		case MUMillilitres:
+			return Measurement.Value;
+		default:
+			return 0;
+		}
+	} else // Grams
+	{
+		switch (Measurement.Unit)
+		{
+		case MUKilograms:
+			return Measurement.Value * 1000000;
+		case MUGrams:
+			return Measurement.Value * 1000;
+		case MUMilligrams:
+			return Measurement.Value;
+		default:
+			return 0;
+		}
+	}
+
+	return 0;
+}
+
+bool UChemicodeStatics::MeasurementIsSameType(FResourceMeasurement A, FResourceMeasurement B)
+{
+	if (A.Unit == MUGrams || A.Unit == MUKilograms || A.Unit == MUMilligrams)
+		return B.Unit == MUGrams || B.Unit == MUKilograms || B.Unit == MUMilligrams;
+	else
+		return B.Unit == MULitres || B.Unit == MUMillilitres;
 }

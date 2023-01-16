@@ -2,6 +2,7 @@
 
 #include "InteractionComponent.h"
 
+#include "ChemicodePawn.h"
 #include "ChemicodeStatics.h"
 #include "ResourceData.h"
 #include "ResourceItem.h"
