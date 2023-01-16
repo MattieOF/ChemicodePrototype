@@ -8,3 +8,5 @@
 #define COLLISION_CHANNEL_BLOCKITEM ECC_GameTraceChannel2
 
 DECLARE_LOG_CATEGORY_EXTERN(LogChemicode, Log, All);
+
+DECLARE_STATS_GROUP(TEXT("Chemicode"), STATGROUP_Chemicode, STATCAT_Advanced);

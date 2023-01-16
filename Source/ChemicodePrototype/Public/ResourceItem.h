@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChemicodeObject.h"
 #include "GameFramework/Actor.h"
 #include "ResourceItem.generated.h"
 
@@ -21,7 +22,7 @@ enum EResourceState
 };
 
 UCLASS(ClassGroup=(Chemicode), Blueprintable)
-class CHEMICODEPROTOTYPE_API AResourceItem : public AActor
+class CHEMICODEPROTOTYPE_API AResourceItem : public AChemicodeObject
 {
 	GENERATED_BODY()
 	
@@ -88,12 +89,6 @@ public:
 	bool InteractWith(AResourceItem* Item) const;
 
 	/**
-	 * @return The outline component for this item
-	 */
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE UOutlineComponent* GetOutline() const { return Outline; }
-
-	/**
 	 * @return The interaction component for this item. Can be nullptr! 
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -113,22 +108,10 @@ protected:
 #endif
 
 	/**
-	 * @brief Main mesh of this item
-	 */
-	UPROPERTY()
-	UStaticMeshComponent* MeshComponent;
-
-	/**
 	 * @brief Reference to the chemicode player
 	 */
 	UPROPERTY()
 	AChemicodePawn* Player;
-
-	/**
-	 * @brief Outline component of this item
-	 */
-	UPROPERTY()
-	UOutlineComponent* Outline;
 
 	/**
 	 * @brief Current interaction component of this item. Set it with SetInteractionType().

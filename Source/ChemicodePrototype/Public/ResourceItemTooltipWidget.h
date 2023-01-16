@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ResourceItemTooltipWidget.generated.h"
 
+class AResourceContainer;
 class UResourceData;
 class UCanvasPanel;
 
@@ -45,6 +46,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ClearInteraction();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetContainer(const AResourceContainer* Container);
 
 	/**
 	 * @return The root canvas

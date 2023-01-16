@@ -9,11 +9,18 @@
 #include "ResourceContainer.generated.h"
 
 UCLASS()
-class CHEMICODEPROTOTYPE_API AResourceContainer : public AResourceItem
+class CHEMICODEPROTOTYPE_API AResourceContainer : public AChemicodeObject
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText ContainerName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText ContainerDescription;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<UResourceData*, FResourceMeasurement> Contents;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)

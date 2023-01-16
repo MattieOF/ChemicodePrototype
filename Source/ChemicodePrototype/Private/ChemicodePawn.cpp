@@ -8,6 +8,7 @@
 #include "ChemicodeGameMode.h"
 #include "ChemicodeStatics.h"
 #include "OutlineComponent.h"
+#include "ResourceContainer.h"
 #include "ResourceData.h"
 #include "ResourceInfoWidget.h"
 #include "ResourceItem.h"
@@ -15,6 +16,9 @@
 #include "Blueprint/UserWidget.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
+
+DECLARE_CYCLE_STAT(TEXT("Chemicode Pawn - Tick"), STAT_CCPawnTick, STATGROUP_Chemicode);
+DECLARE_CYCLE_STAT(TEXT("Chemicode Pawn - Refresh Tooltip"), STAT_CCUpdateTooltip, STATGROUP_Chemicode);
 
 AChemicodePawn::AChemicodePawn()
 {
@@ -56,6 +60,8 @@ void AChemicodePawn::BeginPlay()
 // Called every frame
 void AChemicodePawn::Tick(float DeltaTime)
 {
+	SCOPE_CYCLE_COUNTER(STAT_CCPawnTick);
+	
 	Super::Tick(DeltaTime);
 
 	// Tick cooldowns
@@ -82,7 +88,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 		TArray<AActor*> OutActors;
 		
 		UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
-		                                       AResourceItem::StaticClass(), IgnoredActors, OutActors);
+		                                       AChemicodeObject::StaticClass(), IgnoredActors, OutActors);
 		//DrawDebugBox(GetWorld(), Position, Bounds, FColor::Red);
 		
 		if (OutActors.Num() == 0)
@@ -102,7 +108,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 				// DrawDebugPoint(GetWorld(), Position, 5, FColor::Red, false, 1);
 				OutActors.Empty();
 				UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
-													   AResourceItem::StaticClass(), IgnoredActors, OutActors);
+													   AChemicodeObject::StaticClass(), IgnoredActors, OutActors);
 				if (OutActors.Num() == 0)
 				{
 					HeldItem->SetActorLocation(Position);
@@ -123,7 +129,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 
 		if (UChemicodeStatics::GetHitResultAtCursor(PlayerController, ItemObjectTypeArray, false, Result, IgnoredActors))
 		{
-			auto Item = Cast<AResourceItem>(Result.GetActor());
+			auto Item = Cast<AChemicodeObject>(Result.GetActor());
 			if (Item && HighlightedItem != Item)
 				HighlightItem(Item);
 			else if (Item == nullptr)
@@ -268,7 +274,7 @@ void AChemicodePawn::ResourceLostHover()
 	bResourceInfoVisible = false;
 }
 
-void AChemicodePawn::HighlightItem(AResourceItem* Item)
+void AChemicodePawn::HighlightItem(AChemicodeObject* Item)
 {
 	// Hide outline on previous item
 	if (HighlightedItem)
@@ -286,7 +292,7 @@ void AChemicodePawn::HighlightItem(AResourceItem* Item)
  * @brief Sets an item as the currently held item. This also removes highlight from the previous item, and adds it to the new one. 
  * @param Item Item to hold
  */
-void AChemicodePawn::HoldItem(AResourceItem* Item)
+void AChemicodePawn::HoldItem(AChemicodeObject* Item)
 {
 	if (!Item)
 		return;
@@ -322,12 +328,14 @@ void AChemicodePawn::EnableInteraction()
 
 void AChemicodePawn::RefreshTooltip()
 {
+	SCOPE_CYCLE_COUNTER(STAT_CCUpdateTooltip);
+	
 	// Prevent deref of nullptr if tooltip widget is null for some reason
 	if (!TooltipWidget)
 		return;
 
 	// Hide tooltip if we're not hovering anything
-	if (!HighlightedItem || !HighlightedItem->Resource)
+	if (!HighlightedItem)
 	{
 		if (TooltipWidget->IsShown())
 			TooltipWidget->Hide();
@@ -338,13 +346,22 @@ void AChemicodePawn::RefreshTooltip()
 	if (!TooltipWidget->IsShown())
 		TooltipWidget->Show();
 
+	// Cast to highlighted item to check for and do item specific things
+	const AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
+	const AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
+	const AResourceContainer* HighlightedAsRC = Cast<AResourceContainer>(HighlightedItem);
+	
 	// Set resource to account for changes
-	TooltipWidget->SetResource(HighlightedItem->Resource);
+	if (HighlightedAsRI)
+		TooltipWidget->SetResource(HighlightedAsRI->Resource);
+	else if (HighlightedAsRC)
+		TooltipWidget->SetContainer(HighlightedAsRC);
 
-	// Also check for changes in interactions
-	if (HeldItem && HeldItem->Resource && HighlightedItem->GetInteractionComponent())
+	// When both held and highlighted are resource items,
+	// also check for changes in interactions
+	if (HeldAsRI && HighlightedAsRI && HeldAsRI->Resource && HighlightedAsRI->GetInteractionComponent())
 	{
-		const FInteraction Interaction = HighlightedItem->GetInteractionComponent()->GetInteractionWith(HeldItem->Resource); 
+		const FInteraction Interaction = HighlightedAsRI->GetInteractionComponent()->GetInteractionWith(HeldAsRI->Resource); 
 		if (Interaction.bIsValid)
 			TooltipWidget->SetInteraction(Interaction);
 		else
@@ -373,9 +390,15 @@ void AChemicodePawn::OnUse()
 {
 	if (!bInteractionEnabled)
 		return;
-	
-	if (HeldItem)
-		HeldItem->Interact();
+
+	if (!HeldItem)
+	{
+		// Play invalid sound
+		return;
+	}
+
+	if (const AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem))
+		HeldAsRI->Interact();
 	// else play invalid use sound
 }
 
@@ -383,12 +406,16 @@ void AChemicodePawn::OnInteract()
 {
 	if (!bInteractionEnabled)
 		return;
+
+	const AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
+	AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
+	AResourceContainer* HighlightedAsRC = Cast<AResourceContainer>(HighlightedItem);
 	
-	if (HeldItem != nullptr && HighlightedItem != nullptr)
+	if (HeldAsRI != nullptr && HighlightedAsRI != nullptr)
 	{
-		HighlightedItem->InteractWith(HeldItem);
+		HighlightedAsRI->InteractWith(HeldAsRI);
 	}
-	else if (HeldItem != nullptr)
+	else if (HeldItem != nullptr && HighlightedItem == nullptr)
 	{
 		DropItem();
 	}
@@ -396,6 +423,6 @@ void AChemicodePawn::OnInteract()
 	{
 		FHitResult Result;
 		if (PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result))
-			HoldItem(Cast<AResourceItem>(Result.GetActor()));
+			HoldItem(Cast<AChemicodeObject>(Result.GetActor()));
 	}
 }

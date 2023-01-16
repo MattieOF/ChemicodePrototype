@@ -6,25 +6,14 @@
 #include "ChemicodePawn.h"
 #include "ChemicodeStatics.h"
 #include "InteractionComponent.h"
-#include "OutlineComponent.h"
 #include "ResourceData.h"
-#include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AResourceItem::AResourceItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	MeshComponent->BodyInstance.SetResponseToChannel(COLLISION_CHANNEL_BLOCKITEM, ECR_Block);	
-	MeshComponent->SetAllUseCCD(true);
-	MeshComponent->ComponentTags.Add("Outline");
-	MeshComponent->ComponentTags.Add("MainMesh");
-	Outline = CreateDefaultSubobject<UOutlineComponent>(TEXT("Outline"));
-
-	RootComponent = MeshComponent;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -44,9 +33,9 @@ void AResourceItem::BeginPlay()
 void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshTooltip)
 {
 	Resource = ResourceData;
-	MeshComponent->SetStaticMesh(ResourceData->Mesh);
+	MainMesh->SetStaticMesh(ResourceData->Mesh);
 	if (ResourceData->MeshMaterial)
-		MeshComponent->SetMaterial(0, Resource->MeshMaterial);
+		MainMesh->SetMaterial(0, Resource->MeshMaterial);
 	if (bRefreshTooltip)
 		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 }

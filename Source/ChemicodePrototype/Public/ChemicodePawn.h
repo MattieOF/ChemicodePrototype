@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChemicodeObject.h"
 #include "GameFramework/Pawn.h"
 #include "ChemicodePawn.generated.h"
 
@@ -107,7 +108,7 @@ public:
 	 * @param Item Item to be highlighted
 	 */
 	UFUNCTION(BlueprintCallable)
-	void HighlightItem(AResourceItem* Item);
+	void HighlightItem(AChemicodeObject* Item);
 
 	/**
 	 * @brief Drops the currently held item (if it isn't nullptr), and picks up a new one. 
@@ -115,7 +116,7 @@ public:
 	 * @param Item Item to be held
 	 */
 	UFUNCTION(BlueprintCallable)
-	void HoldItem(AResourceItem* Item);
+	void HoldItem(AChemicodeObject* Item);
 
 	/**
 	 * @brief If it isn't null, drop the currently held item and de-highlight it.
@@ -127,7 +128,7 @@ public:
 	 * @return The currently held item
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE AResourceItem* GetHeldItem() const { return HeldItem; }
+	FORCEINLINE AChemicodeObject* GetHeldItem() const { return HeldItem; }
 
 	/**
 	 * @brief Disables the pawns ability to interact with, move, and hover over items.
@@ -242,12 +243,12 @@ private:
 	 * @brief Currently held item
 	 */
 	UPROPERTY()
-	AResourceItem* HeldItem;
+	AChemicodeObject* HeldItem;
 	/**
 	 * @brief Currently highlighted item
 	 */
 	UPROPERTY()
-	AResourceItem* HighlightedItem;
+	AChemicodeObject* HighlightedItem;
 	/**
 	 * @brief The tooltip widget used by resource items
 	 */
