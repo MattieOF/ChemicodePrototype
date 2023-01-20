@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ChemicodeObject.h"
+#include "ResourceMeasurement.h"
 #include "GameFramework/Actor.h"
 #include "ResourceItem.generated.h"
 
@@ -45,8 +46,20 @@ public:
 	TEnumAsByte<EResourceState> ResourceState;
 
 	/**
+	 * @brief If true, Measurement will not be set to Resource.DefaultMeasurement on start
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bOverrideDefaultMeasurement = false;
+
+	/**
+	 * @brief Current amount of the resource in this item
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FResourceMeasurement Measurement;
+	
+	/**
 	 * @brief Sets the resource, including setting the mesh and material.
-	* @param ResourceData Resource to use
+	 * @param ResourceData Resource to use
 	 * @param bRefreshTooltip If true, the players tooltip is refreshed, to reflect any changes that happened due to
 	 * the change of resource type.
 	 */
@@ -93,6 +106,13 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE UInteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
+
+	/**
+	 * @brief Set measurement of resource in this item to NewMeasurement. Also updates its unit.
+	 * @param NewMeasurement New measurement
+	 */
+	UFUNCTION(BlueprintCallable)
+	void SetMeasurement(FResourceMeasurement NewMeasurement);
 
 protected:
 	/**

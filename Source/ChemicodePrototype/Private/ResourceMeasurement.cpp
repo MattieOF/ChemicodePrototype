@@ -64,3 +64,15 @@ FResourceMeasurement& FResourceMeasurement::operator-=(const FResourceMeasuremen
 	Value -= UChemicodeStatics::ConvertMeasurementType(Other.Value, Other.Unit, Unit);
 	return *this;
 }
+
+FResourceMeasurement operator+(FResourceMeasurement Left,
+	const FResourceMeasurement& Right)
+{
+	return Left += Right;
+}
+
+FResourceMeasurement operator-(FResourceMeasurement Left,
+	const FResourceMeasurement& Right)
+{
+	return Left -= Right;
+}

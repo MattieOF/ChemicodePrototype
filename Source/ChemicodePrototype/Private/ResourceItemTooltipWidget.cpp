@@ -1,6 +1,5 @@
 // copyright lolol
 
-
 #include "ResourceItemTooltipWidget.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
@@ -18,7 +17,7 @@ void UResourceItemTooltipWidget::Hide_Implementation(bool bInstant)
 	bIsShown = false;
 }
 
-void UResourceItemTooltipWidget::SetResource_Implementation(UResourceData* Resource)
+void UResourceItemTooltipWidget::SetResource_Implementation(UResourceData* Resource, AResourceItem* Item)
 {
 	UE_LOG(LogChemicode, Log, TEXT("Resource item tooltip widget had no-op set resource c++ impl called. Make sure to implement it in blueprint!"));
 }

@@ -57,3 +57,7 @@ struct FResourceMeasurement
 	
 	FResourceMeasurement& operator-=(const FResourceMeasurement& Other);
 };
+
+FResourceMeasurement operator+(FResourceMeasurement Left, const FResourceMeasurement& Right);
+	
+FResourceMeasurement operator-(FResourceMeasurement Left, const FResourceMeasurement& Right);

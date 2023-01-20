@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ResourceItemTooltipWidget.generated.h"
 
+class AResourceItem;
 class AResourceContainer;
 class UResourceData;
 class UCanvasPanel;
@@ -39,7 +40,7 @@ public:
 	 * @param Resource Resource data to use
 	 */
 	UFUNCTION(BlueprintNativeEvent)
-	void SetResource(UResourceData* Resource);
+	void SetResource(UResourceData* Resource, AResourceItem* Item);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetInteraction(FInteraction Interaction);

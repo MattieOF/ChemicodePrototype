@@ -38,6 +38,8 @@ void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshToolti
 		MainMesh->SetMaterial(0, Resource->MeshMaterial);
 	if (bRefreshTooltip)
 		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
+	if (!bOverrideDefaultMeasurement)
+		Measurement = Resource->BaseMeasurement;
 }
 
 void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewType, bool bRefreshTooltip)
@@ -72,6 +74,12 @@ bool AResourceItem::InteractWith(AResourceItem* Item) const
 		return false;
 	InteractionComponent->OnInteractWith(Item);
 	return true;
+}
+
+void AResourceItem::SetMeasurement(FResourceMeasurement NewMeasurement)
+{
+	Measurement = NewMeasurement;
+	UChemicodeStatics::UpdateMeasurementUnit(Measurement);
 }
 
 #if WITH_EDITOR

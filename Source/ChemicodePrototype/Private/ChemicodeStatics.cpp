@@ -4,6 +4,7 @@
 
 #include "ChemicodePawn.h"
 #include "EngineUtils.h"
+#include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Engine/PostProcessVolume.h"
 
 AChemicodePawn* UChemicodeStatics::GetChemicodePawn(UObject* World)
@@ -45,7 +46,8 @@ FInteraction UChemicodeStatics::GetInvalidInteraction()
 
 FString UChemicodeStatics::MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand)
 {
-	const auto ValueAsString = FString::SanitizeFloat(Measurement.Value);
+	auto ValueAsString = FString::Printf(TEXT("%.2f"), Measurement.Value);
+	TrimTrailingZeros(ValueAsString);
 	
 	switch (Measurement.Unit)
 	{
@@ -145,6 +147,30 @@ bool UChemicodeStatics::MeasurementIsSameType(FResourceMeasurement A, FResourceM
 		return B.Unit == MULitres || B.Unit == MUMillilitres;
 }
 
+void UChemicodeStatics::TrimTrailingZeros(FString& String)
+{
+	// Copy-pasted from FString::SanitizeFloat()
+	// Trim all trailing zeros (up-to and including the decimal separator) from the fractional part of the number
+	int32 TrimIndex = INDEX_NONE;
+	int32 DecimalSeparatorIndex = INDEX_NONE;
+	for (int32 CharIndex = String.Len() - 1; CharIndex >= 0; --CharIndex)
+	{
+		const TCHAR Char = String[CharIndex];
+		if (Char == TEXT('.'))
+		{
+			DecimalSeparatorIndex = CharIndex;
+			TrimIndex = FMath::Max(TrimIndex, DecimalSeparatorIndex);
+			break;
+		}
+		if (TrimIndex == INDEX_NONE && Char != TEXT('0'))
+		{
+			TrimIndex = CharIndex + 1;
+		}
+	}
+	check(TrimIndex != INDEX_NONE && DecimalSeparatorIndex != INDEX_NONE);
+	String.RemoveAt(TrimIndex, String.Len() - TrimIndex, /*bAllowShrinking*/false);
+}
+
 float UChemicodeStatics::ConvertMeasurementType(float Value, EMeasurementUnit FromUnit, EMeasurementUnit ToUnit)
 {
 	switch (FromUnit)
@@ -188,5 +214,49 @@ float UChemicodeStatics::ConvertMeasurementType(float Value, EMeasurementUnit Fr
 			default: return Value;
 		}
 	default: return Value;
+	}
+}
+
+void UChemicodeStatics::UpdateMeasurementUnit(FResourceMeasurement& Measurement)
+{
+	switch (Measurement.Unit)
+	{
+	case MUMilligrams:
+		if (Measurement.Value >= 1000)
+		{
+			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUMilligrams, MUGrams);
+			Measurement.Unit = MUGrams;
+			UpdateMeasurementUnit(Measurement); // Update again if it's still too big
+		}
+	case MUGrams:
+		if (Measurement.Value < 1)
+		{
+			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUGrams, MUMilligrams);
+			Measurement.Unit = MUMilligrams;
+		} else if (Measurement.Value >= 1000)
+		{
+			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUGrams, MUKilograms);
+			Measurement.Unit = MUKilograms;
+		}
+		break;
+	case MUKilograms:
+		if (Measurement.Value < 1)
+		{
+			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUKilograms, MUGrams);
+			Measurement.Unit = MUGrams;
+			UpdateMeasurementUnit(Measurement); // Update again if it's still below 1
+		} else if (Measurement.Value >= 1000)
+		{
+			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUMillilitres, MULitres);
+			Measurement.Unit = MULitres;
+		}
+		break;
+	case MULitres:
+		if (Measurement.Value < 1)
+		{
+			Measurement.Value = ConvertMeasurementType(Measurement.Value, MULitres, MUMillilitres);
+			Measurement.Unit = MUMillilitres;
+		}
+		break;
 	}
 }

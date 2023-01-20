@@ -347,13 +347,13 @@ void AChemicodePawn::RefreshTooltip()
 		TooltipWidget->Show();
 
 	// Cast to highlighted item to check for and do item specific things
-	const AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
+	AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
 	const AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
 	const AResourceContainer* HighlightedAsRC = Cast<AResourceContainer>(HighlightedItem);
 	
 	// Set resource to account for changes
 	if (HighlightedAsRI)
-		TooltipWidget->SetResource(HighlightedAsRI->Resource);
+		TooltipWidget->SetResource(HighlightedAsRI->Resource, HighlightedAsRI);
 	else if (HighlightedAsRC)
 		TooltipWidget->SetContainer(HighlightedAsRC);
 

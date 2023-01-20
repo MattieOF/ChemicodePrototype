@@ -71,4 +71,10 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TArray<UHazardData*> Hazards;
+
+	/**
+	 * @brief Amount of the resource in a default item of this resource
+	 */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FResourceMeasurement BaseMeasurement;
 };
