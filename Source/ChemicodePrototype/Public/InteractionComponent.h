@@ -96,4 +96,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EndLatentInteraction();
 
+	UFUNCTION(BlueprintNativeEvent)
+	bool CanDepositInto(AResourceContainer* Container);
 };

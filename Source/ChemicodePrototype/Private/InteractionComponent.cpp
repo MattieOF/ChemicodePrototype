@@ -86,3 +86,8 @@ void UInteractionComponent::EndLatentInteraction()
 	UChemicodeStatics::GetChemicodePawn(GetWorld())->EnableInteraction();
 	GetWorld()->GetTimerManager().ClearTimer(UChemicodeStatics::GetChemicodePawn(GetWorld())->CurrentInteractionTimer);
 }
+
+bool UInteractionComponent::CanDepositInto_Implementation(AResourceContainer* Container)
+{
+	return true;
+}

@@ -24,13 +24,13 @@ void AResourceItem::BeginPlay()
 	Player = Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	
 	if (Resource)
-		SetResource(Resource);
+		SetResource(Resource, true, false);
 
 	if (!InteractionComponent && Resource)
 		SetInteractionType(Resource->DefaultInteraction);
 }
 
-void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshTooltip)
+void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshTooltip, bool bPreserveMeasurement)
 {
 	Resource = ResourceData;
 	MainMesh->SetStaticMesh(ResourceData->Mesh);
@@ -38,7 +38,7 @@ void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshToolti
 		MainMesh->SetMaterial(0, Resource->MeshMaterial);
 	if (bRefreshTooltip)
 		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
-	if (!bOverrideDefaultMeasurement)
+	if (!bOverrideDefaultMeasurement && !bPreserveMeasurement)
 		Measurement = Resource->BaseMeasurement;
 }
 
@@ -80,6 +80,11 @@ void AResourceItem::SetMeasurement(FResourceMeasurement NewMeasurement)
 {
 	Measurement = NewMeasurement;
 	UChemicodeStatics::UpdateMeasurementUnit(Measurement);
+	if (Measurement.Value < 1)
+	{
+		Measurement.Value = 0;
+		ResourceState = Empty;
+	}
 }
 
 #if WITH_EDITOR
@@ -88,6 +93,6 @@ void AResourceItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	if (PropertyChangedEvent.Property->GetName() == "Resource" && Resource != nullptr)
-		SetResource(Resource);
+		SetResource(Resource, false, false);
 }
 #endif

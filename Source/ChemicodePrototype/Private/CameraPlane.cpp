@@ -3,7 +3,6 @@
 #include "CameraPlane.h"
 
 #include "CameraPlaneCam.h"
-#include "Camera/CameraComponent.h"
 
 // Sets default values
 ACameraPlane::ACameraPlane()

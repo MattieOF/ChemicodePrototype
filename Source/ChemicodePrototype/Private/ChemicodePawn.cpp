@@ -399,6 +399,8 @@ void AChemicodePawn::OnUse()
 
 	if (const AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem))
 		HeldAsRI->Interact();
+	else if (AResourceContainer* HeldAsRC = Cast<AResourceContainer>(HeldItem))
+		HeldAsRC->AttemptInteraction();
 	// else play invalid use sound
 }
 
@@ -407,7 +409,7 @@ void AChemicodePawn::OnInteract()
 	if (!bInteractionEnabled)
 		return;
 
-	const AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
+	AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
 	AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
 	AResourceContainer* HighlightedAsRC = Cast<AResourceContainer>(HighlightedItem);
 	
@@ -418,6 +420,9 @@ void AChemicodePawn::OnInteract()
 	else if (HeldItem != nullptr && HighlightedItem == nullptr)
 	{
 		DropItem();
+	} else if (HeldAsRI && HighlightedAsRC && HeldAsRI->GetInteractionComponent()->CanDepositInto(HighlightedAsRC))
+	{
+		HighlightedAsRC->TransferFromItem(HeldAsRI, FResourceMeasurement(MUGrams, 50));
 	}
 	else if (CurrentCamPlane == GameMode->GetTableCamPlane())
 	{
