@@ -27,6 +27,12 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE UStaticMeshComponent* GetMainMesh() const { return MainMesh; }
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool Interact();
+	
+	UFUNCTION(BlueprintCallable)
+	virtual bool InteractWith(AChemicodeObject* OtherObject);
 	
 protected:
 	// Called when the game starts or when spawned

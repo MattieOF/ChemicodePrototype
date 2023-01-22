@@ -92,16 +92,14 @@ public:
 	 * @brief Interacts with the item.
 	 * @return True if the interaction could be performed, false if not.
 	 */
-	UFUNCTION(BlueprintCallable)
-	bool Interact() const;
+	virtual bool Interact() override;
 
 	/**
 	 * @brief Interacts with this item with another.
-	 * @param Item The item to use on this item.
+	 * @param OtherObject Object to use on this item
 	 * @return True if the interaction could be performed, false if not.
 	 */
-	UFUNCTION(BlueprintCallable)
-	bool InteractWith(AResourceItem* Item) const;
+	virtual bool InteractWith(AChemicodeObject* OtherObject) override;
 
 	/**
 	 * @return The interaction component for this item. Can be nullptr! 

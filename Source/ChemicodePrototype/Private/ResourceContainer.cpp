@@ -122,6 +122,11 @@ bool AResourceContainer::AttemptInteraction()
 	return false;
 }
 
+bool AResourceContainer::Interact()
+{
+	return AttemptInteraction();
+}
+
 bool AResourceContainer::TransferToContainer(AResourceContainer* Target, UResourceData* Res, FResourceMeasurement Amount)
 {
 	if (!HasAtLeastAmountOfResource(Res, Amount))

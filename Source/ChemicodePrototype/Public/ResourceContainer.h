@@ -98,6 +98,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool AttemptInteraction();
+
+	virtual bool Interact() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FContainerInteraction> Interactions;

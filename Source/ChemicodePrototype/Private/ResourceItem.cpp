@@ -62,7 +62,7 @@ void AResourceItem::SetResourceAndInteraction(UResourceData* NewResource,
 	UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 }
 
-bool AResourceItem::Interact() const
+bool AResourceItem::Interact() 
 {
 	if (!InteractionComponent)
 		return false;
@@ -70,8 +70,11 @@ bool AResourceItem::Interact() const
 	return true;
 }
 
-bool AResourceItem::InteractWith(AResourceItem* Item) const
+bool AResourceItem::InteractWith(AChemicodeObject* OtherObject)
 {
+	AResourceItem* Item = Cast<AResourceItem>(OtherObject);
+	if (!Item)
+		return false;
 	if (!InteractionComponent)
 		return false;
 	InteractionComponent->OnInteractWith(Item);

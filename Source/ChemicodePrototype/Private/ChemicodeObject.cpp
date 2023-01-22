@@ -19,6 +19,16 @@ AChemicodeObject::AChemicodeObject()
 	RootComponent = MainMesh;
 }
 
+bool AChemicodeObject::Interact()
+{
+	return false;
+}
+
+bool AChemicodeObject::InteractWith(AChemicodeObject* OtherObject)
+{
+	return false;
+}
+
 void AChemicodeObject::BeginPlay()
 {
 	Super::BeginPlay();

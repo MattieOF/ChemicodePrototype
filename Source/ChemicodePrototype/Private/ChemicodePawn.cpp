@@ -403,11 +403,8 @@ void AChemicodePawn::OnUse()
 		return;
 	}
 
-	if (const AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem))
-		HeldAsRI->Interact();
-	else if (AResourceContainer* HeldAsRC = Cast<AResourceContainer>(HeldItem))
-		HeldAsRC->AttemptInteraction();
-	// else play invalid use sound
+	HeldItem->Interact();
+	// TODO: if returns false, play invalid use sound
 }
 
 void AChemicodePawn::OnInteract()
@@ -415,20 +412,19 @@ void AChemicodePawn::OnInteract()
 	if (!bInteractionEnabled)
 		return;
 
-	AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
 	AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
 	AResourceContainer* HighlightedAsRC = Cast<AResourceContainer>(HighlightedItem);
 	
-	if (HeldAsRI != nullptr && HighlightedAsRI != nullptr)
+	if (HeldAsRI && HighlightedAsRC && HeldAsRI->GetInteractionComponent()->CanDepositInto(HighlightedAsRC))
 	{
-		HighlightedAsRI->InteractWith(HeldAsRI);
+		HighlightedAsRC->TransferFromItem(HeldAsRI, 50000 * UChemicodeStatics::MeasurementUnitDepositMultiplier(HeldAsRI->Measurement.Unit));
+	} else if (HeldItem != nullptr && HighlightedItem != nullptr)
+	{
+		HighlightedItem->InteractWith(HeldItem);
 	}
 	else if (HeldItem != nullptr && HighlightedItem == nullptr)
 	{
 		DropItem();
-	} else if (HeldAsRI && HighlightedAsRC && HeldAsRI->GetInteractionComponent()->CanDepositInto(HighlightedAsRC))
-	{
-		HighlightedAsRC->TransferFromItem(HeldAsRI, 50000 * UChemicodeStatics::MeasurementUnitDepositMultiplier(HeldAsRI->Measurement.Unit));
 	}
 	else if (CurrentCamPlane == GameMode->GetTableCamPlane())
 	{
