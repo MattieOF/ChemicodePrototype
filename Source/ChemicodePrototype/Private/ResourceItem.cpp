@@ -7,6 +7,7 @@
 #include "ChemicodeStatics.h"
 #include "InteractionComponent.h"
 #include "ResourceData.h"
+#include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -25,7 +26,7 @@ void AResourceItem::BeginPlay()
 	
 	if (Resource)
 		SetResource(Resource, true, false);
-
+	
 	if (!InteractionComponent && Resource)
 		SetInteractionType(Resource->DefaultInteraction);
 }
@@ -53,9 +54,10 @@ void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewTyp
 }
 
 void AResourceItem::SetResourceAndInteraction(UResourceData* NewResource,
-	TSubclassOf<UInteractionComponent> NewInteraction)
+	TSubclassOf<UInteractionComponent> NewInteraction,
+	bool bPreserveMeasurement)
 {
-	SetResource(NewResource, false);
+	SetResource(NewResource, false, bPreserveMeasurement);
 	SetInteractionType(NewInteraction, false);
 	UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 }

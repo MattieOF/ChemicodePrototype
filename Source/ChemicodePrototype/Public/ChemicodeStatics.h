@@ -123,6 +123,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static float ConvertMeasurementType(float Value, EMeasurementUnit FromUnit, EMeasurementUnit ToUnit);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static EMeasurementUnit MinimumUnit(EMeasurementUnit Unit);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static float MeasurementUnitDepositMultiplier(EMeasurementUnit Unit);
+
 	UFUNCTION(BlueprintCallable)
 	static void UpdateMeasurementUnit(FResourceMeasurement& Measurement);
 

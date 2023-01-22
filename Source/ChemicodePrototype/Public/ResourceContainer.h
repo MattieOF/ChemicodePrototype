@@ -86,7 +86,7 @@ public:
 	bool TransferToContainer(AResourceContainer* Target, UResourceData* Res, FResourceMeasurement Amount);
 	
 	UFUNCTION(BlueprintCallable)
-	bool TransferFromItem(AResourceItem* Source, FResourceMeasurement Amount);
+	bool TransferFromItem(AResourceItem* Source, float Amount);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool SatisfiesCondition(FContainerInteractionCondition Condition) { return HasResource(Condition.Resource)

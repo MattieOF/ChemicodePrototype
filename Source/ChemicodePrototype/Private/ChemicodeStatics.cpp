@@ -217,6 +217,35 @@ float UChemicodeStatics::ConvertMeasurementType(float Value, EMeasurementUnit Fr
 	}
 }
 
+EMeasurementUnit UChemicodeStatics::MinimumUnit(EMeasurementUnit Unit)
+{
+	switch (Unit)
+	{
+		case MULitres:
+		case MUMillilitres: return MUMillilitres;
+		case MUMilligrams: 
+		case MUGrams: 
+		case MUKilograms:   return MUMilligrams;
+	}
+
+	// TODO: Add none
+	return MUGrams;
+}
+
+float UChemicodeStatics::MeasurementUnitDepositMultiplier(EMeasurementUnit Unit)
+{
+	switch (Unit)
+	{
+		case MUMillilitres: 
+		case MULitres:       return 0.01f;
+		case MUMilligrams: 
+		case MUGrams: 
+		case MUKilograms:    return 1;
+	}
+
+	return 0;
+}
+
 void UChemicodeStatics::UpdateMeasurementUnit(FResourceMeasurement& Measurement)
 {
 	switch (Measurement.Unit)
@@ -245,7 +274,10 @@ void UChemicodeStatics::UpdateMeasurementUnit(FResourceMeasurement& Measurement)
 			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUKilograms, MUGrams);
 			Measurement.Unit = MUGrams;
 			UpdateMeasurementUnit(Measurement); // Update again if it's still below 1
-		} else if (Measurement.Value >= 1000)
+		}
+		break;
+	case MUMillilitres:
+		if (Measurement.Value >= 1000)
 		{
 			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUMillilitres, MULitres);
 			Measurement.Unit = MULitres;
@@ -257,6 +289,8 @@ void UChemicodeStatics::UpdateMeasurementUnit(FResourceMeasurement& Measurement)
 			Measurement.Value = ConvertMeasurementType(Measurement.Value, MULitres, MUMillilitres);
 			Measurement.Unit = MUMillilitres;
 		}
+		break;
+	default:
 		break;
 	}
 }

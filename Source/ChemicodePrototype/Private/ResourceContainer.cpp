@@ -50,6 +50,8 @@ bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Am
 	else
 		Contents[Res] += Amount;
 
+	UChemicodeStatics::UpdateMeasurementUnit(Contents[Res]);
+	
 	bDirty = true;
 	
 	return true;
@@ -62,6 +64,8 @@ bool AResourceContainer::RemoveResource(UResourceData* Res, FResourceMeasurement
 	
 	Contents[Res] -= Amount;
 	
+	UChemicodeStatics::UpdateMeasurementUnit(Contents[Res]);
+	
 	if (UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Res]) <= 0)
 		Contents.Remove(Res);
 	
@@ -70,7 +74,7 @@ bool AResourceContainer::RemoveResource(UResourceData* Res, FResourceMeasurement
 	return true;
 }
 
-bool AResourceContainer::TransferFromItem(AResourceItem* Source, FResourceMeasurement Amount)
+bool AResourceContainer::TransferFromItem(AResourceItem* Source, float Amount)
 {
 	if (!Source)
 	{
@@ -78,11 +82,16 @@ bool AResourceContainer::TransferFromItem(AResourceItem* Source, FResourceMeasur
 		return false;
 	}
 	
-	if (Source->Measurement < Amount)
+	// if (Contents.Num() > 0 && !UChemicodeStatics::MeasurementIsSameType(Contents.begin().Value(), Source->Measurement))
+	// 	return false;
+	
+	const float SourceAmount = UChemicodeStatics::MeasurementAsMinimumUnit(Source->Measurement);
+	if (SourceAmount < Amount)
 		return false;
 
-	Source->SetMeasurement(Source->Measurement - Amount);
-	AddResource(Source->Resource, Amount);
+	const EMeasurementUnit SourceUnit = UChemicodeStatics::MinimumUnit(Source->Measurement.Unit);
+	Source->SetMeasurement(FResourceMeasurement(SourceUnit, SourceAmount - Amount));
+	AddResource(Source->Resource, FResourceMeasurement(SourceUnit, Amount));
 	return true;
 }
 
@@ -105,6 +114,8 @@ bool AResourceContainer::AttemptInteraction()
 		{
 			if (const auto Function = FindFunction(Interaction.FunctionName))
 				ProcessEvent(Function, nullptr);
+			else
+				UE_LOG(LogChemicode, Error, TEXT("Function with name %s not found!"), *Interaction.FunctionName.ToString());
 		}
 	}
 

@@ -257,12 +257,18 @@ bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
 
 void AChemicodePawn::TryBuyResource(UResourceData* Resource)
 {
+	if (!Resource)
+	{
+		UE_LOG(LogChemicode, Error, TEXT("Null resource in AChemicodePawn::TryBuyResource!"));
+		return;
+	}
+	
 	LookDown(); // Look back at the table
 	const auto Item = Cast<AResourceItem>(GetWorld()->SpawnActor(Resource->ResourceItemClass, &TargetItemPosition, &FRotator::ZeroRotator));
 	FVector Center, Bounds;
+	Item->SetResourceAndInteraction(Resource, Resource->DefaultInteraction ? Resource->DefaultInteraction : UInteractionComponent::StaticClass(), false);
 	Item->GetActorBounds(true, Center, Bounds);
 	Item->AddActorLocalOffset(FVector(0, 0, Bounds.Z + 1));
-	Item->SetResource(Resource);
 	HoldItem(Item);
 }
 
@@ -422,7 +428,7 @@ void AChemicodePawn::OnInteract()
 		DropItem();
 	} else if (HeldAsRI && HighlightedAsRC && HeldAsRI->GetInteractionComponent()->CanDepositInto(HighlightedAsRC))
 	{
-		HighlightedAsRC->TransferFromItem(HeldAsRI, FResourceMeasurement(MUGrams, 50));
+		HighlightedAsRC->TransferFromItem(HeldAsRI, 50000 * UChemicodeStatics::MeasurementUnitDepositMultiplier(HeldAsRI->Measurement.Unit));
 	}
 	else if (CurrentCamPlane == GameMode->GetTableCamPlane())
 	{

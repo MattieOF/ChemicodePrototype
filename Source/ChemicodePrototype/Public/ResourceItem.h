@@ -83,9 +83,10 @@ public:
 	 * refresh tooltip.
 	 * @param NewResource The new resource
 	 * @param NewInteraction The class of the new interaction type
+	 * @param bPreserveMeasurement If true, the measurement is kept the same. If not, it's reset to NewResource.DefaultMeasurement.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SetResourceAndInteraction(UResourceData* NewResource, TSubclassOf<UInteractionComponent> NewInteraction);
+	void SetResourceAndInteraction(UResourceData* NewResource, TSubclassOf<UInteractionComponent> NewInteraction, bool bPreserveMeasurement = true);
 
 	/**
 	 * @brief Interacts with the item.
