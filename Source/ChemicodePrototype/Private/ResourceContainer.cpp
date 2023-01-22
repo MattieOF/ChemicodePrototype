@@ -95,6 +95,28 @@ bool AResourceContainer::TransferFromItem(AResourceItem* Source, float Amount)
 	return true;
 }
 
+bool AResourceContainer::ReplaceResources(TArray<UResourceData*> ResourcesToReplace, UResourceData* NewResource)
+{
+	float Sum = 0;
+
+	for (const auto& Item : ResourcesToReplace)
+	{
+		if (HasResource(Item))
+		{
+			Sum += UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Item]);
+			Contents.Remove(Item);
+		}
+	}
+
+	if (Sum > 0)
+	{
+		AddResource(NewResource, FResourceMeasurement(UChemicodeStatics::MinimumUnit(NewResource->BaseMeasurement.Unit), Sum));
+		return true;
+	}
+	
+	return false;
+}
+
 bool AResourceContainer::SatisfiesInteraction(FContainerInteraction Interaction)
 {
 	for (const auto& Condition : Interaction.Conditions)

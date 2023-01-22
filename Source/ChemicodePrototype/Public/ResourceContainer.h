@@ -88,6 +88,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool TransferFromItem(AResourceItem* Source, float Amount);
 
+	UFUNCTION(BlueprintCallable)
+	bool ReplaceResources(TArray<UResourceData*> ResourcesToReplace, UResourceData* NewResource);
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool SatisfiesCondition(FContainerInteractionCondition Condition) { return HasResource(Condition.Resource)
 		&& GetTotalAmount() >= Condition.MinimumAmount
