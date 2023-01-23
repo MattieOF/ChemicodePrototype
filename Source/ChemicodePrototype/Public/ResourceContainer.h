@@ -41,12 +41,6 @@ class CHEMICODEPROTOTYPE_API AResourceContainer : public AChemicodeObject
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText ContainerName;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText ContainerDescription;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<UResourceData*, FResourceMeasurement> Contents;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -102,7 +96,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool AttemptInteraction();
 
-	virtual bool Interact() override;
+	virtual bool Use() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FContainerInteraction> Interactions;

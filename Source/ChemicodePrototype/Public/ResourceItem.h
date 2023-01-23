@@ -92,7 +92,7 @@ public:
 	 * @brief Interacts with the item.
 	 * @return True if the interaction could be performed, false if not.
 	 */
-	virtual bool Interact() override;
+	virtual bool Use() override;
 
 	/**
 	 * @brief Interacts with this item with another.

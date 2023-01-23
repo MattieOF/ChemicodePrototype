@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ResourceItemTooltipWidget.generated.h"
 
+class AChemicodeObject;
 class AResourceItem;
 class AResourceContainer;
 class UResourceData;
@@ -34,6 +35,13 @@ public:
 	 */
 	UFUNCTION(BlueprintNativeEvent)
 	void Hide(bool bInstant = false);
+
+	/**
+	 * @brief Sets the UI to reflect a basic chemicode object
+	 * @param Object The object to reflect
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetBasicObject(AChemicodeObject* Object);
 	
 	/**
 	 * @brief Sets all the UI to reflect this resource
@@ -42,12 +50,23 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void SetResource(UResourceData* Resource, AResourceItem* Item);
 
+	/**
+	 * @brief Sets the interaction UI to reflect an interaction
+	 * @param Interaction Interaction to reflect
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetInteraction(FInteraction Interaction);
 
+	/**
+	 * @brief Clears the interaction UI
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void ClearInteraction();
 
+	/**
+	 * @brief Sets the UI to reflect a container and its contents
+	 * @param Container The container to reflect
+	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetContainer(const AResourceContainer* Container);
 

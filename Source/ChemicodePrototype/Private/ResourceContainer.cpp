@@ -144,7 +144,7 @@ bool AResourceContainer::AttemptInteraction()
 	return false;
 }
 
-bool AResourceContainer::Interact()
+bool AResourceContainer::Use()
 {
 	return AttemptInteraction();
 }

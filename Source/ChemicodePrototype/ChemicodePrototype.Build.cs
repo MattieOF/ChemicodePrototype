@@ -9,7 +9,7 @@ public class ChemicodePrototype : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		// UMG used by ResourceInfoWidget
-		PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
+		PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "CableComponent" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 	}

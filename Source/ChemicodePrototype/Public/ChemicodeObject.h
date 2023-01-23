@@ -29,10 +29,22 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetMainMesh() const { return MainMesh; }
 
 	UFUNCTION(BlueprintCallable)
+	virtual bool Use();
+	
+	UFUNCTION(BlueprintCallable)
 	virtual bool Interact();
 	
 	UFUNCTION(BlueprintCallable)
 	virtual bool InteractWith(AChemicodeObject* OtherObject);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText Name;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FText Description;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bHoldable = true;
 	
 protected:
 	// Called when the game starts or when spawned

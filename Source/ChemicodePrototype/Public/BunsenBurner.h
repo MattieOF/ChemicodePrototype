@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ChemicodeObject.h"
+#include "CableComponent.h"
 #include "BunsenBurner.generated.h"
 
 /**
@@ -13,5 +14,7 @@ UCLASS()
 class CHEMICODEPROTOTYPE_API ABunsenBurner : public AChemicodeObject
 {
 	GENERATED_BODY()
-	
+
+protected:
+	UCableComponent* Cable;
 };

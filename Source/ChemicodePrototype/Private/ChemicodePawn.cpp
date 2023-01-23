@@ -362,6 +362,8 @@ void AChemicodePawn::RefreshTooltip()
 		TooltipWidget->SetResource(HighlightedAsRI->Resource, HighlightedAsRI);
 	else if (HighlightedAsRC)
 		TooltipWidget->SetContainer(HighlightedAsRC);
+	else if (HighlightedItem)
+		TooltipWidget->SetBasicObject(HighlightedItem);
 
 	// When both held and highlighted are resource items,
 	// also check for changes in interactions
@@ -403,7 +405,7 @@ void AChemicodePawn::OnUse()
 		return;
 	}
 
-	HeldItem->Interact();
+	HeldItem->Use();
 	// TODO: if returns false, play invalid use sound
 }
 
@@ -418,18 +420,25 @@ void AChemicodePawn::OnInteract()
 	if (HeldAsRI && HighlightedAsRC && HeldAsRI->GetInteractionComponent()->CanDepositInto(HighlightedAsRC))
 	{
 		HighlightedAsRC->TransferFromItem(HeldAsRI, 50000 * UChemicodeStatics::MeasurementUnitDepositMultiplier(HeldAsRI->Measurement.Unit));
-	} else if (HeldItem != nullptr && HighlightedItem != nullptr)
+	}
+	else if (HeldItem != nullptr && HighlightedItem != nullptr)
 	{
 		HighlightedItem->InteractWith(HeldItem);
 	}
-	else if (HeldItem != nullptr && HighlightedItem == nullptr)
-	{
-		DropItem();
-	}
-	else if (CurrentCamPlane == GameMode->GetTableCamPlane())
+	else if (HighlightedItem != nullptr && CurrentCamPlane == GameMode->GetTableCamPlane())
 	{
 		FHitResult Result;
 		if (PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result))
-			HoldItem(Cast<AChemicodeObject>(Result.GetActor()));
+		{
+			auto Item = Cast<AChemicodeObject>(Result.GetActor());
+			if (Item->bHoldable)
+				HoldItem(Item);
+			else
+				Item->Interact();
+		}
+	}
+	else if (HeldItem != nullptr)
+	{
+		DropItem();
 	}
 }

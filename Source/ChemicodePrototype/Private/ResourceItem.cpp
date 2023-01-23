@@ -62,7 +62,7 @@ void AResourceItem::SetResourceAndInteraction(UResourceData* NewResource,
 	UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 }
 
-bool AResourceItem::Interact() 
+bool AResourceItem::Use() 
 {
 	if (!InteractionComponent)
 		return false;

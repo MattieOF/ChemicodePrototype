@@ -19,6 +19,11 @@ AChemicodeObject::AChemicodeObject()
 	RootComponent = MainMesh;
 }
 
+bool AChemicodeObject::Use()
+{
+	return false;
+}
+
 bool AChemicodeObject::Interact()
 {
 	return false;
