@@ -78,7 +78,8 @@ void AChemicodePawn::Tick(float DeltaTime)
 		auto Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed * DeltaTime);
 		FVector Center, Bounds;
 		HeldItem->GetActorBounds(true, Center, Bounds);
-		// DrawDebugBox(GetWorld(), Center, Bounds, FColor::Red, false, 0);
+		DrawDebugBox(GetWorld(), Center, Bounds, FColor::Red, false, 0);
+		DrawDebugSphere(GetWorld(), Position, 20, 20, FColor::Red);
 		Position.Z = TargetItemPosition.Z + Bounds.Z;
 
 		// Check if target position is valid (it is if there are no ResourceItems blocking the position)
