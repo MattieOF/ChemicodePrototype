@@ -136,4 +136,7 @@ public:
 	static FORCEINLINE FResourceMeasurement Add(const FResourceMeasurement& A, const FResourceMeasurement& B) { return A + B; }
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FORCEINLINE FResourceMeasurement Subtract(const FResourceMeasurement& A, const FResourceMeasurement& B) { return A - B; };
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static float GetZUnderOrigin(AActor* Object);
 };

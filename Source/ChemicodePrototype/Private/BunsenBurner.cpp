@@ -2,6 +2,8 @@
 
 #include "BunsenBurner.h"
 
+#include "ChemicodePrototype/ChemicodePrototype.h"
+
 ABunsenBurner::ABunsenBurner()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -10,6 +12,7 @@ ABunsenBurner::ABunsenBurner()
 	CollarMesh->SetupAttachment(MainMesh);
 	Cable = CreateDefaultSubobject<UCableComponent>(TEXT("Cable"));
 	Cable->SetupAttachment(MainMesh);
+	Cable->EndLocation = FVector(100, 0, 0);
 	Cable->bEnableCollision = true;
 	RootComponent = MainMesh;
 
@@ -30,6 +33,16 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 void ABunsenBurner::ConnectToGasTap(AGasTap* GasTap)
 {
 	ConnectedGasTap = GasTap;
+	if (GasTap)
+	{
+		Cable->EndLocation = FVector::ZeroVector;
+		Cable->SetAttachEndTo(GasTap, "MainMesh", "Tap");
+		Cable->bAttachEnd = true;
+	} else
+	{
+		Cable->EndLocation = FVector(100, 0, 0);
+		Cable->bAttachEnd = false;
+	}
 }
 
 void ABunsenBurner::SetState(EBunsenBurnerState NewState)

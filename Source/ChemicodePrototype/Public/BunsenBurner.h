@@ -9,7 +9,7 @@
 #include "BunsenBurner.generated.h"
 
 /// Enum representing current burner state
-UENUM()
+UENUM(BlueprintType)
 enum EBunsenBurnerState
 {
 	BBSOff             UMETA(DisplayName = "Off"),
@@ -33,6 +33,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ConnectToGasTap(AGasTap* GasTap);
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void DisconnectFromGasTap() { ConnectToGasTap(nullptr); }
 	UFUNCTION(BlueprintCallable)
 	void SetState(EBunsenBurnerState NewState);
 

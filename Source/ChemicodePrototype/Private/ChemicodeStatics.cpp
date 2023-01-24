@@ -294,3 +294,12 @@ void UChemicodeStatics::UpdateMeasurementUnit(FResourceMeasurement& Measurement)
 		break;
 	}
 }
+
+float UChemicodeStatics::GetZUnderOrigin(AActor* Object)
+{
+	FVector Origin, Extents;
+	Object->GetActorBounds(true, Origin, Extents);
+	const FVector ObjectOrigin = Object->GetActorLocation();
+	const FVector Difference = Origin - ObjectOrigin;
+	return Extents.Z - Difference.Z;
+}

@@ -75,12 +75,17 @@ void AChemicodePawn::Tick(float DeltaTime)
 		
 		// Move the item in direction
 		const auto Direction = (HitResult.ImpactPoint - HeldItem->GetActorLocation()).GetUnsafeNormal();
-		auto Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed * DeltaTime);
+		const auto DistanceToMove = FVector::Distance(HeldItem->GetActorLocation(), TargetItemPosition);
+		FVector Position;
+		if (DistanceToMove < 20)
+			Position = TargetItemPosition;
+		else
+			Position = HeldItem->GetActorLocation() + (Direction * ItemMoveSpeed * DeltaTime);
 		FVector Center, Bounds;
 		HeldItem->GetActorBounds(true, Center, Bounds);
-		DrawDebugBox(GetWorld(), Center, Bounds, FColor::Red, false, 0);
-		DrawDebugSphere(GetWorld(), Position, 20, 20, FColor::Red);
-		Position.Z = TargetItemPosition.Z + Bounds.Z;
+		// DrawDebugBox(GetWorld(), Center, Bounds, FColor::Red, false, 0);
+		// DrawDebugSphere(GetWorld(), Position, 20, 20, FColor::Red);
+		Position.Z = TargetItemPosition.Z + UChemicodeStatics::GetZUnderOrigin(HeldItem);
 
 		// Check if target position is valid (it is if there are no ResourceItems blocking the position)
 		TArray<AActor*> IgnoredActors;
@@ -104,7 +109,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 			for (float i = 50.f; i < Distance + 50; i += 30.f)
 			{
 				Position = HeldItem->GetActorLocation() + (Direction * i);
-				Position.Z = TargetItemPosition.Z + Bounds.Z;
+				Position.Z = TargetItemPosition.Z + UChemicodeStatics::GetZUnderOrigin(HeldItem);
 				// DrawDebugString(GetWorld(), Position + FVector(0, 0, 30), FString::SanitizeFloat(i, 2), nullptr, FColor::White, 1);
 				// DrawDebugPoint(GetWorld(), Position, 5, FColor::Red, false, 1);
 				OutActors.Empty();
