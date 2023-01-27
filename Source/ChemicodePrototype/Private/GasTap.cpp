@@ -2,6 +2,8 @@
 
 #include "GasTap.h"
 
+#include "BunsenBurner.h"
+
 AGasTap::AGasTap()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -21,6 +23,17 @@ bool AGasTap::Interact()
 {
 	Toggle();
 	return true;
+}
+
+bool AGasTap::AltInteractWith(AChemicodeObject* OtherObject)
+{
+	if (ABunsenBurner* Burner = Cast<ABunsenBurner>(OtherObject))
+	{
+		Burner->ConnectToGasTap(this);
+		return true;
+	}
+
+	return false;
 }
 
 // Called when the game starts or when spawned

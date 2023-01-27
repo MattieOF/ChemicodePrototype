@@ -37,6 +37,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual bool InteractWith(AChemicodeObject* OtherObject);
 
+	UFUNCTION(BlueprintCallable)
+	virtual bool AltInteractWith(AChemicodeObject* OtherObject);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AltInteractionBegin();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateAltInteractionPosition(FVector EndPosition);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AltInteractionEnd();
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText Name;
 	
@@ -45,6 +57,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bHoldable = true;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bDragInteraction = false;
 	
 protected:
 	// Called when the game starts or when spawned

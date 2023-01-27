@@ -69,7 +69,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 
 	// If holding an item, move it towards the cursors position over the table
 	FHitResult HitResult;
-	if (bInteractionEnabled && HeldItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
+	if (bInteractionEnabled && HeldItem && !AltInteractionItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
 	{
 		TargetItemPosition = HitResult.ImpactPoint;
 		
@@ -122,7 +122,8 @@ void AChemicodePawn::Tick(float DeltaTime)
 				}
 			}
 		}
-	}
+	} else if (AltInteractionItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult))
+		AltInteractionItem->UpdateAltInteractionPosition(HitResult.ImpactPoint);
 
 	// Check for hovered resource items
 	if (bInteractionEnabled && CurrentCamPlane == GameMode->GetTableCamPlane())
@@ -136,6 +137,8 @@ void AChemicodePawn::Tick(float DeltaTime)
 		if (UChemicodeStatics::GetHitResultAtCursor(PlayerController, ItemObjectTypeArray, false, Result, IgnoredActors))
 		{
 			auto Item = Cast<AChemicodeObject>(Result.GetActor());
+			if (AltInteractionItem && AltInteractionItem == Item)
+				HighlightItem(nullptr);
 			if (Item && HighlightedItem != Item)
 				HighlightItem(Item);
 			else if (Item == nullptr)
@@ -229,6 +232,8 @@ void AChemicodePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("LookRight", EInputEvent::IE_DoubleClick, this, &AChemicodePawn::LookRight);
 	PlayerInputComponent->BindAction("Use", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnUse);
 	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnInteract);
+	PlayerInputComponent->BindAction("AltInteract", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnAltInteractDown);
+	PlayerInputComponent->BindAction("AltInteract", EInputEvent::IE_Released, this, &AChemicodePawn::OnAltInteractUp);
 	PlayerInputComponent->BindAxis("Horizontal", this, &AChemicodePawn::MoveHorizontal);
 	PlayerInputComponent->BindAxis("Vertical", this, &AChemicodePawn::MoveVertical);
 	PlayerInputComponent->BindAxis("Scroll", this, &AChemicodePawn::OnScroll);
@@ -243,6 +248,12 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 	ResourceLostHover();
 	HighlightItem(nullptr);
 	DropItem();
+	if (AltInteractionItem)
+	{
+		AltInteractionItem->GetOutline()->HideOutline();
+		AltInteractionItem->AltInteractionEnd();
+		AltInteractionItem = nullptr;
+	}
 }
 
 bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
@@ -417,7 +428,7 @@ void AChemicodePawn::OnUse()
 
 void AChemicodePawn::OnInteract()
 {
-	if (!bInteractionEnabled)
+	if (!bInteractionEnabled || AltInteractionItem)
 		return;
 
 	AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
@@ -446,5 +457,30 @@ void AChemicodePawn::OnInteract()
 	else if (HeldItem != nullptr)
 	{
 		DropItem();
+	}
+}
+
+void AChemicodePawn::OnAltInteractDown()
+{
+	if (HighlightedItem && HighlightedItem->bDragInteraction)
+	{
+		AltInteractionItem = HighlightedItem;
+		HoldItem(nullptr);
+		HighlightItem(nullptr);
+		AltInteractionItem->AltInteractionBegin();
+		AltInteractionItem->GetOutline()->ShowOutline();
+	}
+}
+
+void AChemicodePawn::OnAltInteractUp()
+{
+	if (AltInteractionItem)
+	{
+		if (HighlightedItem)
+			HighlightedItem->AltInteractWith(AltInteractionItem);
+		
+		AltInteractionItem->AltInteractionEnd();
+		AltInteractionItem->GetOutline()->HideOutline();
+		AltInteractionItem = nullptr;
 	}
 }

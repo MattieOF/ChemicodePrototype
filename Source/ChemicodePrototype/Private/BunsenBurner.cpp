@@ -16,6 +16,7 @@ ABunsenBurner::ABunsenBurner()
 	Cable->bEnableCollision = true;
 	RootComponent = MainMesh;
 
+	bDragInteraction = true;
 	Name = FText::FromString("Bunsen Burner");
 	Description = FText::FromString("Burn baby burn\nRequires gas for fuel, attach the cable to a gas tap");
 }
@@ -32,12 +33,15 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 
 void ABunsenBurner::ConnectToGasTap(AGasTap* GasTap)
 {
+	if (ConnectedGasTap)
+		ConnectedGasTap->Disconnect();
 	ConnectedGasTap = GasTap;
 	if (GasTap)
 	{
 		Cable->EndLocation = FVector::ZeroVector;
 		Cable->SetAttachEndTo(GasTap, "MainMesh", "Tap");
 		Cable->bAttachEnd = true;
+		ConnectedGasTap->Connect();
 	} else
 	{
 		Cable->EndLocation = FVector(100, 0, 0);

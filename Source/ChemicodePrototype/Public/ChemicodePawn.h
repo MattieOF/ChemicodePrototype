@@ -208,6 +208,10 @@ private:
 	 */
 	void OnInteract();
 
+	void OnAltInteractDown();
+	
+	void OnAltInteractUp();
+
 	/**
 	 * @brief Controls if the pawn can interact with, move, and hover over items or not.
 	 */
@@ -249,6 +253,11 @@ private:
 	 */
 	UPROPERTY()
 	AChemicodeObject* HighlightedItem;
+	/**
+	 * @brief Item currently involved in an alternate interaction
+	 */
+	UPROPERTY()
+	AChemicodeObject* AltInteractionItem;
 	/**
 	 * @brief The tooltip widget used by resource items
 	 */

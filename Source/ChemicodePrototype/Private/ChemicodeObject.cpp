@@ -34,6 +34,11 @@ bool AChemicodeObject::InteractWith(AChemicodeObject* OtherObject)
 	return false;
 }
 
+bool AChemicodeObject::AltInteractWith(AChemicodeObject* OtherObject)
+{
+	return false;
+}
+
 void AChemicodeObject::BeginPlay()
 {
 	Super::BeginPlay();
