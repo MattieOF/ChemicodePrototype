@@ -8,6 +8,7 @@
 #include "GasTap.h"
 #include "BunsenBurner.generated.h"
 
+class AResourceItem;
 /// Enum representing current burner state
 UENUM(BlueprintType)
 enum EBunsenBurnerState
@@ -44,12 +45,15 @@ public:
 	void OnStateUpdated(EBunsenBurnerState NewState);
 
 	virtual bool Use() override;
-
 	virtual bool AltInteract() override;
+	virtual bool InteractWith(AChemicodeObject* OtherObject) override;
 
 	virtual void GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent, bool bIncludeFromChildActors) const override;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(MakeEditWidget=true))
+	FVector ItemOffset;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCableComponent* Cable;
 
@@ -62,5 +66,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	TEnumAsByte<EBunsenBurnerState> State;
 
+	UPROPERTY(BlueprintReadWrite)
+	AResourceItem* TargetItem;
+
+	FDelegateHandle TargetItemDelegateHandle;
+	
 	bool bHadGasLastFrame = false;
 };

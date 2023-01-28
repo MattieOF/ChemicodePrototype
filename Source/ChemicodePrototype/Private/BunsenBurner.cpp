@@ -2,6 +2,10 @@
 
 #include "BunsenBurner.h"
 
+#include "ChemicodePawn.h"
+#include "ChemicodeStatics.h"
+#include "ResourceItem.h"
+
 ABunsenBurner::ABunsenBurner()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -27,6 +31,9 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 	if (bHasGas != bHadGasLastFrame)
 		OnStateUpdated(State);
 	bHadGasLastFrame = bHasGas;
+
+	if (TargetItem)
+		TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
 }
 
 void ABunsenBurner::ConnectToGasTap(AGasTap* GasTap)
@@ -64,6 +71,29 @@ bool ABunsenBurner::AltInteract()
 {
 	ConnectToGasTap(nullptr);
 	return true;
+}
+
+bool ABunsenBurner::InteractWith(AChemicodeObject* OtherObject)
+{
+	if (TargetItem) // Do nothing if we already have an item
+		return false;
+	
+	if (AResourceItem* Item = Cast<AResourceItem>(OtherObject))
+	{
+		// We can use this item, put it where it needs to be
+		TargetItem = Item;
+		TargetItemDelegateHandle = TargetItem->OnItemPickedUp.AddLambda([this]
+		{
+			TargetItem->OnItemPickedUp.Remove(TargetItemDelegateHandle);
+			TargetItem = nullptr;
+		});
+		TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
+		UChemicodeStatics::GetChemicodePawn(GetWorld())->DropItem();
+		return true;
+	}
+
+	// Item was invalid, return
+	return false;
 }
 
 void ABunsenBurner::GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent,

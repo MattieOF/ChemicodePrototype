@@ -34,6 +34,8 @@ void AResourceItem::BeginPlay()
 void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshTooltip, bool bPreserveMeasurement)
 {
 	Resource = ResourceData;
+	Name = Resource->Name;
+	Description = Resource->Description;
 	MainMesh->SetStaticMesh(ResourceData->Mesh);
 	if (ResourceData->MeshMaterial)
 		MainMesh->SetMaterial(0, Resource->MeshMaterial);

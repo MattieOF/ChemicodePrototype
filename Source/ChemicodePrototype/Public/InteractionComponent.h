@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChemicodeObject.h"
 #include "Components/ActorComponent.h"
 #include "Interaction.h"
 #include "InteractionComponent.generated.h"
@@ -56,11 +57,11 @@ public:
 
 	/**
 	 * @brief Get interaction data for a resource
-	 * @param Resource Resource to query for interaction with
+	 * @param Item Item to query for interaction with
 	 * @return Interaction data. bIsValid will be false if not valid.
 	 */
 	UFUNCTION(BlueprintImplementableEvent)
-	FInteraction GetInteractionWith(UResourceData* Resource);
+	FInteraction GetInteractionWith(AChemicodeObject* Item);
 
 	/**
 	 * @brief Map of resource data -> function names. If using the default behaviour of OnInteractWith(),

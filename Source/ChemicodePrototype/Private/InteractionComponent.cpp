@@ -54,7 +54,7 @@ void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 		FInteractionFuncParams Params;
 		Params.Item = Item;
 		ProcessEvent(Function, &Params);
-		const auto Interaction = GetInteractionWith(Item->Resource);
+		const auto Interaction = GetInteractionWith(Item);
 		if (Params.bOutSuccess && Interaction.bIsValid && Interaction.Time > 0)
 			BeginLatentInteraction(Interaction.Time);
 	}

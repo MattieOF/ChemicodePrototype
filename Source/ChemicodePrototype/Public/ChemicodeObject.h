@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "ChemicodeObject.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnItemPickedUp)
+
 UCLASS()
 class CHEMICODEPROTOTYPE_API AChemicodeObject : public AActor
 {
@@ -63,6 +65,8 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bDragInteraction = false;
+
+	FOnItemPickedUp OnItemPickedUp;
 	
 protected:
 	// Called when the game starts or when spawned

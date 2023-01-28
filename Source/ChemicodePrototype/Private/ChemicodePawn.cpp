@@ -323,6 +323,7 @@ void AChemicodePawn::HoldItem(AChemicodeObject* Item)
 	DropItem();
 	HighlightItem(nullptr); // De-highlight now so it doesn't happen later and remain un-highlighted
 	HeldItem = Item;
+	Item->OnItemPickedUp.Broadcast();
 	HeldItem->GetOutline()->ShowOutline();
 }
 
@@ -382,11 +383,11 @@ void AChemicodePawn::RefreshTooltip()
 	else if (HighlightedItem)
 		TooltipWidget->SetBasicObject(HighlightedItem);
 
-	// When both held and highlighted are resource items,
-	// also check for changes in interactions
-	if (HeldAsRI && HighlightedAsRI && HeldAsRI->Resource && HighlightedAsRI->GetInteractionComponent())
+	// Check for changes in interactions
+	UInteractionComponent* InteractionComponent = Cast<UInteractionComponent>(HighlightedItem->GetComponentByClass(UInteractionComponent::StaticClass()));
+	if (HeldItem && InteractionComponent)
 	{
-		const FInteraction Interaction = HighlightedAsRI->GetInteractionComponent()->GetInteractionWith(HeldAsRI->Resource); 
+		const FInteraction Interaction = InteractionComponent->GetInteractionWith(HeldItem); 
 		if (Interaction.bIsValid)
 			TooltipWidget->SetInteraction(Interaction);
 		else
