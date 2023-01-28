@@ -478,6 +478,8 @@ void AChemicodePawn::OnAltInteractUp()
 	{
 		if (HighlightedItem)
 			HighlightedItem->AltInteractWith(AltInteractionItem);
+		else
+			AltInteractionItem->AltInteract();
 		
 		AltInteractionItem->AltInteractionEnd();
 		AltInteractionItem->GetOutline()->HideOutline();

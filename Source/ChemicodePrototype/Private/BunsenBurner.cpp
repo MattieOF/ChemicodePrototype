@@ -2,8 +2,6 @@
 
 #include "BunsenBurner.h"
 
-#include "ChemicodePrototype/ChemicodePrototype.h"
-
 ABunsenBurner::ABunsenBurner()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -25,10 +23,10 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (ConnectedGasTap && ConnectedGasTap->IsOpen())
-	{
-		
-	} else SetState(BBSOff);
+	bool bHasGas = HasGas();
+	if (bHasGas != bHadGasLastFrame)
+		OnStateUpdated(State);
+	bHadGasLastFrame = bHasGas;
 }
 
 void ABunsenBurner::ConnectToGasTap(AGasTap* GasTap)
@@ -55,8 +53,21 @@ void ABunsenBurner::SetState(EBunsenBurnerState NewState)
 	OnStateUpdated(NewState);
 }
 
+bool ABunsenBurner::Use()
+{
+	State = static_cast<EBunsenBurnerState>((static_cast<int>(State) + 1) % 3);
+	OnStateUpdated(State);
+	return true;
+}
+
+bool ABunsenBurner::AltInteract()
+{
+	ConnectToGasTap(nullptr);
+	return true;
+}
+
 void ABunsenBurner::GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent,
-	bool bIncludeFromChildActors) const
+                                   bool bIncludeFromChildActors) const
 {
 	FBox Box(ForceInit);
 

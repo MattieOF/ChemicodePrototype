@@ -33,6 +33,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	virtual bool Interact();
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool AltInteract();
 	
 	UFUNCTION(BlueprintCallable)
 	virtual bool InteractWith(AChemicodeObject* OtherObject);
@@ -48,7 +51,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AltInteractionEnd();
-	
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText Name;
 	

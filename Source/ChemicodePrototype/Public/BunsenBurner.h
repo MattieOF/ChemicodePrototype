@@ -12,7 +12,6 @@
 UENUM(BlueprintType)
 enum EBunsenBurnerState
 {
-	BBSOff             UMETA(DisplayName = "Off"),
 	BBSCollarClosed    UMETA(DisplayName = "Collar Closed"),
 	BBSCollarHalfOpen  UMETA(DisplayName = "Collar Half Open"),
 	BBSCollarFullyOpen UMETA(DisplayName = "Collar Fully Open")
@@ -38,8 +37,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetState(EBunsenBurnerState NewState);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool HasGas() { return ConnectedGasTap && ConnectedGasTap->IsOpen(); }
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnStateUpdated(EBunsenBurnerState NewState);
+
+	virtual bool Use() override;
+
+	virtual bool AltInteract() override;
 
 	virtual void GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent, bool bIncludeFromChildActors) const override;
 
@@ -55,4 +61,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	TEnumAsByte<EBunsenBurnerState> State;
+
+	bool bHadGasLastFrame = false;
 };

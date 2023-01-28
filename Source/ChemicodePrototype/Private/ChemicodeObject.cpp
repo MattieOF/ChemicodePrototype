@@ -29,6 +29,11 @@ bool AChemicodeObject::Interact()
 	return false;
 }
 
+bool AChemicodeObject::AltInteract()
+{
+	return false;
+}
+
 bool AChemicodeObject::InteractWith(AChemicodeObject* OtherObject)
 {
 	return false;
