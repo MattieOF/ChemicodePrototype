@@ -4,8 +4,8 @@
 
 #include "ChemicodePawn.h"
 #include "EngineUtils.h"
-#include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Engine/PostProcessVolume.h"
+#include "windows/PxWindowsIntrinsics.h"
 
 AChemicodePawn* UChemicodeStatics::GetChemicodePawn(UObject* World)
 {
@@ -173,19 +173,21 @@ void UChemicodeStatics::TrimTrailingZeros(FString& String)
 
 float UChemicodeStatics::ConvertMeasurementType(float Value, EMeasurementUnit FromUnit, EMeasurementUnit ToUnit)
 {
+	const float Sign = FMath::Sign(Value);
+	
 	switch (FromUnit)
 	{
 	case MUMillilitres:
 		switch (ToUnit)
 		{
 			case MUMillilitres: return Value;
-			case MULitres: return Value / 1000;
+			case MULitres: return Value / (1000 * Sign);
 			default: return Value;
 		}
 	case MULitres: 
 		switch (ToUnit)
 		{
-			case MUMillilitres: return Value * 1000;
+			case MUMillilitres: return Value * (1000 * Sign);
 			case MULitres: return Value;
 			default: return Value;
 		}
@@ -193,23 +195,23 @@ float UChemicodeStatics::ConvertMeasurementType(float Value, EMeasurementUnit Fr
 		switch (ToUnit)
 		{
 			case MUMilligrams: return Value;
-			case MUGrams: return Value / 1000;
-			case MUKilograms: return Value / 1000000;
+			case MUGrams: return Value / (1000 * Sign);
+			case MUKilograms: return Value / (1000000 * Sign);
 			default: return Value;
 		}
 	case MUGrams: 
 		switch (ToUnit)
 		{
-			case MUMilligrams: return Value * 1000;
+			case MUMilligrams: return Value * (1000 * Sign);
 			case MUGrams: return Value;
-			case MUKilograms: return Value / 1000;
+			case MUKilograms: return Value / (1000 * Sign);
 			default: return Value;
 		}
 	case MUKilograms: 
 		switch (ToUnit)
 		{
-			case MUMilligrams: return Value * 1000000;
-			case MUGrams: return Value * 1000;
+			case MUMilligrams: return Value * (1000000 * Sign);
+			case MUGrams: return Value * (1000 * Sign);
 			case MUKilograms: return Value;
 			default: return Value;
 		}

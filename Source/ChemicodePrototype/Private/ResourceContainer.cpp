@@ -3,18 +3,19 @@
 #include "ResourceContainer.h"
 
 #include "ChemicodeStatics.h"
+#include "ResourceTube.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
 float AResourceContainer::GetTotalAmount()
 {
 	if (!bDirty)
-		return m_TotalAmount;
+		return TotalAmount;
 	
 	float Sum = 0;
 	for (const TPair<UResourceData*, FResourceMeasurement>& Res : Contents)
 		Sum += UChemicodeStatics::MeasurementAsMinimumUnit(Res.Value);
 	bDirty = false;
-	m_TotalAmount = Sum;
+	TotalAmount = Sum;
 	return Sum;
 }
 
@@ -51,6 +52,9 @@ bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Am
 		Contents[Res] += Amount;
 
 	UChemicodeStatics::UpdateMeasurementUnit(Contents[Res]);
+
+	if (Contents[Res].Value < 1)
+		Contents.Remove(Res);
 	
 	bDirty = true;
 	
@@ -59,16 +63,16 @@ bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Am
 
 bool AResourceContainer::RemoveResource(UResourceData* Res, FResourceMeasurement Amount)
 {
-	if (!HasAtLeastAmountOfResource(Res, Amount))
+	if (!HasResource(Res))
 		return false;
 	
 	Contents[Res] -= Amount;
 	
 	UChemicodeStatics::UpdateMeasurementUnit(Contents[Res]);
 	
-	if (UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Res]) <= 0)
+	if (Contents[Res].Value < 1)
 		Contents.Remove(Res);
-	
+		
 	bDirty = true;
 	
 	return true;
@@ -117,6 +121,22 @@ bool AResourceContainer::ReplaceResources(TArray<UResourceData*> ResourcesToRepl
 	return false;
 }
 
+bool AResourceContainer::ReplaceResource(UResourceData* Resource, UResourceData* NewResource,
+	FResourceMeasurement Amount, float Scale)
+{
+	if (!HasResource(Resource))
+		return false;
+
+	Amount = FResourceMeasurement(UChemicodeStatics::MinimumUnit(Amount.Unit), UChemicodeStatics::MeasurementAsMinimumUnit(Amount));
+	
+	RemoveResource(Resource, Amount);
+
+	Amount.Value *= Scale;
+	AddResource(NewResource, Amount);
+
+	return true;
+}
+
 bool AResourceContainer::SatisfiesInteraction(FContainerInteraction Interaction)
 {
 	for (const auto& Condition : Interaction.Conditions)
@@ -147,6 +167,44 @@ bool AResourceContainer::AttemptInteraction()
 bool AResourceContainer::Use()
 {
 	return AttemptInteraction();
+}
+
+bool AResourceContainer::InteractWith(AChemicodeObject* OtherObject)
+{
+	if (AResourceTube* Tube = Cast<AResourceTube>(OtherObject))
+	{
+		if (ConnectedTube != nullptr)
+			return false;
+		Tube->ConnectObject(this);
+		TubeConnectionHandle = Tube->OnItemPickedUp.AddLambda([this]
+		{
+			ConnectedTube->OnItemPickedUp.Remove(TubeConnectionHandle);
+			ConnectedTube = nullptr;
+		});
+		ConnectedTube = Tube;
+		return true;
+	}
+
+	return false;
+}
+
+void AResourceContainer::FireTick(AChemicodeObject* Source)
+{
+	OnFireTick(Source);
+}
+
+void AResourceContainer::ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount)
+{
+	if (!OnReceiveResource(Resource, Amount))
+	{
+		if (Amount.Value > 0)
+			AddResource(Resource, Amount);
+		else if (Amount.Value < 0)
+		{
+			Amount.Value = -Amount.Value;
+			RemoveResource(Resource, Amount);
+		}
+	}
 }
 
 bool AResourceContainer::TransferToContainer(AResourceContainer* Target, UResourceData* Res, FResourceMeasurement Amount)

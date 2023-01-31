@@ -35,15 +35,19 @@ public:
 	void ConnectToGasTap(AGasTap* GasTap);
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void DisconnectFromGasTap() { ConnectToGasTap(nullptr); }
+	
 	UFUNCTION(BlueprintCallable)
 	void SetState(EBunsenBurnerState NewState);
-
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasGas() { return ConnectedGasTap && ConnectedGasTap->IsOpen(); }
+	FORCEINLINE EBunsenBurnerState GetState() { return State; }
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnStateUpdated(EBunsenBurnerState NewState);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool HasGas() { return ConnectedGasTap && ConnectedGasTap->IsOpen(); }
+
+	// Interaction implementations
 	virtual bool Use() override;
 	virtual bool AltInteract() override;
 	virtual bool InteractWith(AChemicodeObject* OtherObject) override;
@@ -67,7 +71,7 @@ protected:
 	TEnumAsByte<EBunsenBurnerState> State;
 
 	UPROPERTY(BlueprintReadWrite)
-	AResourceItem* TargetItem;
+	AChemicodeObject* TargetItem;
 
 	FDelegateHandle TargetItemDelegateHandle;
 	

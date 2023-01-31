@@ -5,9 +5,11 @@
 #include "CoreMinimal.h"
 #include "OutlineComponent.h"
 #include "GameFramework/Actor.h"
+#include "ResourceMeasurement.h"
 #include "ChemicodeObject.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnItemPickedUp)
+DECLARE_MULTICAST_DELEGATE(FOnItemPlaced)
 
 UCLASS()
 class CHEMICODEPROTOTYPE_API AChemicodeObject : public AActor
@@ -54,6 +56,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AltInteractionEnd();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void FireTick(AChemicodeObject* Source);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount);
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText Name;
 	
@@ -62,11 +70,19 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bHoldable = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bResourceLike = true;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bDragInteraction = false;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bRequireFreeSpace = true;
 
 	FOnItemPickedUp OnItemPickedUp;
+	
+	FOnItemPlaced OnItemPlaced;
 	
 protected:
 	// Called when the game starts or when spawned

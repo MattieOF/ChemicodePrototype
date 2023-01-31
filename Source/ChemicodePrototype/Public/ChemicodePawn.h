@@ -212,11 +212,20 @@ private:
 	
 	void OnAltInteractUp();
 
+	void OnTiltCamDown();
+
+	void OnTiltCamUp();
 	/**
 	 * @brief Controls if the pawn can interact with, move, and hover over items or not.
 	 */
 	UPROPERTY()
 	bool bInteractionEnabled = true;
+
+	/**
+	 * @brief If true, the player is currently tilting the camera
+	 */
+	UPROPERTY()
+	bool bTilting = false;
 
 	/**
 	 * @brief Reference to the game mode object

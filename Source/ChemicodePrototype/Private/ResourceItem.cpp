@@ -83,6 +83,11 @@ bool AResourceItem::InteractWith(AChemicodeObject* OtherObject)
 	return true;
 }
 
+void AResourceItem::FireTick(AChemicodeObject* Source)
+{
+	InteractionComponent->FireTick(Source);
+}
+
 void AResourceItem::SetMeasurement(FResourceMeasurement NewMeasurement)
 {
 	Measurement = NewMeasurement;

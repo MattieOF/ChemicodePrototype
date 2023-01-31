@@ -107,6 +107,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE UInteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
 
+	virtual void FireTick(AChemicodeObject* Source) override;
+	
 	/**
 	 * @brief Set measurement of resource in this item to NewMeasurement. Also updates its unit.
 	 * @param NewMeasurement New measurement

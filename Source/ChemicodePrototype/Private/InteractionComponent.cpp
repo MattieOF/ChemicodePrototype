@@ -60,13 +60,24 @@ void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 	}
 }
 
+void UInteractionComponent::FireTick_Implementation(AChemicodeObject* Source)
+{
+	if (OwnerAsResourceItem)
+	{
+		OwnerAsResourceItem->SetMeasurement(OwnerAsResourceItem->Measurement - FResourceMeasurement(
+			OwnerMeasurementUnit, BurnRate * GetWorld()->DeltaTimeSeconds));
+	}
+}
+
 void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerItem = Cast<AResourceItem>(GetOwner());
-	if (!OwnerItem)
-		UE_LOG(LogChemicode, Error, TEXT("Interaction component on %s is not a child of an AResourceItem!"), *AActor::GetDebugName(GetOwner()));
+	OwnerItem = Cast<AChemicodeObject>(GetOwner());
+	OwnerAsResourceItem = Cast<AResourceItem>(GetOwner());
+
+	if (OwnerAsResourceItem)
+		OwnerMeasurementUnit = UChemicodeStatics::MinimumUnit(OwnerAsResourceItem->Measurement.Unit);
 }
 
 void UInteractionComponent::BeginLatentInteraction(float Length)

@@ -8,9 +8,10 @@ AGasTap::AGasTap()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	Name = FText::FromString("Gas Tap");
-	Description = FText::FromString("Used to gas yourself, and power bunsen burners.");
-	bHoldable  = false;
+	Name          = FText::FromString("Gas Tap");
+	Description   = FText::FromString("Used to gas yourself, and power bunsen burners.");
+	bHoldable     = false;
+	bResourceLike = false;
 	
 	TapMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tap"));
 	TapMesh->SetupAttachment(MainMesh);
@@ -27,6 +28,9 @@ bool AGasTap::Interact()
 
 bool AGasTap::AltInteractWith(AChemicodeObject* OtherObject)
 {
+	if (IsConnected())
+		return false;
+	
 	if (ABunsenBurner* Burner = Cast<ABunsenBurner>(OtherObject))
 	{
 		Burner->ConnectToGasTap(this);

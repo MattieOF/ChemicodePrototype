@@ -67,6 +67,21 @@ void AChemicodePawn::Tick(float DeltaTime)
 	// Tick cooldowns
 	LookCooldown -= DeltaTime;
 
+	// Process tilting
+	if (bTilting)
+	{
+		float XDelta, YDelta;
+		PlayerController->GetInputMouseDelta(XDelta, YDelta);
+		FRotator Rot = CurrentCamPlane->GetCamPositionActor()->GetActorRotation();
+		Rot.Pitch += YDelta * DeltaTime * 3;
+		Rot.Yaw += XDelta * DeltaTime * 3;
+		// CurrentCamPlane->GetCamPositionActor()->AddActorLocalRotation(FRotator(YDelta * DeltaTime * 3, XDelta * DeltaTime * 2, 0));
+		CurrentCamPlane->GetCamPositionActor()->SetActorRotation(Rot);
+		int ViewportWidth, ViewportHeight;
+		PlayerController->GetViewportSize(ViewportWidth, ViewportHeight);
+		PlayerController->SetMouseLocation(ViewportWidth / 2, ViewportHeight / 2);
+	}
+
 	// If holding an item, move it towards the cursors position over the table
 	FHitResult HitResult;
 	if (bInteractionEnabled && HeldItem && !AltInteractionItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
@@ -97,7 +112,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 		                                       AChemicodeObject::StaticClass(), IgnoredActors, OutActors);
 		//DrawDebugBox(GetWorld(), Position, Bounds, FColor::Red);
 		
-		if (OutActors.Num() == 0)
+		if (OutActors.Num() == 0 || !HeldItem->bRequireFreeSpace)
 			HeldItem->SetActorLocation(Position);
 		else
 		{
@@ -234,6 +249,8 @@ void AChemicodePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnInteract);
 	PlayerInputComponent->BindAction("AltInteract", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnAltInteractDown);
 	PlayerInputComponent->BindAction("AltInteract", EInputEvent::IE_Released, this, &AChemicodePawn::OnAltInteractUp);
+	PlayerInputComponent->BindAction("TiltCamera", EInputEvent::IE_Pressed, this, &AChemicodePawn::OnTiltCamDown);
+	PlayerInputComponent->BindAction("TiltCamera", EInputEvent::IE_Released, this, &AChemicodePawn::OnTiltCamUp);
 	PlayerInputComponent->BindAxis("Horizontal", this, &AChemicodePawn::MoveHorizontal);
 	PlayerInputComponent->BindAxis("Vertical", this, &AChemicodePawn::MoveVertical);
 	PlayerInputComponent->BindAxis("Scroll", this, &AChemicodePawn::OnScroll);
@@ -247,7 +264,13 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 		BlendTime, VTBlend_EaseInOut, 2);
 	ResourceLostHover();
 	HighlightItem(nullptr);
-	DropItem();
+	
+	if (HeldItem)
+	{
+		HeldItem->OnItemPlaced.Broadcast();
+		DropItem();
+	}
+	
 	if (AltInteractionItem)
 	{
 		AltInteractionItem->GetOutline()->HideOutline();
@@ -319,8 +342,13 @@ void AChemicodePawn::HoldItem(AChemicodeObject* Item)
 {
 	if (!Item)
 		return;
+
+	if (HeldItem)
+	{
+		HeldItem->OnItemPlaced.Broadcast();
+		DropItem();
+	}
 	
-	DropItem();
 	HighlightItem(nullptr); // De-highlight now so it doesn't happen later and remain un-highlighted
 	HeldItem = Item;
 	Item->OnItemPickedUp.Broadcast();
@@ -457,6 +485,7 @@ void AChemicodePawn::OnInteract()
 	}
 	else if (HeldItem != nullptr)
 	{
+		HeldItem->OnItemPlaced.Broadcast();
 		DropItem();
 	}
 }
@@ -486,4 +515,22 @@ void AChemicodePawn::OnAltInteractUp()
 		AltInteractionItem->GetOutline()->HideOutline();
 		AltInteractionItem = nullptr;
 	}
+}
+
+void AChemicodePawn::OnTiltCamDown()
+{
+	// Hide the cursor
+	PlayerController->bShowMouseCursor = false;
+	PlayerController->bEnableClickEvents = false;
+	PlayerController->bEnableMouseOverEvents = false;
+	bTilting = true;
+}
+
+void AChemicodePawn::OnTiltCamUp()
+{
+	// Show the cursor
+	PlayerController->bShowMouseCursor = true;
+	PlayerController->bEnableClickEvents = true;
+	PlayerController->bEnableMouseOverEvents = true;
+	bTilting = false;
 }

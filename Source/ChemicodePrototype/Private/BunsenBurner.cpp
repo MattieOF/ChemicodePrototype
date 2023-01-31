@@ -4,7 +4,7 @@
 
 #include "ChemicodePawn.h"
 #include "ChemicodeStatics.h"
-#include "ResourceItem.h"
+#include "ResourceTube.h"
 
 ABunsenBurner::ABunsenBurner()
 {
@@ -19,6 +19,7 @@ ABunsenBurner::ABunsenBurner()
 	RootComponent = MainMesh;
 
 	bDragInteraction = true;
+	bResourceLike = false;
 	Name = FText::FromString("Bunsen Burner");
 	Description = FText::FromString("Burn baby burn\nRequires gas for fuel, attach the cable to a gas tap");
 }
@@ -27,13 +28,17 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	bool bHasGas = HasGas();
+	const bool bHasGas = HasGas();
 	if (bHasGas != bHadGasLastFrame)
 		OnStateUpdated(State);
 	bHadGasLastFrame = bHasGas;
 
 	if (TargetItem)
+	{
 		TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
+		if (bHasGas)
+			TargetItem->FireTick(this);
+	}
 }
 
 void ABunsenBurner::ConnectToGasTap(AGasTap* GasTap)
@@ -78,10 +83,10 @@ bool ABunsenBurner::InteractWith(AChemicodeObject* OtherObject)
 	if (TargetItem) // Do nothing if we already have an item
 		return false;
 	
-	if (AResourceItem* Item = Cast<AResourceItem>(OtherObject))
+	if (OtherObject->bResourceLike)
 	{
 		// We can use this item, put it where it needs to be
-		TargetItem = Item;
+		TargetItem = OtherObject;
 		TargetItemDelegateHandle = TargetItem->OnItemPickedUp.AddLambda([this]
 		{
 			TargetItem->OnItemPickedUp.Remove(TargetItemDelegateHandle);

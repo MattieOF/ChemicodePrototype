@@ -23,7 +23,7 @@ public:
 	/**
 	 * @brief Description of the hazard
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(MultiLine=true))
 	FText Description;
 
 	/**

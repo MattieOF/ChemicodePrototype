@@ -6,6 +6,7 @@
 #include "ResourceData.h"
 #include "ResourceItem.h"
 #include "ResourceMeasurement.h"
+#include "ResourceTube.h"
 #include "ResourceContainer.generated.h"
 
 USTRUCT(BlueprintType)
@@ -85,6 +86,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool ReplaceResources(TArray<UResourceData*> ResourcesToReplace, UResourceData* NewResource);
 
+	UFUNCTION(BlueprintCallable)
+	bool ReplaceResource(UResourceData* Resource, UResourceData* NewResource, FResourceMeasurement Amount, float Scale = 1);
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool SatisfiesCondition(FContainerInteractionCondition Condition) { return HasResource(Condition.Resource)
 		&& GetTotalAmount() >= Condition.MinimumAmount
@@ -97,11 +101,31 @@ public:
 	bool AttemptInteraction();
 
 	virtual bool Use() override;
+
+	virtual bool InteractWith(AChemicodeObject* OtherObject) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFireTick(AChemicodeObject* Source);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	bool OnReceiveResource(UResourceData* Resource, FResourceMeasurement Amount);
+
+	virtual void FireTick(AChemicodeObject* Source) override;
+
+	virtual void ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FContainerInteraction> Interactions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanTakeTube = true;
 	
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	AResourceTube* ConnectedTube;
+
 private:
-	float m_TotalAmount = 0;
-	bool bDirty = false;
+	FDelegateHandle TubeConnectionHandle;
+	float TotalAmount = 0;
+	bool bDirty = true;
 };

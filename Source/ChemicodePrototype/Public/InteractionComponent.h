@@ -63,6 +63,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	FInteraction GetInteractionWith(AChemicodeObject* Item);
 
+	UFUNCTION(BlueprintNativeEvent, Category = Events)
+	void FireTick(AChemicodeObject* Source);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BurnRate = 150000;
+	
 	/**
 	 * @brief Map of resource data -> function names. If using the default behaviour of OnInteractWith(),
 	 * when an item is used on this item the map is checked for the corresponding resource data and if it exists,
@@ -75,10 +81,16 @@ public:
 	TMap<UResourceData*, FName> ItemInteractions;
 
 	/**
-	 * @brief Item that owns this interaction component
+	 * @brief Object that owns this interaction component
 	 */
 	UPROPERTY(BlueprintReadWrite)
-	AResourceItem* OwnerItem;
+	AChemicodeObject* OwnerItem;
+
+	/**
+	 * @brief If the owner is a resource item, this is a reference to that item. If it isn't, nullptr.
+	 */
+	UPROPERTY(BlueprintReadWrite)
+	AResourceItem* OwnerAsResourceItem;
 	
 	/**
 	 * @brief Sets owner item variable and checks its valid
@@ -99,4 +111,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	bool CanDepositInto(AResourceContainer* Container);
+
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<EMeasurementUnit> OwnerMeasurementUnit;
 };

@@ -9,6 +9,14 @@
 
 class UHazardData;
 
+UENUM(BlueprintType)
+enum EResourceType
+{
+	RTSolid   UMETA(DisplayName = "Solid"),
+	RTLiquid  UMETA(DisplayName = "Liquid"),
+	RTGas     UMETA(DisplayName = "Gas")
+};
+
 /**
  * Basic data class for resources
  */
@@ -27,7 +35,7 @@ public:
 	/**
 	 * @brief Description of the resource
 	 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta=(MultiLine=true))
 	FText Description;
 
 	/**
@@ -35,6 +43,12 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FText ChemicalFormula;
+
+	/**
+	 * @brief Default state of the resource
+	 */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TEnumAsByte<EResourceType> DefaultState;
 
 	/**
 	 * @brief Icon displayed in UI

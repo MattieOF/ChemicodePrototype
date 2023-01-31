@@ -44,6 +44,16 @@ bool AChemicodeObject::AltInteractWith(AChemicodeObject* OtherObject)
 	return false;
 }
 
+void AChemicodeObject::FireTick(AChemicodeObject* Source)
+{
+	return;
+}
+
+void AChemicodeObject::ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount)
+{
+	return;
+}
+
 void AChemicodeObject::BeginPlay()
 {
 	Super::BeginPlay();

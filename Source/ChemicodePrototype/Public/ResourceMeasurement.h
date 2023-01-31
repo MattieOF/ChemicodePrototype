@@ -29,7 +29,7 @@ struct FResourceMeasurement
 	 * @brief Value of the cost
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Interaction")
-	float Value;
+	double Value;
 
 	FResourceMeasurement()
 	{
