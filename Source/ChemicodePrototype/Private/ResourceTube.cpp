@@ -67,6 +67,7 @@ void AResourceTube::Tick(float DeltaSeconds)
 bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Resource, UResourceData* As,
 	FResourceMeasurement Amount, bool bMultiplyByDeltaTime)
 {
+	// TODO: Prevent transferring more than the source has
 	AChemicodeObject* To = nullptr;
 	if (From == LHSConnection)
 		To = RHSConnection;
@@ -78,7 +79,6 @@ bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Re
 
 	if (bMultiplyByDeltaTime)
 	{
-		UChemicodeStatics::MeasurementAsMinimumUnit(Amount);
 		Amount.Value *= GetWorld()->DeltaTimeSeconds;
 	}
 

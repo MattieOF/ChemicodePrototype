@@ -5,7 +5,6 @@
 #include "ChemicodePawn.h"
 #include "EngineUtils.h"
 #include "Engine/PostProcessVolume.h"
-#include "windows/PxWindowsIntrinsics.h"
 
 AChemicodePawn* UChemicodeStatics::GetChemicodePawn(UObject* World)
 {
@@ -46,25 +45,59 @@ FInteraction UChemicodeStatics::GetInvalidInteraction()
 
 FString UChemicodeStatics::MeasurementAsString(FResourceMeasurement Measurement, bool bShorthand)
 {
-	auto ValueAsString = FString::Printf(TEXT("%.2f"), Measurement.Value);
-	TrimTrailingZeros(ValueAsString);
+	FString UnitString;
+	float Value;
 	
-	switch (Measurement.Unit)
+	if (Measurement.Value < 1000)
 	{
-		// Ternary hell incoming, sorry
-		case MUMilligrams:
-			return FString::Printf(TEXT("%s%s"), *ValueAsString, bShorthand ? TEXT("mg") : (Measurement.Value == 1 ? TEXT(" Milligram") : TEXT(" Milligrams")));
-		case MUGrams:
-			return FString::Printf(TEXT("%s%s"), *ValueAsString, bShorthand ? TEXT("g") : (Measurement.Value == 1 ? TEXT(" Gram") : TEXT(" Grams")));
-		case MUKilograms:
-			return FString::Printf(TEXT("%s%s"), *ValueAsString, bShorthand ? TEXT("kg") : (Measurement.Value == 1 ? TEXT(" Kilogram") : TEXT(" Kilograms")));
-		case MUMillilitres:
-			return FString::Printf(TEXT("%s%s"), *ValueAsString, bShorthand ? TEXT("mL") : (Measurement.Value == 1 ? TEXT(" Millilitre") : TEXT(" Millilitres")));
-		case MULitres:
-			return FString::Printf(TEXT("%s%s"), *ValueAsString, bShorthand ? TEXT("L") : (Measurement.Value == 1 ? TEXT(" Litre") : TEXT(" Litres")));
-		default:
-			return "Invalid";
+		Value = Measurement.Value;
+		switch (Measurement.Unit)
+		{
+			case MUGrams:
+				UnitString = bShorthand ? "mg" : (Value == 1 ? " milligram" : " milligrams");
+				break;
+			case MULitres:
+				UnitString = bShorthand ? "μL" : (Value == 1 ? " microlitre" : " microlitres");
+				break;
+			default:
+				UnitString = "INVALID";
+				break;
+		}
+	} else if (Measurement.Value < 1000000)
+	{
+		Value = static_cast<float>(Measurement.Value) / 1000;
+		switch (Measurement.Unit)
+		{
+			case MUGrams:
+				UnitString = bShorthand ? "g" : (Value == 1 ? " gram" : " grams");
+				break;
+			case MULitres:
+				UnitString = bShorthand ? "mL" : (Value == 1 ? " millilitre" : " millilitres");
+				break;
+			default:
+				UnitString = "INVALID";
+				break;
+		}
+	} else
+	{
+		Value = static_cast<float>(Measurement.Value) / 1000000;
+		switch (Measurement.Unit)
+		{
+			case MUGrams:
+				UnitString = bShorthand ? "kg" : (Value == 1 ? " kilogram" : " kilograms");
+				break;
+			case MULitres:
+				UnitString = bShorthand ? "L" : (Value == 1 ? " litre" : " litres");
+				break;
+			default:
+				UnitString = "INVALID";
+				break;
+		}
 	}
+
+	FString ValueString = FString::Printf(TEXT("%.2f"), Value);
+	TrimTrailingZeros(ValueString);
+	return FString::Printf(TEXT("%ls%ls"), *ValueString, *UnitString);
 }
 
 AActor* UChemicodeStatics::GetFirstActorWithTag(UObject* WorldContext, FName Tag)
@@ -108,45 +141,6 @@ float UChemicodeStatics::GetCurrentInteractionProgress(UObject* WorldContext)
 	} else return 0;
 }
 
-float UChemicodeStatics::MeasurementAsMinimumUnit(const FResourceMeasurement Measurement)
-{
-	if (Measurement.Unit == MULitres || Measurement.Unit == MUMillilitres) // Litres
-	{
-		switch (Measurement.Unit)
-		{
-		case MULitres:
-			return Measurement.Value * 1000;
-		case MUMillilitres:
-			return Measurement.Value;
-		default:
-			return 0;
-		}
-	} else // Grams
-	{
-		switch (Measurement.Unit)
-		{
-		case MUKilograms:
-			return Measurement.Value * 1000000;
-		case MUGrams:
-			return Measurement.Value * 1000;
-		case MUMilligrams:
-			return Measurement.Value;
-		default:
-			return 0;
-		}
-	}
-
-	return 0;
-}
-
-bool UChemicodeStatics::MeasurementIsSameType(FResourceMeasurement A, FResourceMeasurement B)
-{
-	if (A.Unit == MUGrams || A.Unit == MUKilograms || A.Unit == MUMilligrams)
-		return B.Unit == MUGrams || B.Unit == MUKilograms || B.Unit == MUMilligrams;
-	else
-		return B.Unit == MULitres || B.Unit == MUMillilitres;
-}
-
 void UChemicodeStatics::TrimTrailingZeros(FString& String)
 {
 	// Copy-pasted from FString::SanitizeFloat()
@@ -169,132 +163,6 @@ void UChemicodeStatics::TrimTrailingZeros(FString& String)
 	}
 	check(TrimIndex != INDEX_NONE && DecimalSeparatorIndex != INDEX_NONE);
 	String.RemoveAt(TrimIndex, String.Len() - TrimIndex, /*bAllowShrinking*/false);
-}
-
-float UChemicodeStatics::ConvertMeasurementType(float Value, EMeasurementUnit FromUnit, EMeasurementUnit ToUnit)
-{
-	const float Sign = FMath::Sign(Value);
-	
-	switch (FromUnit)
-	{
-	case MUMillilitres:
-		switch (ToUnit)
-		{
-			case MUMillilitres: return Value;
-			case MULitres: return Value / (1000 * Sign);
-			default: return Value;
-		}
-	case MULitres: 
-		switch (ToUnit)
-		{
-			case MUMillilitres: return Value * (1000 * Sign);
-			case MULitres: return Value;
-			default: return Value;
-		}
-	case MUMilligrams: 
-		switch (ToUnit)
-		{
-			case MUMilligrams: return Value;
-			case MUGrams: return Value / (1000 * Sign);
-			case MUKilograms: return Value / (1000000 * Sign);
-			default: return Value;
-		}
-	case MUGrams: 
-		switch (ToUnit)
-		{
-			case MUMilligrams: return Value * (1000 * Sign);
-			case MUGrams: return Value;
-			case MUKilograms: return Value / (1000 * Sign);
-			default: return Value;
-		}
-	case MUKilograms: 
-		switch (ToUnit)
-		{
-			case MUMilligrams: return Value * (1000000 * Sign);
-			case MUGrams: return Value * (1000 * Sign);
-			case MUKilograms: return Value;
-			default: return Value;
-		}
-	default: return Value;
-	}
-}
-
-EMeasurementUnit UChemicodeStatics::MinimumUnit(EMeasurementUnit Unit)
-{
-	switch (Unit)
-	{
-		case MULitres:
-		case MUMillilitres: return MUMillilitres;
-		case MUMilligrams: 
-		case MUGrams: 
-		case MUKilograms:   return MUMilligrams;
-	}
-
-	// TODO: Add none
-	return MUGrams;
-}
-
-float UChemicodeStatics::MeasurementUnitDepositMultiplier(EMeasurementUnit Unit)
-{
-	switch (Unit)
-	{
-		case MUMillilitres: 
-		case MULitres:       return 0.01f;
-		case MUMilligrams: 
-		case MUGrams: 
-		case MUKilograms:    return 1;
-	}
-
-	return 0;
-}
-
-void UChemicodeStatics::UpdateMeasurementUnit(FResourceMeasurement& Measurement)
-{
-	switch (Measurement.Unit)
-	{
-	case MUMilligrams:
-		if (Measurement.Value >= 1000)
-		{
-			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUMilligrams, MUGrams);
-			Measurement.Unit = MUGrams;
-			UpdateMeasurementUnit(Measurement); // Update again if it's still too big
-		}
-	case MUGrams:
-		if (Measurement.Value < 1)
-		{
-			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUGrams, MUMilligrams);
-			Measurement.Unit = MUMilligrams;
-		} else if (Measurement.Value >= 1000)
-		{
-			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUGrams, MUKilograms);
-			Measurement.Unit = MUKilograms;
-		}
-		break;
-	case MUKilograms:
-		if (Measurement.Value < 1)
-		{
-			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUKilograms, MUGrams);
-			Measurement.Unit = MUGrams;
-			UpdateMeasurementUnit(Measurement); // Update again if it's still below 1
-		}
-		break;
-	case MUMillilitres:
-		if (Measurement.Value >= 1000)
-		{
-			Measurement.Value = ConvertMeasurementType(Measurement.Value, MUMillilitres, MULitres);
-			Measurement.Unit = MULitres;
-		}
-		break;
-	case MULitres:
-		if (Measurement.Value < 1)
-		{
-			Measurement.Value = ConvertMeasurementType(Measurement.Value, MULitres, MUMillilitres);
-			Measurement.Unit = MUMillilitres;
-		}
-		break;
-	default:
-		break;
-	}
 }
 
 float UChemicodeStatics::GetZUnderOrigin(AActor* Object)

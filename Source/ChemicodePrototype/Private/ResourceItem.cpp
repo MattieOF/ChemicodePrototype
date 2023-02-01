@@ -91,7 +91,6 @@ void AResourceItem::FireTick(AChemicodeObject* Source)
 void AResourceItem::SetMeasurement(FResourceMeasurement NewMeasurement)
 {
 	Measurement = NewMeasurement;
-	UChemicodeStatics::UpdateMeasurementUnit(Measurement);
 	if (Measurement.Value < 1)
 	{
 		Measurement.Value = 0;

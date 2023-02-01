@@ -2,7 +2,6 @@
 
 #include "ResourceContainer.h"
 
-#include "ChemicodeStatics.h"
 #include "ResourceTube.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
@@ -13,7 +12,7 @@ float AResourceContainer::GetTotalAmount()
 	
 	float Sum = 0;
 	for (const TPair<UResourceData*, FResourceMeasurement>& Res : Contents)
-		Sum += UChemicodeStatics::MeasurementAsMinimumUnit(Res.Value);
+		Sum += Res.Value.Value;
 	bDirty = false;
 	TotalAmount = Sum;
 	return Sum;
@@ -24,12 +23,12 @@ float AResourceContainer::ResourceProportion(UResourceData* Res)
 	if (!HasResource(Res))
 		return 0;
 
-	return UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Res]) / GetTotalAmount();
+	return static_cast<float>(Contents[Res].Value) / GetTotalAmount();
 }
 
 bool AResourceContainer::HasProportionOfResource(UResourceData* Res, float Percentage)
 {
-	return HasResource(Res) && (UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Res]) / GetTotalAmount()) == Percentage;
+	return HasResource(Res) && (static_cast<float>(Contents[Res].Value) / GetTotalAmount()) == Percentage;
 }
 
 bool AResourceContainer::HasProportionOfResourceRange(UResourceData* Res, float PercentageMin, float PercentageMax)
@@ -37,23 +36,21 @@ bool AResourceContainer::HasProportionOfResourceRange(UResourceData* Res, float 
 	if (!HasResource(Res))
 		return false;
 
-	const auto Percentage = UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Res]) / GetTotalAmount();
+	const auto Percentage = static_cast<float>(Contents[Res].Value) / GetTotalAmount();
 	return Percentage >= PercentageMin && Percentage <= PercentageMax;
 }
 
 bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Amount)
 {
-	if (Contents.Num() != 0 && !UChemicodeStatics::MeasurementIsSameType(Contents.begin().Value(), Amount))
-		return false;
+	// if (Contents.Num() != 0 && Contents.begin().Value().Unit != Amount.Unit) // check for same measurement type?
+	// 	return false;
 
 	if (!HasResource(Res))
 		Contents.Add(Res, Amount);
 	else
 		Contents[Res] += Amount;
 
-	UChemicodeStatics::UpdateMeasurementUnit(Contents[Res]);
-
-	if (Contents[Res].Value < 1)
+	if (Contents[Res].Value <= 0)
 		Contents.Remove(Res);
 	
 	bDirty = true;
@@ -68,9 +65,7 @@ bool AResourceContainer::RemoveResource(UResourceData* Res, FResourceMeasurement
 	
 	Contents[Res] -= Amount;
 	
-	UChemicodeStatics::UpdateMeasurementUnit(Contents[Res]);
-	
-	if (Contents[Res].Value < 1)
+	if (Contents[Res].Value <= 0)
 		Contents.Remove(Res);
 		
 	bDirty = true;
@@ -89,13 +84,11 @@ bool AResourceContainer::TransferFromItem(AResourceItem* Source, float Amount)
 	// if (Contents.Num() > 0 && !UChemicodeStatics::MeasurementIsSameType(Contents.begin().Value(), Source->Measurement))
 	// 	return false;
 	
-	const float SourceAmount = UChemicodeStatics::MeasurementAsMinimumUnit(Source->Measurement);
-	if (SourceAmount < Amount)
+	if (Source->Measurement.Value < Amount)
 		return false;
 
-	const EMeasurementUnit SourceUnit = UChemicodeStatics::MinimumUnit(Source->Measurement.Unit);
-	Source->SetMeasurement(FResourceMeasurement(SourceUnit, SourceAmount - Amount));
-	AddResource(Source->Resource, FResourceMeasurement(SourceUnit, Amount));
+	Source->SetMeasurement(FResourceMeasurement(Source->Measurement.Unit, Source->Measurement.Value - Amount));
+	AddResource(Source->Resource, FResourceMeasurement(Source->Measurement.Unit, Amount));
 	return true;
 }
 
@@ -107,14 +100,14 @@ bool AResourceContainer::ReplaceResources(TArray<UResourceData*> ResourcesToRepl
 	{
 		if (HasResource(Item))
 		{
-			Sum += UChemicodeStatics::MeasurementAsMinimumUnit(Contents[Item]);
+			Sum += Contents[Item].Value;
 			Contents.Remove(Item);
 		}
 	}
 
 	if (Sum > 0)
 	{
-		AddResource(NewResource, FResourceMeasurement(UChemicodeStatics::MinimumUnit(NewResource->BaseMeasurement.Unit), Sum));
+		AddResource(NewResource, FResourceMeasurement(NewResource->BaseMeasurement.Unit, Sum));
 		return true;
 	}
 	
@@ -127,8 +120,6 @@ bool AResourceContainer::ReplaceResource(UResourceData* Resource, UResourceData*
 	if (!HasResource(Resource))
 		return false;
 
-	Amount = FResourceMeasurement(UChemicodeStatics::MinimumUnit(Amount.Unit), UChemicodeStatics::MeasurementAsMinimumUnit(Amount));
-	
 	RemoveResource(Resource, Amount);
 
 	Amount.Value *= Scale;

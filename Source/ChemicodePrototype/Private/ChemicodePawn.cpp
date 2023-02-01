@@ -465,7 +465,7 @@ void AChemicodePawn::OnInteract()
 	
 	if (HeldAsRI && HighlightedAsRC && HeldAsRI->GetInteractionComponent()->CanDepositInto(HighlightedAsRC))
 	{
-		HighlightedAsRC->TransferFromItem(HeldAsRI, 50000 * UChemicodeStatics::MeasurementUnitDepositMultiplier(HeldAsRI->Measurement.Unit));
+		HighlightedAsRC->TransferFromItem(HeldAsRI, 50000); // Deposit 50g/50ml
 	}
 	else if (HeldItem != nullptr && HighlightedItem != nullptr)
 	{

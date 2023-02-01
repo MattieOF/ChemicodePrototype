@@ -77,7 +77,7 @@ void UInteractionComponent::BeginPlay()
 	OwnerAsResourceItem = Cast<AResourceItem>(GetOwner());
 
 	if (OwnerAsResourceItem)
-		OwnerMeasurementUnit = UChemicodeStatics::MinimumUnit(OwnerAsResourceItem->Measurement.Unit);
+		OwnerMeasurementUnit = OwnerAsResourceItem->Measurement.Unit;
 }
 
 void UInteractionComponent::BeginLatentInteraction(float Length)

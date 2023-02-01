@@ -112,25 +112,7 @@ public:
 	static float GetCurrentInteractionProgress(UObject* WorldContext);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static float MeasurementAsMinimumUnit(FResourceMeasurement Measurement);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static bool MeasurementIsSameType(FResourceMeasurement A, FResourceMeasurement B);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static void TrimTrailingZeros(FString& String);
-	
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static float ConvertMeasurementType(float Value, EMeasurementUnit FromUnit, EMeasurementUnit ToUnit);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static EMeasurementUnit MinimumUnit(EMeasurementUnit Unit);
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static float MeasurementUnitDepositMultiplier(EMeasurementUnit Unit);
-
-	UFUNCTION(BlueprintCallable)
-	static void UpdateMeasurementUnit(FResourceMeasurement& Measurement);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FORCEINLINE FResourceMeasurement Add(const FResourceMeasurement& A, const FResourceMeasurement& B) { return A + B; }

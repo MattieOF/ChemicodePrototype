@@ -48,7 +48,7 @@ public:
 	float GetTotalAmount();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasResource(UResourceData* Res) { return Contents.Contains(Res); }
+	FORCEINLINE bool HasResource(UResourceData* Res) { return Contents.Contains(Res) && Contents[Res].Value > 0; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float ResourceProportion(UResourceData* Res);

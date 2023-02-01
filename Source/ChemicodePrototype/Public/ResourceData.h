@@ -91,4 +91,10 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FResourceMeasurement BaseMeasurement;
+
+	/**
+	 * @brief Multiplier used on natural destruction of this resource while it burns
+	 */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float BurnMultiplier = 1;
 };

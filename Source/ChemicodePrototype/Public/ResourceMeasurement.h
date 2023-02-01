@@ -6,11 +6,8 @@
 UENUM()
 enum EMeasurementUnit
 {
-	MUMillilitres UMETA(DisplayName = "Millilitres"),
-	MULitres      UMETA(DisplayName = "Litres"),
-	MUMilligrams  UMETA(DisplayName = "Milligrams"),
-	MUGrams       UMETA(DisplayName = "Grams"),
-	MUKilograms   UMETA(DisplayName = "Kilograms")
+	MULitres      UMETA(DisplayName = "Microlitres"),
+	MUGrams       UMETA(DisplayName = "Milligrams"),
 };
 
 // Struct used to define an amount of a material, in volume or weight.
@@ -29,15 +26,15 @@ struct FResourceMeasurement
 	 * @brief Value of the cost
 	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Interaction")
-	double Value;
+	int64 Value;
 
 	FResourceMeasurement()
 	{
-		Unit = MUMillilitres;
+		Unit = MULitres;
 		Value = 0;
 	}
 
-	FResourceMeasurement(TEnumAsByte<EMeasurementUnit> NewUnit, float NewValue)
+	FResourceMeasurement(TEnumAsByte<EMeasurementUnit> NewUnit, int64 NewValue)
 	{
 		Unit = NewUnit;
 		Value = NewValue;

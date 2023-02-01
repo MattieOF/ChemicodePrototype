@@ -109,5 +109,4 @@ void ABunsenBurner::GetActorBounds(bool bOnlyCollidingComponents, FVector& Origi
 	Box += MainMesh->Bounds.GetBox();
 	
 	Box.GetCenterAndExtents(Origin, BoxExtent);
-	auto WorldPos = GetActorLocation();
 }
