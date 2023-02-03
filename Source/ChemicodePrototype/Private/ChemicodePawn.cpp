@@ -1,6 +1,5 @@
 // copyright lolol
 
-
 #include "ChemicodePawn.h"
 
 #include "CameraPlane.h"
@@ -11,6 +10,7 @@
 #include "ResourceContainer.h"
 #include "ResourceData.h"
 #include "ResourceInfoWidget.h"
+#include "ResourceInstance.h"
 #include "ResourceItem.h"
 #include "ResourceItemTooltipWidget.h"
 #include "Blueprint/UserWidget.h"
@@ -405,7 +405,7 @@ void AChemicodePawn::RefreshTooltip()
 	
 	// Set resource to account for changes
 	if (HighlightedAsRI)
-		TooltipWidget->SetResource(HighlightedAsRI->Resource, HighlightedAsRI);
+		TooltipWidget->SetResource(HighlightedAsRI->Resource->Data, HighlightedAsRI);
 	else if (HighlightedAsRC)
 		TooltipWidget->SetContainer(HighlightedAsRC);
 	else if (HighlightedItem)

@@ -2,6 +2,7 @@
 
 #include "ResourceContainer.h"
 
+#include "ResourceInstance.h"
 #include "ResourceTube.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
@@ -84,11 +85,11 @@ bool AResourceContainer::TransferFromItem(AResourceItem* Source, float Amount)
 	// if (Contents.Num() > 0 && !UChemicodeStatics::MeasurementIsSameType(Contents.begin().Value(), Source->Measurement))
 	// 	return false;
 	
-	if (Source->Measurement.Value < Amount)
+	if (Source->Resource->Measurement.Value < Amount)
 		return false;
 
-	Source->SetMeasurement(FResourceMeasurement(Source->Measurement.Unit, Source->Measurement.Value - Amount));
-	AddResource(Source->Resource, FResourceMeasurement(Source->Measurement.Unit, Amount));
+	Source->SetMeasurement(FResourceMeasurement(Source->Resource->Measurement.Unit, Source->Resource->Measurement.Value - Amount));
+	AddResource(Source->Resource->Data, FResourceMeasurement(Source->Resource->Measurement.Unit, Amount));
 	return true;
 }
 

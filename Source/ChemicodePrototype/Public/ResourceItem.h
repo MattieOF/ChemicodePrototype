@@ -12,10 +12,11 @@
 class UOutlineComponent;
 class UInteractionComponent;
 class UResourceData;
+class UResourceInstance;
 class AChemicodePawn;
 
 UENUM(BlueprintType)
-enum EResourceState
+enum EResourceItemState
 {
 	Usable UMETA(DisplayName = "Usable"),
 	HasLid UMETA(DisplayName = "Has Lid"),
@@ -34,16 +35,10 @@ public:
 	AResourceItem();
 
 	/**
-	 * @brief Resource data for this item.
+	 * @brief Resource this item represents
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UResourceData* Resource;
-
-	/**
-	 * @brief State of this resource item
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EResourceState> ResourceState;
+	UPROPERTY(BlueprintReadWrite)
+	UResourceInstance* Resource;
 
 	/**
 	 * @brief If true, Measurement will not be set to Resource.DefaultMeasurement on start
@@ -51,12 +46,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bOverrideDefaultMeasurement = false;
 
-	/**
-	 * @brief Current amount of the resource in this item
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FResourceMeasurement Measurement;
-	
 	/**
 	 * @brief Sets the resource, including setting the mesh and material.
 	 * @param ResourceData Resource to use
@@ -115,6 +104,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMeasurement(FResourceMeasurement NewMeasurement);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EResourceItemState> DefaultItemState = Usable; 
 
 protected:
 	/**

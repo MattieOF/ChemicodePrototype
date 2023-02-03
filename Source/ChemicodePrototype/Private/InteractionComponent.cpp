@@ -4,7 +4,7 @@
 
 #include "ChemicodePawn.h"
 #include "ChemicodeStatics.h"
-#include "ResourceData.h"
+#include "ResourceInstance.h"
 #include "ResourceItem.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
@@ -15,15 +15,15 @@ UInteractionComponent::UInteractionComponent()
 
 void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 {
-	if (ItemInteractions.Contains(Item->Resource))
+	if (ItemInteractions.Contains(Item->Resource->Data))
 	{
-		const FName FuncName = ItemInteractions[Item->Resource];
+		const FName FuncName = ItemInteractions[Item->Resource->Data];
 		const auto Function = FindFunction(FuncName);
 
 		if (!Function)
 		{
 			UE_LOG(LogChemicode, Error, TEXT("Failed to find function %s for interaction with resource %s"),
-			       *FuncName.ToString(), *Item->Resource->Name.ToString());
+			       *FuncName.ToString(), *Item->Resource->Data->Name.ToString());
 			UChemicodeStatics::DebugErrorNotification(
 				GetWorld(), "Non-existent function provided in interaction map",
 				"Check output log for more info");
@@ -33,7 +33,7 @@ void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 		if (Function->NumParms != 2)
 		{
 			UE_LOG(LogChemicode, Error, TEXT("Function %s for interaction with %s is invalid. It has %d parameters, but should have 2: an input of type AResourceItem (the other item in the interaction), and a return of type bool (representing success)."),
-			       *FuncName.ToString(), *Item->Resource->Name.ToString(), Function->NumParms);
+			       *FuncName.ToString(), *Item->Resource->Data->Name.ToString(), Function->NumParms);
 			UChemicodeStatics::DebugErrorNotification(
 				GetWorld(), "Invalid function provided in interaction map",
 				"Incorrect amount of parameters. Check output log for more info");
@@ -64,7 +64,7 @@ void UInteractionComponent::FireTick_Implementation(AChemicodeObject* Source)
 {
 	if (OwnerAsResourceItem)
 	{
-		OwnerAsResourceItem->SetMeasurement(OwnerAsResourceItem->Measurement - FResourceMeasurement(
+		OwnerAsResourceItem->SetMeasurement(OwnerAsResourceItem->Resource->Measurement - FResourceMeasurement(
 			OwnerMeasurementUnit, BurnRate * GetWorld()->DeltaTimeSeconds));
 	}
 }
@@ -77,12 +77,12 @@ void UInteractionComponent::BeginPlay()
 	OwnerAsResourceItem = Cast<AResourceItem>(GetOwner());
 
 	if (OwnerAsResourceItem)
-		OwnerMeasurementUnit = OwnerAsResourceItem->Measurement.Unit;
+		OwnerMeasurementUnit = OwnerAsResourceItem->Resource->Measurement.Unit;
 }
 
 void UInteractionComponent::BeginLatentInteraction(float Length)
 {
-	auto Pawn = UChemicodeStatics::GetChemicodePawn(GetWorld());
+	const auto Pawn = UChemicodeStatics::GetChemicodePawn(GetWorld());
 	Pawn->DisableInteraction();
 
 	FTimerDelegate TimerDelegate;

@@ -7,6 +7,7 @@
 #include "ChemicodeStatics.h"
 #include "InteractionComponent.h"
 #include "ResourceData.h"
+#include "ResourceInstance.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -21,28 +22,25 @@ AResourceItem::AResourceItem()
 void AResourceItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	Player = Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	
-	if (Resource)
-		SetResource(Resource, true, false);
-	
-	if (!InteractionComponent && Resource)
-		SetInteractionType(Resource->DefaultInteraction);
+	Resource = NewObject<UResourceInstance>(this, TEXT("ResourceInstance"));
+	UE_LOG(LogChemicode, Log, TEXT("%i"), DefaultItemState);
+	Resource->ResourceItemState = DefaultItemState;
 }
 
 void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshTooltip, bool bPreserveMeasurement)
 {
-	Resource = ResourceData;
-	Name = Resource->Name;
-	Description = Resource->Description;
+	Resource->Data = ResourceData;
+	Name = ResourceData->Name;
+	Description = ResourceData->Description;
 	MainMesh->SetStaticMesh(ResourceData->Mesh);
 	if (ResourceData->MeshMaterial)
-		MainMesh->SetMaterial(0, Resource->MeshMaterial);
+		MainMesh->SetMaterial(0, ResourceData->MeshMaterial);
 	if (bRefreshTooltip)
 		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
 	if (!bOverrideDefaultMeasurement && !bPreserveMeasurement)
-		Measurement = Resource->BaseMeasurement;
+		Resource->Measurement = ResourceData->BaseMeasurement;
 }
 
 void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewType, bool bRefreshTooltip)
@@ -66,8 +64,10 @@ void AResourceItem::SetResourceAndInteraction(UResourceData* NewResource,
 
 bool AResourceItem::Use() 
 {
+	UE_LOG(LogChemicode, Log, TEXT("Trying to interact!"));
 	if (!InteractionComponent)
 		return false;
+	UE_LOG(LogChemicode, Log, TEXT("Interacting! Comp: %s"), *InteractionComponent->GetName());
 	InteractionComponent->OnInteract();
 	return true;
 }
@@ -90,11 +90,11 @@ void AResourceItem::FireTick(AChemicodeObject* Source)
 
 void AResourceItem::SetMeasurement(FResourceMeasurement NewMeasurement)
 {
-	Measurement = NewMeasurement;
-	if (Measurement.Value < 1)
+	Resource->Measurement = NewMeasurement;
+	if (Resource->Measurement.Value < 1)
 	{
-		Measurement.Value = 0;
-		ResourceState = Empty;
+		Resource->Measurement.Value = 0;
+		Resource->ResourceItemState = Empty;
 	}
 }
 
@@ -104,6 +104,6 @@ void AResourceItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	if (PropertyChangedEvent.Property->GetName() == "Resource" && Resource != nullptr)
-		SetResource(Resource, false, false);
+		SetResource(Resource->Data, false, false);
 }
 #endif
