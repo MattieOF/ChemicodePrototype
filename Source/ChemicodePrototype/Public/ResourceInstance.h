@@ -18,7 +18,7 @@ class CHEMICODEPROTOTYPE_API UResourceInstance : public UObject
 	GENERATED_BODY()
 
 public:
-	void SetResourceData(UResourceData* NewData, bool bOverwriteMeasurement = false);
+	void SetResourceData(UResourceData* NewData, bool bPreserveMeasurements = false, bool bOverwriteMeasurement = false);
 
 	// Not a UFunction as blueprint functions can't return pointers to structs
 	FResourceProperty* GetProperty(FName Name);

@@ -2,11 +2,31 @@
 
 #include "ResourceInstance.h"
 
-void UResourceInstance::SetResourceData(UResourceData* NewData, bool bOverwriteMeasurement)
+#include "ChemicodePrototype/ChemicodePrototype.h"
+
+void UResourceInstance::SetResourceData(UResourceData* NewData, bool bPreserveMeasurements, bool bOverwriteMeasurement)
 {
 	Data = NewData;
 	if (bOverwriteMeasurement)
 		Measurement = Data->BaseMeasurement;
+	if (!bPreserveMeasurements)
+		Properties.Empty();
+	for (auto& Element : Data->DefaultProperties)
+	{
+		switch (Element.PropertyType)
+		{
+		case RPTDecimal:
+			SetDecimalProperty(Element.Name, Element.DecimalValue);
+			break;
+		case RPTString:
+			SetStringProperty(Element.Name, Element.StringValue);
+			break;
+		default:
+			UE_LOG(LogChemicode, Error, TEXT("Invalid resource property type (%i) in Resource %s default properties (property: %s)"),
+				static_cast<int>(Element.PropertyType), *Data->Name.ToString(), *Element.Name.ToString());
+			break;
+		}
+	}
 }
 
 FResourceProperty* UResourceInstance::GetProperty(FName Name)

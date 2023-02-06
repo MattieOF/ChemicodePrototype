@@ -17,6 +17,31 @@ enum EResourceType
 	RTGas     UMETA(DisplayName = "Gas")
 };
 
+// Types related to default properties
+UENUM(BlueprintType)
+enum EResourcePropertyType
+{
+	RPTDecimal  UMETA(DisplayName = "Decimal"),
+	RPTString   UMETA(DisplayName = "String")
+};
+
+USTRUCT()
+struct FDefaultResourceProperty
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FName Name;
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<EResourcePropertyType> PropertyType = RPTDecimal;
+	UPROPERTY(EditAnywhere)
+	double DecimalValue = 0;
+	UPROPERTY(EditAnywhere)
+	FString StringValue = "";
+	UPROPERTY(EditAnywhere)
+	bool bHiddenInUI = false;
+};
+
 /**
  * Basic data class for resources
  */
@@ -97,6 +122,12 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float BurnMultiplier = 1;
+
+	/**
+	 * @brief Array of default properties, used by ResourceInstance during initialisation
+	 */
+	UPROPERTY(EditAnywhere)
+	TArray<FDefaultResourceProperty> DefaultProperties;
 };
 
 USTRUCT(BlueprintType)
