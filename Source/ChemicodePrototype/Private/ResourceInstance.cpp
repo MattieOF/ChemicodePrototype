@@ -11,7 +11,7 @@ void UResourceInstance::SetResourceData(UResourceData* NewData, bool bOverwriteM
 
 FResourceProperty* UResourceInstance::GetProperty(FName Name)
 {
-	for (auto Element : Properties)
+	for (auto& Element : Properties)
 	{
 		if (Element.PropertyName == Name)
 			return &Element;
@@ -26,22 +26,58 @@ void UResourceInstance::SetPropertyHidden(const FName Name, const bool bNewHidde
 		Property->bHiddenInUI = bNewHidden;
 }
 
-void UResourceInstance::SetDoubleProperty(const FName Name, const double Value)
+bool UResourceInstance::SetDecimalProperty(const FName Name, const double Value)
 {
-	
+	const auto Property = GetProperty(Name);
+	if (!Property)
+	{
+		FDecimalResourceProperty DecimalProperty;
+		DecimalProperty.Value = Value;
+		Properties.Add(DecimalProperty);
+		return true;
+	} else
+	{
+		if (FDecimalResourceProperty* DecimalProperty = dynamic_cast<FDecimalResourceProperty*>(Property))
+		{
+			DecimalProperty->Value = Value;
+			return true;
+		} else return false;
+	}
 }
 
-void UResourceInstance::SetStringProperty(FName Name, FString Value)
+bool UResourceInstance::SetStringProperty(FName Name, FString Value)
 {
-	
+	const auto Property = GetProperty(Name);
+	if (!Property)
+	{
+		FStringResourceProperty StringProperty;
+		StringProperty.Value = Value;
+		Properties.Add(StringProperty);
+		return true;
+	} else
+	{
+		if (FStringResourceProperty* StringProperty = dynamic_cast<FStringResourceProperty*>(Property))
+		{
+			StringProperty->Value = Value;
+			return true;
+		} else return false;
+	}
 }
 
-double UResourceInstance::GetDoubleProperty(FName Name, double DefaultValue)
+double UResourceInstance::GetDecimalProperty(FName Name, double DefaultValue)
 {
-	return 0;
+	const auto Property = GetProperty(Name);
+	if (!Property) return DefaultValue;
+	const auto DecimalProperty = dynamic_cast<FDecimalResourceProperty*>(Property);
+	if (!DecimalProperty) return DefaultValue;
+	return DecimalProperty->Value;
 }
 
 FString UResourceInstance::GetStringProperty(FName Name, FString DefaultValue)
 {
-	return "";
+	const auto Property = GetProperty(Name);
+	if (!Property) return DefaultValue;
+	const auto StringProperty = dynamic_cast<FStringResourceProperty*>(Property);
+	if (!StringProperty) return DefaultValue;
+	return StringProperty->Value;
 }
