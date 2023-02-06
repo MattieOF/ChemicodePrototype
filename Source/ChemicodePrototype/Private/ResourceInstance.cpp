@@ -29,12 +29,12 @@ void UResourceInstance::SetResourceData(UResourceData* NewData, bool bPreserveMe
 	}
 }
 
-FResourceProperty* UResourceInstance::GetProperty(FName Name)
+UResourceProperty* UResourceInstance::GetProperty(FName Name)
 {
-	for (auto& Element : Properties)
+	for (auto Element : Properties)
 	{
-		if (Element.PropertyName == Name)
-			return &Element;
+		if (Element->GetFName() == Name)
+			return Element;
 	}
 
 	return nullptr;
@@ -51,13 +51,13 @@ bool UResourceInstance::SetDecimalProperty(const FName Name, const double Value)
 	const auto Property = GetProperty(Name);
 	if (!Property)
 	{
-		FDecimalResourceProperty DecimalProperty;
-		DecimalProperty.Value = Value;
+		UDecimalResourceProperty* DecimalProperty = NewObject<UDecimalResourceProperty>(this, Name);
+		DecimalProperty->Value = Value;
 		Properties.Add(DecimalProperty);
 		return true;
 	} else
 	{
-		if (FDecimalResourceProperty* DecimalProperty = dynamic_cast<FDecimalResourceProperty*>(Property))
+		if (UDecimalResourceProperty* DecimalProperty = Cast<UDecimalResourceProperty>(Property))
 		{
 			DecimalProperty->Value = Value;
 			return true;
@@ -70,13 +70,13 @@ bool UResourceInstance::SetStringProperty(FName Name, FString Value)
 	const auto Property = GetProperty(Name);
 	if (!Property)
 	{
-		FStringResourceProperty StringProperty;
-		StringProperty.Value = Value;
+		UStringResourceProperty* StringProperty = NewObject<UStringResourceProperty>(this, Name);
+		StringProperty->Value = Value;
 		Properties.Add(StringProperty);
 		return true;
 	} else
 	{
-		if (FStringResourceProperty* StringProperty = dynamic_cast<FStringResourceProperty*>(Property))
+		if (UStringResourceProperty* StringProperty = Cast<UStringResourceProperty>(Property))
 		{
 			StringProperty->Value = Value;
 			return true;
@@ -88,7 +88,7 @@ double UResourceInstance::GetDecimalProperty(FName Name, bool& bSuccess, double 
 {
 	const auto Property = GetProperty(Name);
 	if (!Property) return DefaultValue;
-	const auto DecimalProperty = dynamic_cast<FDecimalResourceProperty*>(Property);
+	const auto DecimalProperty = Cast<UDecimalResourceProperty>(Property);
 	if (!DecimalProperty) return DefaultValue;
 	return DecimalProperty->Value;
 }
@@ -97,7 +97,7 @@ FString UResourceInstance::GetStringProperty(FName Name, bool& bSuccess, FString
 {
 	const auto Property = GetProperty(Name);
 	if (!Property) return DefaultValue;
-	const auto StringProperty = dynamic_cast<FStringResourceProperty*>(Property);
+	const auto StringProperty = Cast<UStringResourceProperty>(Property);
 	if (!StringProperty) return DefaultValue;
 	return StringProperty->Value;
 }

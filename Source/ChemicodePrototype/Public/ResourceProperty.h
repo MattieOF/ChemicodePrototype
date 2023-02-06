@@ -2,37 +2,37 @@
 
 #include "ResourceProperty.generated.h"
 
-USTRUCT(BlueprintType)
-struct FResourceProperty
+UCLASS(BlueprintType)
+class UResourceProperty : public UObject
 {
 	GENERATED_BODY()
 
-	virtual ~FResourceProperty() { }
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName PropertyName = TEXT("Property");
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bHiddenInUI = false;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	virtual FString ToString() { return "Invalid"; };
 };
 
-USTRUCT(BlueprintType)
-struct FDecimalResourceProperty : public FResourceProperty
+UCLASS(BlueprintType)
+class UDecimalResourceProperty : public UResourceProperty
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double Value = 0;
 
 	virtual FString ToString() override;
 };
 
-USTRUCT(BlueprintType)
-struct FStringResourceProperty : public FResourceProperty
+UCLASS(BlueprintType)
+class UStringResourceProperty : public UResourceProperty
 {
 	GENERATED_BODY()
-
+	
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Value = "Value";
 

@@ -4,7 +4,7 @@
 
 #include "ChemicodeStatics.h"
 
-FString FDecimalResourceProperty::ToString()
+FString UDecimalResourceProperty::ToString()
 {
 	FString ValueString = FString::Printf(TEXT("%.2f"), Value);
 	UChemicodeStatics::TrimTrailingZeros(ValueString);

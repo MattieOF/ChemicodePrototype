@@ -21,10 +21,8 @@ public:
 	void SetResourceData(UResourceData* NewData, bool bPreserveMeasurements = false, bool bOverwriteMeasurement = false);
 
 	// Not a UFunction as blueprint functions can't return pointers to structs
-	FResourceProperty* GetProperty(FName Name);
-
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE FResourceProperty GetPropertyCopy(FName Name, bool& bSuccess) { const auto Prop = GetProperty(Name); bSuccess = Prop != nullptr; return *Prop; }
+	UResourceProperty* GetProperty(FName Name);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetPropertyHidden(const FName Name, const bool bNewHidden);
@@ -60,5 +58,5 @@ public:
 	 * @brief Array of properties
 	 */
 	UPROPERTY(BlueprintReadWrite)
-	TArray<FResourceProperty> Properties;
+	TArray<UResourceProperty*> Properties;
 };

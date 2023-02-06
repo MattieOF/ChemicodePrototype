@@ -178,9 +178,9 @@ FString UChemicodeStatics::ResourcePropertyToString(UResourceInstance* Resource,
 {
 	if (const auto Property = Resource->GetProperty(Name))
 	{
-		if (const auto DecimalProperty = dynamic_cast<FDecimalResourceProperty*>(Property))
+		if (const auto DecimalProperty = Cast<UDecimalResourceProperty>(Property))
 			return DecimalProperty->ToString();
-		if (const auto StringProperty = dynamic_cast<FStringResourceProperty*>(Property))
+		if (const auto StringProperty = Cast<UStringResourceProperty>(Property))
 			return StringProperty->ToString();
 		return "Invalid Type";
 	}
