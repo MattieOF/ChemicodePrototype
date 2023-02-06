@@ -173,3 +173,17 @@ float UChemicodeStatics::GetZUnderOrigin(AActor* Object)
 	const FVector Difference = Origin - ObjectOrigin;
 	return Extents.Z - Difference.Z;
 }
+
+FString UChemicodeStatics::ResourcePropertyToString(UResourceInstance* Resource, FName Name)
+{
+	if (const auto Property = Resource->GetProperty(Name))
+	{
+		if (const auto DecimalProperty = dynamic_cast<FDecimalResourceProperty*>(Property))
+			return DecimalProperty->ToString();
+		if (const auto StringProperty = dynamic_cast<FStringResourceProperty*>(Property))
+			return StringProperty->ToString();
+		return "Invalid Type";
+	}
+
+	return "Null";
+}

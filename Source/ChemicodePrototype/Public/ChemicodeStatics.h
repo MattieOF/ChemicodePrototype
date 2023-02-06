@@ -123,11 +123,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static float GetZUnderOrigin(AActor* Object);
 
-	static FORCEINLINE FString ResourcePropertyToString(UResourceInstance* Resource, FName Name)
-	{
-		if (const auto Property = Resource->GetProperty(Name))
-			return Property->ToString();
-		else
-			return "Invalid";
-	};
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FString ResourcePropertyToString(UResourceInstance* Resource, FName Name);
 };

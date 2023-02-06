@@ -24,7 +24,7 @@ public:
 	FResourceProperty* GetProperty(FName Name);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE FResourceProperty GetPropertyCopy(FName Name) { return *GetProperty(Name); }
+	FORCEINLINE FResourceProperty GetPropertyCopy(FName Name, bool& bSuccess) { const auto Prop = GetProperty(Name); bSuccess = Prop != nullptr; return *Prop; }
 	
 	UFUNCTION(BlueprintCallable)
 	void SetPropertyHidden(const FName Name, const bool bNewHidden);
