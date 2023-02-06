@@ -84,7 +84,7 @@ bool UResourceInstance::SetStringProperty(FName Name, FString Value)
 	}
 }
 
-double UResourceInstance::GetDecimalProperty(FName Name, double DefaultValue)
+double UResourceInstance::GetDecimalProperty(FName Name, bool& bSuccess, double DefaultValue)
 {
 	const auto Property = GetProperty(Name);
 	if (!Property) return DefaultValue;
@@ -93,7 +93,7 @@ double UResourceInstance::GetDecimalProperty(FName Name, double DefaultValue)
 	return DecimalProperty->Value;
 }
 
-FString UResourceInstance::GetStringProperty(FName Name, FString DefaultValue)
+FString UResourceInstance::GetStringProperty(FName Name, bool& bSuccess, FString DefaultValue)
 {
 	const auto Property = GetProperty(Name);
 	if (!Property) return DefaultValue;
