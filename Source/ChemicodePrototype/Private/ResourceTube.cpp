@@ -75,12 +75,13 @@ bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Re
 		To = LHSConnection;
 	
 	if (To == nullptr)
-		return false;	
+		return false;
 
 	if (bMultiplyByDeltaTime)
 	{
 		Amount.Value *= GetWorld()->DeltaTimeSeconds;
 	}
+	UE_LOG(LogChemicode, Log, TEXT("%lld"), Amount.Value);
 
 	To->ReceiveResource(As, Amount);
 	Amount.Value = -Amount.Value;

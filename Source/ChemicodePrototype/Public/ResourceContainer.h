@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ResourceData.h"
+#include "ResourceInstance.h"
 #include "ResourceItem.h"
 #include "ResourceMeasurement.h"
 #include "ResourceTube.h"
@@ -41,29 +42,46 @@ class CHEMICODEPROTOTYPE_API AResourceContainer : public AChemicodeObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<UResourceData*, FResourceMeasurement> Contents;
+	virtual void BeginPlay() override;
+	
+	UPROPERTY(BlueprintReadWrite)
+	TArray<UResourceInstance*> Contents;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FMeasuredResource> InitialContents;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetTotalAmount();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasResource(UResourceData* Res) { return Contents.Contains(Res) && Contents[Res].Value > 0; }
+	UResourceInstance* GetResource(UResourceData* Res);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float ResourceProportion(UResourceData* Res);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasAmountOfResource(UResourceData* Res, const FResourceMeasurement Amount) { return HasResource(Res) && Contents[Res] == Amount; }
+	FORCEINLINE bool HasAmountOfResource(UResourceData* Res, const FResourceMeasurement Amount)
+	{
+		const auto Resource = GetResource(Res); return Resource != nullptr && Resource->Measurement == Amount;
+	}
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasAtLeastAmountOfResource(UResourceData* Res, const FResourceMeasurement Amount) { return HasResource(Res) && Contents[Res] >= Amount; }
+	FORCEINLINE bool HasAtLeastAmountOfResource(UResourceData* Res, const FResourceMeasurement Amount)
+	{
+		const auto Resource = GetResource(Res); return Resource != nullptr && Resource->Measurement >= Amount;
+	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasAtMostAmountOfResource(UResourceData* Res, const FResourceMeasurement Amount) { return HasResource(Res) && Contents[Res] <= Amount; }
+	FORCEINLINE bool HasAtMostAmountOfResource(UResourceData* Res, const FResourceMeasurement Amount)
+	{
+		const auto Resource = GetResource(Res); return Resource != nullptr && Resource->Measurement <= Amount;
+	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasAmountOfResourceRange(UResourceData* Res, const FResourceMeasurement Min, const FResourceMeasurement Max) { return HasResource(Res) && Contents[Res] >= Min && Contents[Res] <= Max; }
+	FORCEINLINE bool HasAmountOfResourceRange(UResourceData* Res, const FResourceMeasurement Min, const FResourceMeasurement Max)
+	{
+		const auto Resource = GetResource(Res); return Resource != nullptr && Resource->Measurement >= Min && Resource->Measurement <= Max;
+	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool HasProportionOfResource(UResourceData* Res, float Percentage);
@@ -90,9 +108,13 @@ public:
 	bool ReplaceResource(UResourceData* Resource, UResourceData* NewResource, FResourceMeasurement Amount, float Scale = 1);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool SatisfiesCondition(FContainerInteractionCondition Condition) { return HasResource(Condition.Resource)
+	FORCEINLINE bool SatisfiesCondition(FContainerInteractionCondition Condition)
+	{
+		const auto Resource = GetResource(Condition.Resource);
+		return Resource != nullptr
 		&& GetTotalAmount() >= Condition.MinimumAmount
-		&& HasProportionOfResourceRange(Condition.Resource, Condition.MinProportion, Condition.MaxProportion); }
+		&& HasProportionOfResourceRange(Condition.Resource, Condition.MinProportion, Condition.MaxProportion);
+	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool SatisfiesInteraction(FContainerInteraction Interaction);

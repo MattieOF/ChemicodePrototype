@@ -6,53 +6,87 @@
 #include "ResourceTube.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
+void AResourceContainer::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Add resources from initial contents array to container
+	for (auto Element : InitialContents)
+		AddResource(Element.Resource, Element.Amount);
+	InitialContents.Empty(); // Clear it after to save a tiny bit of memory
+}
+
 float AResourceContainer::GetTotalAmount()
 {
 	if (!bDirty)
 		return TotalAmount;
 	
 	float Sum = 0;
-	for (const TPair<UResourceData*, FResourceMeasurement>& Res : Contents)
-		Sum += Res.Value.Value;
+	for (const auto Element : Contents)
+		Sum += Element->Measurement.Value;
 	bDirty = false;
 	TotalAmount = Sum;
 	return Sum;
 }
 
+UResourceInstance* AResourceContainer::GetResource(UResourceData* Res)
+{
+	for(const auto Element : Contents)
+	{
+		if (Element->Data == Res)
+		{
+			if (Element->Measurement.Value > 0)
+				return Element;
+			else
+			{
+				Contents.Remove(Element);
+				return nullptr;	
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 float AResourceContainer::ResourceProportion(UResourceData* Res)
 {
-	if (!HasResource(Res))
-		return 0;
-
-	return static_cast<float>(Contents[Res].Value) / GetTotalAmount();
+	const UResourceInstance* Resource = GetResource(Res);
+	if (!Resource) return 0;
+	
+	return static_cast<float>(Resource->Measurement.Value) / GetTotalAmount();
 }
 
 bool AResourceContainer::HasProportionOfResource(UResourceData* Res, float Percentage)
 {
-	return HasResource(Res) && (static_cast<float>(Contents[Res].Value) / GetTotalAmount()) == Percentage;
+	const UResourceInstance* Resource = GetResource(Res);
+	if (!Resource) return false;
+	return (static_cast<float>(Resource->Measurement.Value) / GetTotalAmount()) == Percentage;
 }
 
 bool AResourceContainer::HasProportionOfResourceRange(UResourceData* Res, float PercentageMin, float PercentageMax)
 {
-	if (!HasResource(Res))
-		return false;
-
-	const auto Percentage = static_cast<float>(Contents[Res].Value) / GetTotalAmount();
+	const UResourceInstance* Resource = GetResource(Res);
+	if (!Resource) return false;
+	const auto Percentage = static_cast<float>(Resource->Measurement.Value) / GetTotalAmount();
 	return Percentage >= PercentageMin && Percentage <= PercentageMax;
 }
 
 bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Amount)
 {
-	// if (Contents.Num() != 0 && Contents.begin().Value().Unit != Amount.Unit) // check for same measurement type?
-	// 	return false;
-
-	if (!HasResource(Res))
-		Contents.Add(Res, Amount);
+	UResourceInstance* Resource = GetResource(Res);
+	
+	if (Resource)
+		Resource->Measurement += Amount;
 	else
-		Contents[Res] += Amount;
+	{
+		Resource = NewObject<UResourceInstance>(this, FName(*Res->Name.ToString()));
+		Resource->SetResourceData(Res);
+		Resource->Measurement = Amount;
+		Contents.Add(Resource);
+	}
 
-	if (Contents[Res].Value <= 0)
-		Contents.Remove(Res);
+	if (Resource->Measurement.Value <= 0)
+		Contents.Remove(Resource);
 	
 	bDirty = true;
 	
@@ -61,13 +95,13 @@ bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Am
 
 bool AResourceContainer::RemoveResource(UResourceData* Res, FResourceMeasurement Amount)
 {
-	if (!HasResource(Res))
-		return false;
+	UResourceInstance* Resource = GetResource(Res);
+	if (!Resource) return false;
 	
-	Contents[Res] -= Amount;
+	Resource->Measurement -= Amount;
 	
-	if (Contents[Res].Value <= 0)
-		Contents.Remove(Res);
+	if (Resource->Measurement.Value <= 0)
+		Contents.Remove(Resource);
 		
 	bDirty = true;
 	
@@ -99,10 +133,10 @@ bool AResourceContainer::ReplaceResources(TArray<UResourceData*> ResourcesToRepl
 
 	for (const auto& Item : ResourcesToReplace)
 	{
-		if (HasResource(Item))
+		if (UResourceInstance* Resource = GetResource(Item))
 		{
-			Sum += Contents[Item].Value;
-			Contents.Remove(Item);
+			Sum += Resource->Measurement.Value;
+			Contents.Remove(Resource);
 		}
 	}
 
@@ -118,8 +152,10 @@ bool AResourceContainer::ReplaceResources(TArray<UResourceData*> ResourcesToRepl
 bool AResourceContainer::ReplaceResource(UResourceData* Resource, UResourceData* NewResource,
 	FResourceMeasurement Amount, float Scale)
 {
-	if (!HasResource(Resource))
-		return false;
+	UE_LOG(LogChemicode, Log, TEXT("Replace %lld of %s with %s (scale %f)"), Amount.Value, *Resource->Name.ToString(), *NewResource->Name.ToString(), Scale);
+	
+	const UResourceInstance* ResourceInst = GetResource(Resource);
+	if (!ResourceInst) return false;
 
 	RemoveResource(Resource, Amount);
 

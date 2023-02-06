@@ -10,17 +10,6 @@
 #include "GameFramework/Actor.h"
 #include "ResourceTube.generated.h"
 
-USTRUCT(BlueprintType)
-struct FMeasuredResource
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	UResourceData* Resource;
-	UPROPERTY(BlueprintReadWrite)
-	FResourceMeasurement Amount;
-};
-
 UCLASS()
 class CHEMICODEPROTOTYPE_API AResourceTube : public AChemicodeObject
 {

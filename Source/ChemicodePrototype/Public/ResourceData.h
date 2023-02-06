@@ -98,3 +98,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float BurnMultiplier = 1;
 };
+
+USTRUCT(BlueprintType)
+struct FMeasuredResource
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UResourceData* Resource;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FResourceMeasurement Amount;
+};

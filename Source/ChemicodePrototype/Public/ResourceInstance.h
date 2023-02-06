@@ -17,6 +17,9 @@ class CHEMICODEPROTOTYPE_API UResourceInstance : public UObject
 	GENERATED_BODY()
 
 public:
+	void SetResourceData(UResourceData* NewData, bool bOverwriteMeasurement = false);
+
+public:
 	/**
 	 * @brief Data for this resource
 	 */
