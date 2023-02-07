@@ -16,6 +16,23 @@ void AResourceContainer::BeginPlay()
 	InitialContents.Empty(); // Clear it after to save a tiny bit of memory
 }
 
+void AResourceContainer::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	// Diffusion
+	if (!ConnectedTube)
+	{
+		for (auto& Element : Contents)
+		{
+			bool Success;
+			const double DiffusionRate = Element->GetDecimalProperty("Diffusion Rate", Success);
+			if (DiffusionRate > 0)
+				Element->Measurement -= FResourceMeasurement(Element->Measurement.Unit, DiffusionRate * DeltaSeconds);
+		}
+	}
+}
+
 float AResourceContainer::GetTotalAmount()
 {
 	if (!bDirty)

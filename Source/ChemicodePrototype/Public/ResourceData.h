@@ -22,7 +22,8 @@ UENUM(BlueprintType)
 enum EResourcePropertyType
 {
 	RPTDecimal  UMETA(DisplayName = "Decimal"),
-	RPTString   UMETA(DisplayName = "String")
+	RPTString   UMETA(DisplayName = "String"),
+	RPTBool     UMETA(DisplayName = "Bool")
 };
 
 USTRUCT()
@@ -38,6 +39,8 @@ struct FDefaultResourceProperty
 	double DecimalValue = 0;
 	UPROPERTY(EditAnywhere)
 	FString StringValue = "";
+	UPROPERTY(EditAnywhere)
+	bool BoolValue = false;
 	UPROPERTY(EditAnywhere)
 	bool bHiddenInUI = false;
 };
@@ -116,12 +119,6 @@ public:
 	 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FResourceMeasurement BaseMeasurement;
-
-	/**
-	 * @brief Multiplier used on natural destruction of this resource while it burns
-	 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float BurnMultiplier = 1;
 
 	/**
 	 * @brief Array of default properties, used by ResourceInstance during initialisation

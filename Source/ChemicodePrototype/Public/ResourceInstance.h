@@ -18,7 +18,7 @@ class CHEMICODEPROTOTYPE_API UResourceInstance : public UObject
 	GENERATED_BODY()
 
 public:
-	void SetResourceData(UResourceData* NewData, bool bPreserveMeasurements = false, bool bOverwriteMeasurement = false);
+	void SetResourceData(UResourceData* NewData, bool bPreserveProperties = false, bool bOverwriteMeasurement = false);
 
 	// Not a UFunction as blueprint functions can't return pointers to structs
 	UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -32,12 +32,14 @@ public:
 	bool SetStringProperty(FName Name, FString Value);
 	UFUNCTION(BlueprintCallable)
 	bool SetBoolProperty(FName Name, bool Value);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	double GetDecimalProperty(FName Name, bool& bSuccess, double DefaultValue = 0);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FString GetStringProperty(FName Name, bool& bSuccess, FString DefaultValue = "Empty");
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetBoolProperty(FName Name, bool& bSuccess, bool DefaultValue = false);
+	
+	void AddDefaultResourceProperty(const FDefaultResourceProperty& Property);
 
 public:
 	/**

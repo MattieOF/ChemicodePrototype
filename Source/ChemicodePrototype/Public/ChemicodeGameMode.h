@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "NotificationPanelWidget.h"
 #include "GameFramework/GameModeBase.h"
+#include "ResourceData.h" // I don't like this include
 #include "ChemicodeGameMode.generated.h"
 
 class ACameraPlane;
@@ -55,6 +56,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bComputerEnabled = false;
 	
+	/**
+	 * @brief Properties to be applied to every resource instance
+	 */
+	UPROPERTY(EditAnywhere)
+	TArray<FDefaultResourceProperty> GlobalDefaultProperties;
+
 private:
 	// Cam plane object references
 	UPROPERTY()

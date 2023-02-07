@@ -2,31 +2,20 @@
 
 #include "ResourceInstance.h"
 
+#include "ChemicodeStatics.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
-void UResourceInstance::SetResourceData(UResourceData* NewData, bool bPreserveMeasurements, bool bOverwriteMeasurement)
+void UResourceInstance::SetResourceData(UResourceData* NewData, bool bPreserveProperties, bool bOverwriteMeasurement)
 {
 	Data = NewData;
 	if (bOverwriteMeasurement)
 		Measurement = Data->BaseMeasurement;
-	if (!bPreserveMeasurements)
+	if (!bPreserveProperties)
 		Properties.Empty();
+	for (auto& Element : UChemicodeStatics::GetChemicodeGameMode(GetWorld())->GlobalDefaultProperties)
+		AddDefaultResourceProperty(Element);
 	for (auto& Element : Data->DefaultProperties)
-	{
-		switch (Element.PropertyType)
-		{
-		case RPTDecimal:
-			SetDecimalProperty(Element.Name, Element.DecimalValue);
-			break;
-		case RPTString:
-			SetStringProperty(Element.Name, Element.StringValue);
-			break;
-		default:
-			UE_LOG(LogChemicode, Error, TEXT("Invalid resource property type (%i) in Resource %s default properties (property: %s)"),
-				static_cast<int>(Element.PropertyType), *Data->Name.ToString(), *Element.Name.ToString());
-			break;
-		}
-	}
+		AddDefaultResourceProperty(Element);
 }
 
 UResourceProperty* UResourceInstance::GetProperty(FName Name)
@@ -161,4 +150,26 @@ bool UResourceInstance::GetBoolProperty(FName Name, bool& bSuccess, bool Default
 	
 	bSuccess = true;
 	return BoolProperty->Value;
+}
+
+void UResourceInstance::AddDefaultResourceProperty(const FDefaultResourceProperty& Property)
+{
+	switch (Property.PropertyType)
+	{
+	case RPTDecimal:
+		SetDecimalProperty(Property.Name, Property.DecimalValue);
+		break;
+	case RPTString:
+		SetStringProperty(Property.Name, Property.StringValue);
+		break;
+	case RPTBool:
+		SetBoolProperty(Property.Name, Property.BoolValue);
+		break;
+	default:
+		UE_LOG(LogChemicode, Error, TEXT("Invalid resource property type (%i) in Resource %s default properties (property: %s)"),
+			static_cast<int>(Property.PropertyType), *Data->Name.ToString(), *Property.Name.ToString());
+		break;
+	}
+
+	SetPropertyHidden(Property.Name, Property.bHiddenInUI);
 }
