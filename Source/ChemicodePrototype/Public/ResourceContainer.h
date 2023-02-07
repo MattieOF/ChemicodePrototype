@@ -135,6 +135,50 @@ public:
 	virtual void FireTick(AChemicodeObject* Source) override;
 
 	virtual void ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount) override;
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetPropertyHiddenOnAll(FName PropertyName, bool bNewHidden)
+	{
+		for (const auto& Element : Contents)
+			Element->SetPropertyHidden(PropertyName, bNewHidden);
+	}
+	
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetDecimalPropertyOnAll(FName PropertyName, double Value)
+	{
+		for (const auto& Element : Contents)
+			Element->SetDecimalProperty(PropertyName, Value);
+	}
+	
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetStringPropertyOnAll(FName PropertyName, FString Value)
+	{
+		for (const auto& Element : Contents)
+			Element->SetStringProperty(PropertyName, Value);
+	}
+	
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetBoolPropertyOnAll(FName PropertyName, bool Value)
+	{
+		for (const auto& Element : Contents)
+			Element->SetBoolProperty(PropertyName, Value);
+	}
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE double GetTotalDecimalPropertyValue(FName PropertyName)
+	{
+		double Sum = 0;
+		bool Success;
+		for (const auto& Element : Contents)
+			Sum += Element->GetDecimalProperty(PropertyName, Success);
+		return Sum;
+	}
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE double GetAverageDecimalPropertyValue(FName PropertyName)
+	{
+		return GetTotalDecimalPropertyValue(PropertyName) / Contents.Num();
+	}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FContainerInteraction> Interactions;
