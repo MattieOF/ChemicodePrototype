@@ -84,20 +84,81 @@ bool UResourceInstance::SetStringProperty(FName Name, FString Value)
 	}
 }
 
+bool UResourceInstance::SetBoolProperty(FName Name, bool Value)
+{
+	const auto Property = GetProperty(Name);
+	if (!Property)
+	{
+		UBoolResourceProperty* BoolProperty = NewObject<UBoolResourceProperty>(this, Name);
+		BoolProperty->Value = Value;
+		Properties.Add(BoolProperty);
+		return true;
+	} else
+	{
+		if (UBoolResourceProperty* BoolProperty = Cast<UBoolResourceProperty>(Property))
+		{
+			BoolProperty->Value = Value;
+			return true;
+		} else return false;
+	}
+}
+
 double UResourceInstance::GetDecimalProperty(FName Name, bool& bSuccess, double DefaultValue)
 {
 	const auto Property = GetProperty(Name);
-	if (!Property) return DefaultValue;
+	if (!Property)
+	{
+		bSuccess = false;
+		return DefaultValue;
+	};
+	
 	const auto DecimalProperty = Cast<UDecimalResourceProperty>(Property);
-	if (!DecimalProperty) return DefaultValue;
+	if (!DecimalProperty)
+	{
+		bSuccess = false;
+		return DefaultValue;
+	};
+	
+	bSuccess = true;
 	return DecimalProperty->Value;
 }
 
 FString UResourceInstance::GetStringProperty(FName Name, bool& bSuccess, FString DefaultValue)
 {
 	const auto Property = GetProperty(Name);
-	if (!Property) return DefaultValue;
+	if (!Property)
+	{
+		bSuccess = false;
+		return DefaultValue;
+	};
+	
 	const auto StringProperty = Cast<UStringResourceProperty>(Property);
-	if (!StringProperty) return DefaultValue;
+	if (!StringProperty)
+	{
+		bSuccess = false;
+		return DefaultValue;
+	};
+	
+	bSuccess = true;
 	return StringProperty->Value;
+}
+
+bool UResourceInstance::GetBoolProperty(FName Name, bool& bSuccess, bool DefaultValue)
+{
+	const auto Property = GetProperty(Name);
+	if (!Property)
+	{
+		bSuccess = false;
+		return DefaultValue;
+	};
+	
+	const auto BoolProperty = Cast<UBoolResourceProperty>(Property);
+	if (!BoolProperty)
+	{
+		bSuccess = false;
+		return DefaultValue;
+	};
+	
+	bSuccess = true;
+	return BoolProperty->Value;
 }

@@ -124,5 +124,9 @@ public:
 	static float GetZUnderOrigin(AActor* Object);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static FString ResourcePropertyToString(UResourceInstance* Resource, FName Name);
+	static FORCEINLINE FString ResourcePropertyToString(UResourceInstance* Resource, FName Name)
+	{
+		if (const auto Property = Resource->GetProperty(Name)) return Property->ToString();
+		return "Invalid Property";
+	}
 };

@@ -31,9 +31,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetStringProperty(FName Name, FString Value);
 	UFUNCTION(BlueprintCallable)
+	bool SetBoolProperty(FName Name, bool Value);
+	UFUNCTION(BlueprintCallable)
 	double GetDecimalProperty(FName Name, bool& bSuccess, double DefaultValue = 0);
 	UFUNCTION(BlueprintCallable)
 	FString GetStringProperty(FName Name, bool& bSuccess, FString DefaultValue = "Empty");
+	UFUNCTION(BlueprintCallable)
+	bool GetBoolProperty(FName Name, bool& bSuccess, bool DefaultValue = false);
 
 public:
 	/**

@@ -41,3 +41,18 @@ public:
 		return Value;
 	};
 };
+
+UCLASS(BlueprintType)
+class UBoolResourceProperty : public UResourceProperty
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Value = false;
+
+	virtual FString ToString() override
+	{
+		return Value ? "Yes" : "No";
+	};
+};
