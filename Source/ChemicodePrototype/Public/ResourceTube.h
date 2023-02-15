@@ -31,7 +31,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool TransferResourceAs(AChemicodeObject* From, UResourceData* Resource, UResourceData* As,
-	                        FResourceMeasurement Amount, bool bMultiplyByDeltaTime = true);
+	                        FResourceMeasurement Amount, float AsScale = 1, bool bMultiplyByDeltaTime = true);
 	
 	UFUNCTION(BlueprintCallable)
 	bool TransferResources(AChemicodeObject* From, TArray<FMeasuredResource> Resources, bool bMultiplyByDeltaTime = true);

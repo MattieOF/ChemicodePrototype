@@ -51,8 +51,13 @@ FResourceMeasurement& FResourceMeasurement::operator-=(const FResourceMeasuremen
 	return *this;
 }
 
+FResourceMeasurement FResourceMeasurement::operator*(const float Multiplier) const
+{
+	return FResourceMeasurement(Unit, Value * Multiplier);
+}
+
 FResourceMeasurement operator+(FResourceMeasurement Left,
-	const FResourceMeasurement& Right)
+                               const FResourceMeasurement& Right)
 {
 	return Left += Right;
 }

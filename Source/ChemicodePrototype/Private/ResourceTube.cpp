@@ -65,7 +65,7 @@ void AResourceTube::Tick(float DeltaSeconds)
 }
 
 bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Resource, UResourceData* As,
-	FResourceMeasurement Amount, bool bMultiplyByDeltaTime)
+                                       FResourceMeasurement Amount, float AsScale, bool bMultiplyByDeltaTime)
 {
 	// TODO: Prevent transferring more than the source has
 	AChemicodeObject* To = nullptr;
@@ -83,7 +83,7 @@ bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Re
 	}
 	UE_LOG(LogChemicode, Log, TEXT("%lld"), Amount.Value);
 
-	To->ReceiveResource(As, Amount);
+	To->ReceiveResource(As, Amount * AsScale);
 	Amount.Value = -Amount.Value;
 	From->ReceiveResource(Resource, Amount);
 	

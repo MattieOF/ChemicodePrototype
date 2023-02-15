@@ -53,6 +53,8 @@ struct FResourceMeasurement
 	FResourceMeasurement& operator+=(const FResourceMeasurement& Other);
 	
 	FResourceMeasurement& operator-=(const FResourceMeasurement& Other);
+	
+	FResourceMeasurement operator*(float Multiplier) const;
 };
 
 FResourceMeasurement operator+(FResourceMeasurement Left, const FResourceMeasurement& Right);
