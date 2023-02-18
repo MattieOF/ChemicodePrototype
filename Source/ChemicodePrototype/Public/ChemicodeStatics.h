@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChemicodeGameInstance.h"
 #include "ChemicodeGameMode.h"
 #include "Notification.h"
 #include "Interaction.h"
 #include "ResourceInstance.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "ScriptRuntime/ChemicodeCommand.h"
 #include "ChemicodeStatics.generated.h"
 
 /**
@@ -27,6 +29,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Actor References", BlueprintPure, meta=(WorldContext="World"))
 	static AChemicodePawn* GetChemicodePawn(UObject* World);
+
+	/**
+	 * @brief Gets the game instance object as a Chemicode Game Instance
+	 * @param World World context object
+	 * @return The game instance object
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Utilities", BlueprintPure, meta=(WorldContext="World"))
+	static FORCEINLINE UChemicodeGameInstance* GetChemicodeGameInstance(UObject* World) { return Cast<UChemicodeGameInstance>(UGameplayStatics::GetGameInstance(World)); }
 
 	/**
 	 * @brief Gets the current gamemode object as a Chemicode gamemode object
@@ -122,6 +132,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static float GetZUnderOrigin(AActor* Object);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FORCEINLINE int GetUObjectCount() { return GUObjectArray.GetObjectArrayNum(); };
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FORCEINLINE FString ResourcePropertyToString(UResourceInstance* Resource, FName Name)
