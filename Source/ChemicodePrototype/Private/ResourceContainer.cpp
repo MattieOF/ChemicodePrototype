@@ -11,7 +11,7 @@ void AResourceContainer::BeginPlay()
 	Super::BeginPlay();
 
 	// Add resources from initial contents array to container
-	for (auto Element : InitialContents)
+	for (const auto& Element : InitialContents)
 		AddResource(Element.Resource, Element.Amount);
 	InitialContents.Empty(); // Clear it after to save a tiny bit of memory
 }
@@ -23,6 +23,7 @@ void AResourceContainer::Tick(float DeltaSeconds)
 	if (bShouldClearConnectedTube)
 	{
 		ConnectedTube->OnItemPickedUp.Remove(TubeConnectionHandle);
+		TubeConnectionHandle.Reset();
 		ConnectedTube = nullptr;
 		bShouldClearConnectedTube = false;
 	}
