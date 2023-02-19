@@ -5,21 +5,6 @@
 #include "ChemicodePrototype/ChemicodePrototype.h"
 #include "ScriptRuntime/ChemicodeBuyCommand.h"
 
-void UChemicodeScript::AddCommand(UChemicodeCommand* Command)
-{
-	Commands.Add(Command);
-}
-
-void UChemicodeScript::RemoveCommand(UChemicodeCommand* Command)
-{
-	Commands.Remove(Command);
-}
-
-void UChemicodeScript::RemoveAllCommands()
-{
-	Commands.Empty();
-}
-
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
 {
 	Archive << Name;

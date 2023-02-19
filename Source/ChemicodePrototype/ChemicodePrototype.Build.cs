@@ -10,7 +10,7 @@ public class ChemicodePrototype : ModuleRules
 		bUseRTTI = false;
 	
 		// UMG used by ResourceInfoWidget
-		PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "CableComponent" });
+		PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "CableComponent", "Slate" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 	}

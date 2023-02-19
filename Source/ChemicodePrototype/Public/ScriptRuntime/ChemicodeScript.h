@@ -22,14 +22,14 @@ public:
 	UPROPERTY()
 	TArray<UChemicodeCommand*> Commands;
 
-	UFUNCTION()
-	FORCEINLINE void AddCommand(UChemicodeCommand* Command);
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void AddCommand(UChemicodeCommand* Command) { Commands.Add(Command); }
 	
-	UFUNCTION()
-	FORCEINLINE void RemoveCommand(UChemicodeCommand* Command);
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void RemoveCommand(UChemicodeCommand* Command) { Commands.Remove(Command); }
 
-	UFUNCTION()
-	FORCEINLINE void RemoveAllCommands();
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void RemoveAllCommands() { Commands.Empty(); }
 
 	void SerialiseScript(FArchive& Ar);
 };

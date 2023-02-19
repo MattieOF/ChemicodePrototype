@@ -8,7 +8,7 @@ public class ChemicodePrototypeEditor : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ChemicodePrototype" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ChemicodePrototype", "Slate" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 	}

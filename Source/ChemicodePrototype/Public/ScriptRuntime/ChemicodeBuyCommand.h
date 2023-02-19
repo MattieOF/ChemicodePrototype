@@ -17,7 +17,7 @@ class CHEMICODEPROTOTYPE_API UChemicodeBuyCommand : public UChemicodeCommand
 public:
 	virtual bool Execute(UChemicodeVM* VM) override;
 	
-	static inline FString Format = "Buy some {Resource:Resource}, and call it {String:VarName}";
+	static inline FString Format = "Buy some {Resource:Resource}, and call it {String:Variable Name}";
 	virtual FString GetFormat() override { return Format; }
 	
 	static inline FString CommandName = "Buy";

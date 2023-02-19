@@ -19,7 +19,7 @@ bool UChemicodeBuyCommand::Execute(UChemicodeVM* VM)
 	// Create resource variable
 	UChemicodeResourceVariable* ResourceVar = NewObject<UChemicodeResourceVariable>(VM);
 	ResourceVar->Value = Resource;
-	VM->Variables.Add(Arguments["VarName"], ResourceVar);
+	VM->Variables.Add(Arguments["Variable Name"], ResourceVar);
 
 	// Add run time
 	VM->RunTime += 0.1f;
