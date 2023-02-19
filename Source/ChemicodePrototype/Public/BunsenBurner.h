@@ -76,4 +76,5 @@ protected:
 	FDelegateHandle TargetItemDelegateHandle;
 	
 	bool bHadGasLastFrame = false;
+	bool bShouldRemoveTarget = false;
 };

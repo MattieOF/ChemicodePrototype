@@ -28,6 +28,14 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if (bShouldRemoveTarget)
+	{
+		TargetItem->OnItemPickedUp.Remove(TargetItemDelegateHandle);
+		TargetItemDelegateHandle.Reset();
+		TargetItem = nullptr;
+		bShouldRemoveTarget = false;
+	}
+
 	const bool bHasGas = HasGas();
 	if (bHasGas != bHadGasLastFrame)
 		OnStateUpdated(State);
@@ -89,8 +97,7 @@ bool ABunsenBurner::InteractWith(AChemicodeObject* OtherObject)
 		TargetItem = OtherObject;
 		TargetItemDelegateHandle = TargetItem->OnItemPickedUp.AddLambda([this]
 		{
-			TargetItem->OnItemPickedUp.Remove(TargetItemDelegateHandle);
-			TargetItem = nullptr;
+			bShouldRemoveTarget = true;
 		});
 		TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
 		UChemicodeStatics::GetChemicodePawn(GetWorld())->DropItem();

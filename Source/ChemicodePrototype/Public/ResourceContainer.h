@@ -196,4 +196,5 @@ private:
 	FDelegateHandle TubeConnectionHandle;
 	float TotalAmount = 0;
 	bool bDirty = true;
+	bool bShouldClearConnectedTube = false;
 };

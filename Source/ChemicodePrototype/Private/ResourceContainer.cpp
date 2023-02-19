@@ -20,6 +20,13 @@ void AResourceContainer::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if (bShouldClearConnectedTube)
+	{
+		ConnectedTube->OnItemPickedUp.Remove(TubeConnectionHandle);
+		ConnectedTube = nullptr;
+		bShouldClearConnectedTube = false;
+	}
+	
 	// Diffusion
 	if (!ConnectedTube)
 	{
@@ -223,8 +230,7 @@ bool AResourceContainer::InteractWith(AChemicodeObject* OtherObject)
 		Tube->ConnectObject(this);
 		TubeConnectionHandle = Tube->OnItemPickedUp.AddLambda([this]
 		{
-			ConnectedTube->OnItemPickedUp.Remove(TubeConnectionHandle);
-			ConnectedTube = nullptr;
+			bShouldClearConnectedTube = true;
 		});
 		ConnectedTube = Tube;
 		return true;
