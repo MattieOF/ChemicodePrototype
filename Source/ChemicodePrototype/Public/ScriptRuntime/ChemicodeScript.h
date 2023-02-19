@@ -10,7 +10,7 @@
 /**
  * Object that holds the data for a script.
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CHEMICODEPROTOTYPE_API UChemicodeScript : public UObject
 {
 	GENERATED_BODY()

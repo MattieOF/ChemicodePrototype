@@ -9,7 +9,7 @@
 /**
  * Command for buying a resource
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CHEMICODEPROTOTYPE_API UChemicodeBuyCommand : public UChemicodeCommand
 {
 	GENERATED_BODY()

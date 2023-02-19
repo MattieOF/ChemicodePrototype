@@ -16,15 +16,15 @@ struct FChemicodeScriptOutput
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	bool Successful = false;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString ErrorMessage = "Successful";
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UChemicodeCommand* ErrorSource = nullptr;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float RunTime = 0;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	AResourceContainer* Result = nullptr;
 };
 
@@ -32,7 +32,7 @@ public:
  * Object that runs a script, keeping notes of all variables and outputs, and reporting any errors, and
  * then deciding if it results in the correct end goal and satisfies all conditions of the assignment. 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CHEMICODEPROTOTYPE_API UChemicodeVM : public UObject
 {
 	GENERATED_BODY()

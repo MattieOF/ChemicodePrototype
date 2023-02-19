@@ -10,7 +10,7 @@
 /**
  * Variable representing a String.
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CHEMICODEPROTOTYPE_API UChemicodeStringVariable : public UChemicodeVariable
 {
 	GENERATED_BODY()

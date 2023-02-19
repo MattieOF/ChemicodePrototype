@@ -8,7 +8,7 @@
 
 class UChemicodeVM;
 
-UENUM()
+UENUM(BlueprintType)
 enum EChemicodeCommandFormatTokenType
 {
 	CCTTText       UMETA(DisplayName = "Text"),
@@ -20,13 +20,13 @@ struct FChemicodeCommandFormatToken
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<EChemicodeCommandFormatTokenType> TokenType;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString TextValue = "";
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString VariableName = "";
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString VariableType = "";
 
 	FChemicodeCommandFormatToken()
@@ -51,13 +51,13 @@ struct FChemicodeCommandFormatToken
 /**
  * Object that represents a command in a script. This is a base class; useful commands inherit from this.
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CHEMICODEPROTOTYPE_API UChemicodeCommand : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TMap<FString, FString> Arguments;
 
 	UFUNCTION()

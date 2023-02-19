@@ -11,7 +11,7 @@
 /**
  * Variable representing some resource data.
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CHEMICODEPROTOTYPE_API UChemicodeResourceVariable : public UChemicodeVariable
 {
 	GENERATED_BODY()

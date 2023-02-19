@@ -9,7 +9,7 @@
 /**
  * Object that represents a variable in a script. This is a base class; useful commands inherit from this.
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CHEMICODEPROTOTYPE_API UChemicodeVariable : public UObject
 {
 	GENERATED_BODY()
