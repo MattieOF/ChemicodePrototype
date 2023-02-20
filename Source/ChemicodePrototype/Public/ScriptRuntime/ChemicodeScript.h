@@ -16,10 +16,10 @@ class CHEMICODEPROTOTYPE_API UChemicodeScript : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FString Name;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TArray<UChemicodeCommand*> Commands;
 
 	UFUNCTION(BlueprintCallable)
