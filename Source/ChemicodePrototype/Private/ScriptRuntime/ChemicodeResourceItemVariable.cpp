@@ -13,8 +13,7 @@ void UChemicodeResourceItemVariable::SerialiseVariable(FArchive& Archive)
 	{
 		FString ResourceName;
 		Archive << ResourceName;
-		Value = NewObject<AResourceItem>(this);
-		Value->SetResource(UChemicodeStatics::GetChemicodeGameInstance(GetWorld())->Resources[ResourceName], false, false);
+		InitialiseWithResource(UChemicodeStatics::GetChemicodeGameInstance(GetWorld())->Resources[ResourceName]);
 	} else
 	{
 		Archive << Value->Resource->Data->Name;
@@ -33,4 +32,11 @@ void UChemicodeResourceItemVariable::SerialiseVariable(FArchive& Archive)
 		for (int i = 0; i < Num; i++)
 			Archive << Value->Resource->Properties[i];
 	}
+}
+
+void UChemicodeResourceItemVariable::InitialiseWithResource(UResourceData* Resource)
+{
+	Value = NewObject<AResourceItem>(this);
+	Value->Initialise(GetWorld()); // Begin play isn't called when creating it like this
+	Value->SetResource(Resource, false, false);
 }

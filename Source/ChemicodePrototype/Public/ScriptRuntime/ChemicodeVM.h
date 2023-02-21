@@ -53,7 +53,10 @@ public:
 	UPROPERTY()
 	UChemicodeCommand*                 ErrorSource = nullptr;
 
+	UFUNCTION(BlueprintCallable)
 	FChemicodeScriptOutput ExecuteScript(UChemicodeScript* Script);
+	UFUNCTION(BlueprintCallable)
 	void ThrowError(FString Message, UChemicodeCommand* Source);
+	UFUNCTION(BlueprintCallable)
 	void ClearError();
 };

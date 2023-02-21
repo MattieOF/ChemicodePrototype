@@ -18,15 +18,20 @@ AResourceItem::AResourceItem()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+void AResourceItem::Initialise(UWorld* World)
+{
+	Player = UChemicodeStatics::GetChemicodePawn(World);
+	GameMode = UChemicodeStatics::GetChemicodeGameMode(World);
+	Resource = NewObject<UResourceInstance>(this, TEXT("ResourceInstance"));
+	Resource->WorldRef = World;
+	Resource->ResourceItemState = DefaultItemState;
+}
+
 // Called when the game starts or when spawned
 void AResourceItem::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Player = Cast<AChemicodePawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	Resource = NewObject<UResourceInstance>(this, TEXT("ResourceInstance"));
-	UE_LOG(LogChemicode, Log, TEXT("%i"), DefaultItemState);
-	Resource->ResourceItemState = DefaultItemState;
+	Initialise(GetWorld());
 }
 
 void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshTooltip, bool bPreserveMeasurement)
@@ -38,7 +43,7 @@ void AResourceItem::SetResource(UResourceData* ResourceData, bool bRefreshToolti
 	if (ResourceData->MeshMaterial)
 		MainMesh->SetMaterial(0, ResourceData->MeshMaterial);
 	if (bRefreshTooltip)
-		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
+		Player->RefreshTooltip();
 	if (!bOverrideDefaultMeasurement && !bPreserveMeasurement)
 		Resource->Measurement = ResourceData->BaseMeasurement;
 }
@@ -50,7 +55,7 @@ void AResourceItem::SetInteractionType(TSubclassOf<UInteractionComponent> NewTyp
 	InteractionComponent = NewObject<UInteractionComponent>(this, NewType);
 	InteractionComponent->RegisterComponent();
 	if (bRefreshTooltip)
-		UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
+		Player->RefreshTooltip();
 }
 
 void AResourceItem::SetResourceAndInteraction(UResourceData* NewResource,
@@ -59,7 +64,7 @@ void AResourceItem::SetResourceAndInteraction(UResourceData* NewResource,
 {
 	SetResource(NewResource, false, bPreserveMeasurement);
 	SetInteractionType(NewInteraction, false);
-	UChemicodeStatics::GetChemicodePawn(GetWorld())->RefreshTooltip();
+	Player->RefreshTooltip();
 }
 
 bool AResourceItem::Use() 

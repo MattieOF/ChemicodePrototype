@@ -12,7 +12,7 @@ void UResourceInstance::SetResourceData(UResourceData* NewData, bool bPreservePr
 		Measurement = Data->BaseMeasurement;
 	if (!bPreserveProperties)
 		Properties.Empty();
-	for (auto& Element : UChemicodeStatics::GetChemicodeGameMode(GetWorld())->GlobalDefaultProperties)
+	for (auto& Element : UChemicodeStatics::GetChemicodeGameMode(WorldRef ? WorldRef : GetWorld())->GlobalDefaultProperties)
 		AddDefaultResourceProperty(Element);
 	for (auto& Element : Data->DefaultProperties)
 		AddDefaultResourceProperty(Element);

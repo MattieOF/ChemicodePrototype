@@ -3,6 +3,7 @@
 #include "ScriptRuntime/ChemicodeBuyCommand.h"
 
 #include "ChemicodeStatics.h"
+#include "ScriptRuntime/ChemicodeResourceItemVariable.h"
 #include "ScriptRuntime/ChemicodeResourceVariable.h"
 #include "ScriptRuntime/ChemicodeVM.h"
 
@@ -16,9 +17,16 @@ bool UChemicodeBuyCommand::Execute(UChemicodeVM* VM)
 		return false;
 	}
 
+	// Check variable name is set
+	if (!Arguments.Contains("Variable Name") || Arguments["Variable Name"].IsEmpty())
+	{
+		VM->ThrowError("Variable name is empty!", this);
+		return false;
+	}
+	
 	// Create resource variable
-	UChemicodeResourceVariable* ResourceVar = NewObject<UChemicodeResourceVariable>(VM);
-	ResourceVar->Value = Resource;
+	UChemicodeResourceItemVariable* ResourceVar = NewObject<UChemicodeResourceItemVariable>(VM);
+	ResourceVar->InitialiseWithResource(Resource);
 	VM->Variables.Add(Arguments["Variable Name"], ResourceVar);
 
 	// Add run time

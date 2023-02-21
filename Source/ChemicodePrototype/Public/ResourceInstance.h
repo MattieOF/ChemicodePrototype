@@ -65,4 +65,7 @@ public:
 	 */
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UResourceProperty*> Properties;
+
+	UPROPERTY()
+	UWorld* WorldRef;
 };

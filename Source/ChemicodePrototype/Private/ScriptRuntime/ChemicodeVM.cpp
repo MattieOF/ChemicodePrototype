@@ -26,6 +26,7 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 			Output.RunTime = RunTime;
 			return Output;
 		}
+		CurrentCommand++;
 	}
 
 	// Return output

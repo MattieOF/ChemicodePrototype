@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "ResourceItem.generated.h"
 
+class AChemicodeGameMode;
 // Forward declarations
 class UOutlineComponent;
 class UInteractionComponent;
@@ -34,6 +35,8 @@ public:
 	 */
 	AResourceItem();
 
+	void Initialise(UWorld* World);
+	
 	/**
 	 * @brief Resource this item represents
 	 */
@@ -106,7 +109,7 @@ public:
 	void SetMeasurement(FResourceMeasurement NewMeasurement);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EResourceItemState> DefaultItemState = Usable; 
+	TEnumAsByte<EResourceItemState> DefaultItemState = Usable;
 
 protected:
 	/**
@@ -126,6 +129,9 @@ protected:
 	 */
 	UPROPERTY()
 	AChemicodePawn* Player;
+
+	UPROPERTY()
+	AChemicodeGameMode* GameMode;
 
 	/**
 	 * @brief Current interaction component of this item. Set it with SetInteractionType().

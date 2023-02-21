@@ -20,4 +20,6 @@ public:
 	AResourceItem* Value;
 
 	virtual void SerialiseVariable(FArchive& Archive) override;
+
+	void InitialiseWithResource(UResourceData* Resource);
 };
