@@ -10,7 +10,6 @@
 #include "ResourceInstance.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "ScriptRuntime/ChemicodeCommand.h"
 #include "ChemicodeStatics.generated.h"
 
 /**

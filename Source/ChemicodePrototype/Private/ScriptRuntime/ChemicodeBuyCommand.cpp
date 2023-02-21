@@ -4,7 +4,6 @@
 
 #include "ChemicodeStatics.h"
 #include "ScriptRuntime/ChemicodeResourceItemVariable.h"
-#include "ScriptRuntime/ChemicodeResourceVariable.h"
 #include "ScriptRuntime/ChemicodeVM.h"
 
 bool UChemicodeBuyCommand::Execute(UChemicodeVM* VM)
