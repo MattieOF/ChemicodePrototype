@@ -100,7 +100,7 @@ bool ABunsenBurner::InteractWith(AChemicodeObject* OtherObject)
 			bShouldRemoveTarget = true;
 		});
 		TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
-		UChemicodeStatics::GetChemicodePawn(GetWorld())->DropItem();
+		UChemicodeStatics::GetChemicodePawn(WorldRef ? WorldRef : GetWorld())->DropItem();
 		return true;
 	}
 

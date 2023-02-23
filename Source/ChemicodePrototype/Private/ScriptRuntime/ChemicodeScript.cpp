@@ -3,6 +3,9 @@
 #include "ScriptRuntime/ChemicodeScript.h"
 
 #include "ChemicodePrototype/ChemicodePrototype.h"
+
+// Command includes
+#include "ScriptRuntime/Commands/ChemicodeBunsenBurnerCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeBuyCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeSubmitCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
@@ -33,6 +36,8 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 				NewCommand = NewObject<UChemicodeSubmitCommand>(this);
 			else if (Type == "Transfer")
 				NewCommand = NewObject<UChemicodeTransferCommand>(this);
+			else if (Type == "GetBunsenBurner")
+				NewCommand = NewObject<UChemicodeBunsenBurnerCommand>(this);
 			else
 			{
 				UE_LOG(LogChemicode, Error, TEXT("Invalid command type %s in script %s!"), *Type, *Name);

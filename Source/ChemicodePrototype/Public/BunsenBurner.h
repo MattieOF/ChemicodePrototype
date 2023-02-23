@@ -54,6 +54,9 @@ public:
 
 	virtual void GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent, bool bIncludeFromChildActors) const override;
 
+	UPROPERTY()
+	UWorld* WorldRef = nullptr;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(MakeEditWidget=true))
 	FVector ItemOffset;

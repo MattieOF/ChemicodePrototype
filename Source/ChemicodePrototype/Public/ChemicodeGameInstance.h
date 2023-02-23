@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BunsenBurner.h"
 #include "Engine/GameInstance.h"
 #include "ChemicodeGameInstance.generated.h"
 
@@ -23,6 +24,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AResourceContainer> TestTubeClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ABunsenBurner> BunsenBurnerClass;
 	
 	virtual void Init() override;
 };
