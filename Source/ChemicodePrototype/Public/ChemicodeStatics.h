@@ -141,4 +141,7 @@ public:
 		if (const auto Property = Resource->GetProperty(Name)) return Property->ToString();
 		return "Invalid Property";
 	}
+
+	UFUNCTION(BlueprintCallable)
+	static FORCEINLINE void ForceFullPurgeGC() { GEngine->ForceGarbageCollection(true); }
 };

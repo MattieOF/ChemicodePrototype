@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ChemicodeCommand.h"
+#include "Commands/ChemicodeCommand.h"
 #include "UObject/Object.h"
 #include "ChemicodeScript.generated.h"
 

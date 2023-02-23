@@ -9,7 +9,11 @@
 void AResourceContainer::BeginPlay()
 {
 	Super::BeginPlay();
+	Initialise();
+}
 
+void AResourceContainer::Initialise()
+{
 	// Add resources from initial contents array to container
 	for (const auto& Element : InitialContents)
 		AddResource(Element.Resource, Element.Amount);

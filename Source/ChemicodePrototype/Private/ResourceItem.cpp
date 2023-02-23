@@ -9,7 +9,6 @@
 #include "ResourceData.h"
 #include "ResourceInstance.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AResourceItem::AResourceItem()

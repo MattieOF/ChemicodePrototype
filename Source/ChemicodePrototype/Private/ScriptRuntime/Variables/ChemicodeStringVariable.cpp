@@ -1,6 +1,6 @@
 ﻿// copyright lolol
 
-#include "ScriptRuntime/ChemicodeStringVariable.h"
+#include "ScriptRuntime/Variables/ChemicodeStringVariable.h"
 
 void UChemicodeStringVariable::SerialiseVariable(FArchive& Archive)
 {

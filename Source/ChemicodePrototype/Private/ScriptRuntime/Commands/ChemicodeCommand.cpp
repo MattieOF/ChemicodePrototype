@@ -1,6 +1,6 @@
 ﻿// copyright lolol
 
-#include "ScriptRuntime/ChemicodeCommand.h"
+#include "ScriptRuntime/Commands/ChemicodeCommand.h"
 #include "ScriptRuntime/ChemicodeVM.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
@@ -16,6 +16,26 @@ void UChemicodeCommand::SerialiseCommand(FArchive& Archive)
 		Archive << CommandName;
 
 	Archive << Arguments;
+}
+
+bool UChemicodeCommand::CheckVariableNameIsValid(UChemicodeVM* VM, FString Key)
+{
+	// Check it exists and is not empty
+	if (!Arguments.Contains(Key) || Arguments[Key].IsEmpty())
+	{
+		VM->ThrowError("Variable name is empty!", this);
+		return false;
+	}
+
+	// Check VM doesn't already have variable with that name
+	// TODO: Maybe throw a warning instead
+	if (VM->Variables.Contains(Arguments[Key]))
+	{
+		VM->ThrowError(FString::Printf(TEXT("Variable with name %ls already exists!"), *Arguments[Key]), this);
+		return false;
+	}
+
+	return true;
 }
 
 TArray<FChemicodeCommandFormatToken> UChemicodeCommand::TokeniseFormat(FString FormatString)

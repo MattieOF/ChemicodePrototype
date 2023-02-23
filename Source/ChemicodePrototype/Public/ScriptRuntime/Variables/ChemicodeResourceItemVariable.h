@@ -21,5 +21,6 @@ public:
 
 	virtual void SerialiseVariable(FArchive& Archive) override;
 
+	UFUNCTION(BlueprintCallable)
 	void InitialiseWithResource(UResourceData* Resource);
 };

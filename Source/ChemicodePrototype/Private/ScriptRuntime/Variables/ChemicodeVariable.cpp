@@ -1,6 +1,6 @@
 ﻿// copyright lolol
 
-#include "ScriptRuntime/ChemicodeVariable.h"
+#include "ScriptRuntime/Variables/ChemicodeVariable.h"
 
 #include "ChemicodePrototype/ChemicodePrototype.h"
 

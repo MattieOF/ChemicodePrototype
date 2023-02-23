@@ -44,6 +44,8 @@ class CHEMICODEPROTOTYPE_API AResourceContainer : public AChemicodeObject
 public:
 	virtual void BeginPlay() override;
 
+	void Initialise();
+
 	virtual void Tick(float DeltaSeconds) override;
 	
 	UPROPERTY(BlueprintReadWrite)

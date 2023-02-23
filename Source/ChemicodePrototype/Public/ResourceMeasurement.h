@@ -56,6 +56,8 @@ struct FResourceMeasurement
 	
 	FResourceMeasurement operator*(float Multiplier) const;
 };
+	
+FArchive operator<<(FArchive& LHS, FResourceMeasurement& RHS);
 
 FResourceMeasurement operator+(FResourceMeasurement Left, const FResourceMeasurement& Right);
 	

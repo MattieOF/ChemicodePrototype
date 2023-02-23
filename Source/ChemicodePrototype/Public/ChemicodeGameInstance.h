@@ -6,7 +6,9 @@
 #include "Engine/GameInstance.h"
 #include "ChemicodeGameInstance.generated.h"
 
+class AResourceContainer;
 class UResourceData;
+
 /**
  * Game instance for Chemicode.
  */
@@ -18,6 +20,9 @@ class CHEMICODEPROTOTYPE_API UChemicodeGameInstance : public UGameInstance
 public:
 	UPROPERTY(BlueprintReadOnly)
 	TMap<FString, UResourceData*> Resources;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AResourceContainer> TestTubeClass;
 	
 	virtual void Init() override;
 };

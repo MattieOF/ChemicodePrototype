@@ -56,6 +56,13 @@ FResourceMeasurement FResourceMeasurement::operator*(const float Multiplier) con
 	return FResourceMeasurement(Unit, Value * Multiplier);
 }
 
+FArchive operator<<(FArchive& LHS, FResourceMeasurement& RHS)
+{
+	LHS << RHS.Unit;
+	LHS << RHS.Value;
+	return LHS;
+}
+
 FResourceMeasurement operator+(FResourceMeasurement Left,
                                const FResourceMeasurement& Right)
 {

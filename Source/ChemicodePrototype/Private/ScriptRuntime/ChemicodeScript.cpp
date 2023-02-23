@@ -3,7 +3,8 @@
 #include "ScriptRuntime/ChemicodeScript.h"
 
 #include "ChemicodePrototype/ChemicodePrototype.h"
-#include "ScriptRuntime/ChemicodeBuyCommand.h"
+#include "ScriptRuntime/Commands/ChemicodeBuyCommand.h"
+#include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
 
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
 {
@@ -24,7 +25,12 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 			if (Type == "Buy")
 			{
 				NewCommand = NewObject<UChemicodeBuyCommand>(this);
-			} else
+			}
+			else if (Type == "GetTestTube")
+			{
+				NewCommand = NewObject<UChemicodeTestTubeCommand>(this);
+			}
+			else
 			{
 				UE_LOG(LogChemicode, Error, TEXT("Invalid command type %s in script %s!"), *Type, *Name);
 				Archive.SetCriticalError();

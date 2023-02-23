@@ -1,6 +1,6 @@
 ﻿// copyright lolol
 
-#include "ScriptRuntime/ChemicodeResourceItemVariable.h"
+#include "ScriptRuntime/Variables/ChemicodeResourceItemVariable.h"
 
 #include "ChemicodeStatics.h"
 #include "ResourceInstance.h"

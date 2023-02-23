@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ChemicodeCommand.h"
+#include "Commands/ChemicodeCommand.h"
 #include "ChemicodeScript.h"
-#include "ChemicodeVariable.h"
+#include "Variables/ChemicodeVariable.h"
 #include "ResourceContainer.h"
 #include "UObject/Object.h"
 #include "ChemicodeVM.generated.h"

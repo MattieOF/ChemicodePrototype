@@ -73,6 +73,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	virtual FString GetCommandName() { return CommandName; }
 
+	UFUNCTION(BlueprintCallable)
+	virtual bool CheckVariableNameIsValid(UChemicodeVM* VM, FString Name);
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static TArray<FChemicodeCommandFormatToken> TokeniseFormat(FString FormatString);
 };
