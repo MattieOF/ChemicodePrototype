@@ -38,6 +38,34 @@ bool UChemicodeCommand::CheckVariableNameIsValid(UChemicodeVM* VM, FString Key)
 	return true;
 }
 
+bool UChemicodeCommand::CheckInputVariableNameIsValid(UChemicodeVM* VM, FString Name,
+	TSubclassOf<UChemicodeVariable> RequiredClass)
+{
+	// Check argument exists and is not empty
+	if (!Arguments.Contains(Name) || Arguments[Name].IsEmpty())
+	{
+		VM->ThrowError(FString::Printf(TEXT("Argument %s is undefined or empty!"), *Name), this);
+		return false;
+	}
+	
+	// Check it exists and is not empty
+	if (!VM->Variables.Contains(Arguments[Name]))
+	{
+		VM->ThrowError(FString::Printf(TEXT("There is no variable called %s!"), *Arguments[Name]), this);
+		return false;
+	}
+
+	// Check the variable types match
+	if (!VM->Variables[Arguments[Name]]->IsA(RequiredClass))
+	{
+		VM->ThrowError(FString::Printf(TEXT("Variable %s should be a %s, but is a %s!"), *Arguments[Name],
+			*RequiredClass.GetDefaultObject()->GetTypeName(), *VM->Variables[Arguments[Name]]->GetTypeName()), this);
+		return false;
+	}
+
+	return true;
+}
+
 TArray<FChemicodeCommandFormatToken> UChemicodeCommand::TokeniseFormat(FString FormatString)
 {
 	TArray<FChemicodeCommandFormatToken> Output;

@@ -33,7 +33,7 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 	FChemicodeScriptOutput Output;
 	Output.Successful = true;
 	Output.RunTime = RunTime;
-	// TODO: Output.Result =
+	Output.Result = Submission;
 	return Output;
 }
 

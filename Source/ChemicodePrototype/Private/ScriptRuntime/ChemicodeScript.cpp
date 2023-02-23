@@ -4,6 +4,7 @@
 
 #include "ChemicodePrototype/ChemicodePrototype.h"
 #include "ScriptRuntime/Commands/ChemicodeBuyCommand.h"
+#include "ScriptRuntime/Commands/ChemicodeSubmitCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
 
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
@@ -29,6 +30,10 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 			else if (Type == "GetTestTube")
 			{
 				NewCommand = NewObject<UChemicodeTestTubeCommand>(this);
+			}
+			else if (Type == "SetSubmission")
+			{
+				NewCommand = NewObject<UChemicodeSubmitCommand>(this);
 			}
 			else
 			{

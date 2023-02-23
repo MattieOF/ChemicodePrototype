@@ -21,4 +21,7 @@ public:
 	UResourceData* Value;
 	
 	virtual void SerialiseVariable(FArchive& Archive) override;
+	
+	static inline FString VariableTypeName = "Resource Type Reference";
+	virtual FString GetTypeName() override { return VariableTypeName; }
 };

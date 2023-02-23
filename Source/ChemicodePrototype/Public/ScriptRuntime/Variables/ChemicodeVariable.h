@@ -16,4 +16,8 @@ class CHEMICODEPROTOTYPE_API UChemicodeVariable : public UObject
 
 public:
 	virtual void SerialiseVariable(FArchive& Archive);
+
+	static inline FString VariableTypeName = "Base";
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	virtual FString GetTypeName() { return VariableTypeName; }
 };

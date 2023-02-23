@@ -8,6 +8,7 @@
 #include "Variables/ChemicodeVariable.h"
 #include "ResourceContainer.h"
 #include "UObject/Object.h"
+#include "Variables/ChemicodeTestTubeVariable.h"
 #include "ChemicodeVM.generated.h"
 
 USTRUCT(BlueprintType)
@@ -52,6 +53,8 @@ public:
 	FString                            ErrorMessage = "Successful";
 	UPROPERTY()
 	UChemicodeCommand*                 ErrorSource = nullptr;
+	UPROPERTY(BlueprintReadWrite)
+	AResourceContainer*                Submission = nullptr;
 
 	UFUNCTION(BlueprintCallable)
 	FChemicodeScriptOutput ExecuteScript(UChemicodeScript* Script);

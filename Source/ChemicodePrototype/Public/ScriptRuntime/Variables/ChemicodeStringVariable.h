@@ -20,4 +20,7 @@ public:
 	FString Value;
 
 	virtual void SerialiseVariable(FArchive& Archive) override;
+
+	static inline FString VariableTypeName = "String";
+	virtual FString GetTypeName() override { return VariableTypeName; }
 };

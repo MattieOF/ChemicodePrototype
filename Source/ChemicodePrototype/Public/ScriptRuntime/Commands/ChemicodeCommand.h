@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScriptRuntime/Variables/ChemicodeVariable.h"
 #include "UObject/Object.h"
 #include "ChemicodeCommand.generated.h"
 
@@ -75,6 +76,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool CheckVariableNameIsValid(UChemicodeVM* VM, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool CheckInputVariableNameIsValid(UChemicodeVM* VM, FString Name, TSubclassOf<UChemicodeVariable> RequiredClass);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static TArray<FChemicodeCommandFormatToken> TokeniseFormat(FString FormatString);
