@@ -47,5 +47,6 @@ void UChemicodeTestTubeVariable::InitialiseWithNew()
 	const UChemicodeGameInstance* GameInstance = UChemicodeStatics::GetChemicodeGameInstance(GetWorld());
 	check(GameInstance->TestTubeClass != nullptr);
 	Value = NewObject<AResourceContainer>(this, GameInstance->TestTubeClass);
+	Value->WorldRef = GetWorld();
 	Value->Initialise();
 }

@@ -6,6 +6,7 @@
 #include "ScriptRuntime/Commands/ChemicodeBuyCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeSubmitCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
+#include "ScriptRuntime/Commands/ChemicodeTransferCommand.h"
 
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
 {
@@ -23,18 +24,15 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 			FString Type;
 			Archive << Type;
 			UChemicodeCommand* NewCommand;
+			
 			if (Type == "Buy")
-			{
 				NewCommand = NewObject<UChemicodeBuyCommand>(this);
-			}
 			else if (Type == "GetTestTube")
-			{
 				NewCommand = NewObject<UChemicodeTestTubeCommand>(this);
-			}
 			else if (Type == "SetSubmission")
-			{
 				NewCommand = NewObject<UChemicodeSubmitCommand>(this);
-			}
+			else if (Type == "Transfer")
+				NewCommand = NewObject<UChemicodeTransferCommand>(this);
 			else
 			{
 				UE_LOG(LogChemicode, Error, TEXT("Invalid command type %s in script %s!"), *Type, *Name);

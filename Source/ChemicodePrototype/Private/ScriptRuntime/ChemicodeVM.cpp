@@ -15,6 +15,7 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 	// Iterate through commands
 	for (UChemicodeCommand* Command : CurrentScript->Commands)
 	{
+		// Execute command
 		Command->Execute(this);
 		if (HasError)
 		{
@@ -27,6 +28,15 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 			return Output;
 		}
 		CurrentCommand++;
+		
+		// Tick variables
+		const float DeltaTime = RunTime - PrevRunTime;
+		for (const TTuple<FString, UChemicodeVariable*>& Variable : Variables)
+		{
+			Variable.Value->Tick(DeltaTime);
+		}
+
+		PrevRunTime = RunTime;
 	}
 
 	// Return output

@@ -109,6 +109,7 @@ bool AResourceContainer::AddResource(UResourceData* Res, FResourceMeasurement Am
 	else
 	{
 		Resource = NewObject<UResourceInstance>(this, FName(*Res->Name.ToString()));
+		Resource->WorldRef = WorldRef ? WorldRef : GetWorld();
 		Resource->SetResourceData(Res);
 		Resource->Measurement = Amount;
 		Contents.Add(Resource);

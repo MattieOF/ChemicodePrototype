@@ -48,6 +48,8 @@ public:
 	UPROPERTY()
 	double                             RunTime = 0;
 	UPROPERTY()
+	double                             PrevRunTime = 0;
+	UPROPERTY()
 	bool                               HasError = false;
 	UPROPERTY()
 	FString                            ErrorMessage = "Successful";

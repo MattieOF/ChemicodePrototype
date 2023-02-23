@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FMeasuredResource> InitialContents;
 
+	UPROPERTY()
+	UWorld* WorldRef = nullptr;
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetTotalAmount();
 
