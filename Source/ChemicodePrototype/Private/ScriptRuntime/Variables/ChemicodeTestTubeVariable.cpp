@@ -42,6 +42,11 @@ void UChemicodeTestTubeVariable::SerialiseVariable(FArchive& Archive)
 	}
 }
 
+void UChemicodeTestTubeVariable::Tick(float DeltaTime)
+{
+	Value->Tick(DeltaTime);
+}
+
 void UChemicodeTestTubeVariable::InitialiseWithNew()
 {
 	const UChemicodeGameInstance* GameInstance = UChemicodeStatics::GetChemicodeGameInstance(GetWorld());

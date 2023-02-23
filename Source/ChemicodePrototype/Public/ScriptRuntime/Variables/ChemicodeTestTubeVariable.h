@@ -21,6 +21,8 @@ public:
 	
 	virtual void SerialiseVariable(FArchive& Archive) override;
 
+	virtual void Tick(float DeltaTime) override;
+
 	static inline FString VariableTypeName = "Test Tube Reference";
 	virtual FString GetTypeName() override { return VariableTypeName; }
 	

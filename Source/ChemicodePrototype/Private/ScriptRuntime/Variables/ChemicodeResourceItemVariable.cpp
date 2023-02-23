@@ -34,6 +34,11 @@ void UChemicodeResourceItemVariable::SerialiseVariable(FArchive& Archive)
 	}
 }
 
+void UChemicodeResourceItemVariable::Tick(float DeltaTime)
+{
+	Value->Tick(DeltaTime);
+}
+
 void UChemicodeResourceItemVariable::InitialiseWithResource(UResourceData* Resource)
 {
 	Value = NewObject<AResourceItem>(this);
