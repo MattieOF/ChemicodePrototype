@@ -22,4 +22,7 @@ public:
 	
 	static inline FString CommandName = "Transfer";
 	virtual FString GetCommandName() override { return CommandName; }
+
+	static inline FLinearColor BackgroundColour = FLinearColor(1.0, 0.12, 0.12, 1.0);
+	virtual FLinearColor GetBackgroundColour() override { return BackgroundColour; }
 };

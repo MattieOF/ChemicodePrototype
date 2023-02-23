@@ -22,4 +22,7 @@ public:
 	
 	static inline FString CommandName = "SetSubmission";
 	virtual FString GetCommandName() override { return CommandName; }
+
+	static inline FLinearColor BackgroundColour = FLinearColor(0.9, 0.9, 0.9, 1.0);
+	virtual FLinearColor GetBackgroundColour() override { return BackgroundColour; }
 };

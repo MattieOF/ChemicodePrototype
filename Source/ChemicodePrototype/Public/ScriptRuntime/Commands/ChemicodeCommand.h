@@ -74,6 +74,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	virtual FString GetCommandName() { return CommandName; }
 
+	static inline FLinearColor BackgroundColour = FLinearColor(0, 0.35, 1.0, 1.0);
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	virtual FLinearColor GetBackgroundColour() { return BackgroundColour; }
+
 	UFUNCTION(BlueprintCallable)
 	virtual bool CheckVariableNameIsValid(UChemicodeVM* VM, FString Name);
 
