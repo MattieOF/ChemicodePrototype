@@ -29,10 +29,7 @@ AResourceTube::AResourceTube()
 
 	OnItemPickedUp.AddLambda([this]
 	{
-		LHSConnection = nullptr;
-		RHSConnection = nullptr;
-		Cable->bAttachEnd = false;
-		Cable->EndLocation = FVector(100, 0, 10);
+		DisconnectObjects();
 	});
 
 	OnItemPlaced.AddLambda([this]
@@ -50,6 +47,10 @@ void AResourceTube::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	// -- WORLD EFFECTS ONLY BELOW HERE --
+	if (bSimulated)
+		return;
+	
 	// Get start and end locations
 	TArray<FVector> Locations;
 	Cable->GetCableParticleLocations(Locations);
@@ -79,7 +80,7 @@ bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Re
 
 	if (bMultiplyByDeltaTime)
 	{
-		Amount.Value *= GetWorld()->DeltaTimeSeconds;
+		Amount.Value *= (WorldRef ? WorldRef : GetWorld())->DeltaTimeSeconds;
 	}
 	UE_LOG(LogChemicode, Log, TEXT("%lld"), Amount.Value);
 
@@ -107,19 +108,33 @@ bool AResourceTube::ConnectObject(AChemicodeObject* Object)
 	if (!LHSConnection)
 	{
 		LHSConnection = Object;
-		Cable->SetAttachEndToComponent(Object->GetMainMesh(), "TubeConnection");
-		Cable->bAttachEnd = true;
-		Cable->EndLocation = FVector::ZeroVector;
+		if (!bSimulated)
+		{
+			Cable->SetAttachEndToComponent(Object->GetMainMesh(), "TubeConnection");
+			Cable->bAttachEnd = true;
+			Cable->EndLocation = FVector::ZeroVector;
+		}
 		return true;
 	} else if (!RHSConnection)
 	{
 		RHSConnection = Object;
-		SetActorLocation(Object->GetMainMesh()->GetSocketLocation("TubeConnection"));
-		UChemicodeStatics::GetChemicodePawn(GetWorld())->DropItem();
+		if (!bSimulated)
+		{
+			SetActorLocation(Object->GetMainMesh()->GetSocketLocation("TubeConnection"));
+			UChemicodeStatics::GetChemicodePawn(WorldRef ? WorldRef : GetWorld())->DropItem();
+		}
 		return true;
 	}
 	
 	return false;
+}
+
+void AResourceTube::DisconnectObjects()
+{
+	LHSConnection = nullptr;
+	RHSConnection = nullptr;
+	Cable->bAttachEnd = false;
+	Cable->EndLocation = FVector(100, 0, 10);
 }
 
 void AResourceTube::GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent,

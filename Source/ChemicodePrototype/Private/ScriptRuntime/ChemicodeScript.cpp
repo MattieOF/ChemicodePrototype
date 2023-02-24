@@ -3,6 +3,7 @@
 #include "ScriptRuntime/ChemicodeScript.h"
 
 #include "ChemicodePrototype/ChemicodePrototype.h"
+#include "Serialization/BufferArchive.h"
 
 // Command includes
 #include "ScriptRuntime/Commands/BunsenBurnerStateCommand.h"
@@ -11,8 +12,12 @@
 #include "ScriptRuntime/Commands/ChemicodeSubmitCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTransferCommand.h"
+#include "ScriptRuntime/Commands/ConnectBunsenBurnerCommand.h"
+#include "ScriptRuntime/Commands/ConnectGasTubeCommand.h"
+#include "ScriptRuntime/Commands/DisconnectGasTubeCommand.h"
 #include "ScriptRuntime/Commands/GasTapStatusCommand.h"
-#include "Serialization/BufferArchive.h"
+#include "ScriptRuntime/Commands/GetGasTubeCommand.h"
+#include "ScriptRuntime/Commands/WaitCommand.h"
 
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
 {
@@ -50,6 +55,16 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 				NewCommand = NewObject<UBunsenBurnerStateCommand>(this);
 			else if (Type == "GasTapStatus")
 				NewCommand = NewObject<UGasTapStatusCommand>(this);
+			else if (Type == "GetGasTube")
+				NewCommand = NewObject<UGetGasTubeCommand>(this);
+			else if (Type == "ConnectTube")
+				NewCommand = NewObject<UConnectGasTubeCommand>(this);
+			else if (Type == "DisconnectTube")
+				NewCommand = NewObject<UDisconnectGasTubeCommand>(this);
+			else if (Type == "Wait")
+				NewCommand = NewObject<UWaitCommand>(this);
+			else if (Type == "ConnectBurner")
+				NewCommand = NewObject<UConnectBunsenBurnerCommand>(this);
 			else
 			{
 				UE_LOG(LogChemicode, Error, TEXT("Invalid command type %s in script %s!"), *Type, *Name);

@@ -233,16 +233,23 @@ bool AResourceContainer::InteractWith(AChemicodeObject* OtherObject)
 	{
 		if (ConnectedTube != nullptr)
 			return false;
-		Tube->ConnectObject(this);
-		TubeConnectionHandle = Tube->OnItemPickedUp.AddLambda([this]
-		{
-			bShouldClearConnectedTube = true;
-		});
-		ConnectedTube = Tube;
+		ConnectTube(Tube);
 		return true;
 	}
 
 	return false;
+}
+
+void AResourceContainer::ConnectTube(AResourceTube* Tube)
+{
+	if (ConnectedTube != nullptr)
+		return;
+	Tube->ConnectObject(this);
+	TubeConnectionHandle = Tube->OnItemPickedUp.AddLambda([this]
+	{
+		bShouldClearConnectedTube = true;
+	});
+	ConnectedTube = Tube;
 }
 
 void AResourceContainer::FireTick(AChemicodeObject* Source)

@@ -133,6 +133,9 @@ public:
 
 	virtual bool InteractWith(AChemicodeObject* OtherObject) override;
 
+	UFUNCTION(BlueprintCallable)
+	void ConnectTube(AResourceTube* Tube);
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnFireTick(AChemicodeObject* Source);
 
@@ -186,12 +189,17 @@ public:
 	{
 		return GetTotalDecimalPropertyValue(PropertyName) / Contents.Num();
 	}
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool IsConnectedToTube() const { return ConnectedTube != nullptr; }
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FContainerInteraction> Interactions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanTakeTube = true;
+	
+	bool bShouldClearConnectedTube = false;
 	
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -201,5 +209,4 @@ private:
 	FDelegateHandle TubeConnectionHandle;
 	float TotalAmount = 0;
 	bool bDirty = true;
-	bool bShouldClearConnectedTube = false;
 };

@@ -7,6 +7,12 @@
 
 void UChemicodeResourceItemVariable::SerialiseVariable(FArchive& Archive)
 {
+	if (Archive.IsSaving())
+	{
+		FString Type = "ResourceItem";
+		Archive << Type;
+	}
+	
 	// If loading, initialise value
 	// If saving, save resource name
 	if (Archive.IsLoading())

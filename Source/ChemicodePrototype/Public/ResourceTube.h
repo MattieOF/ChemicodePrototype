@@ -39,8 +39,22 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool ConnectObject(AChemicodeObject* Object);
 
+	UFUNCTION(BlueprintCallable)
+	void DisconnectObjects();
+
 	virtual void GetActorBounds(bool bOnlyCollidingComponents, FVector& Origin, FVector& BoxExtent,
 	                            bool bIncludeFromChildActors) const override;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool HasLHSConnection() const { return LHSConnection != nullptr; }
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool HasRHSConnection() const { return RHSConnection != nullptr; }
+	
+	UPROPERTY(BlueprintReadOnly)
+	bool bSimulated = false;
+	
+	UPROPERTY()
+	UWorld* WorldRef;
 	
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

@@ -22,11 +22,14 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TMap<FString, UResourceData*> Resources;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Class References")
 	TSubclassOf<AResourceContainer> TestTubeClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Class References")
 	TSubclassOf<ABunsenBurner> BunsenBurnerClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Class References")
+	TSubclassOf<ABunsenBurner> GasTubeClass;
 	
 	virtual void Init() override;
 };

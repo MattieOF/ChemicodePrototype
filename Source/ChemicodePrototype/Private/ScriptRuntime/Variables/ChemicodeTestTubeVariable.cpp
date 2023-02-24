@@ -7,6 +7,12 @@
 
 void UChemicodeTestTubeVariable::SerialiseVariable(FArchive& Archive)
 {
+	if (Archive.IsSaving())
+	{
+		FString Type = "TestTube";
+		Archive << Type;
+	}
+	
 	if (Archive.IsLoading())
 		InitialiseWithNew();
 

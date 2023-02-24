@@ -7,6 +7,12 @@
 
 void UChemicodeBunsenBurnerVariable::SerialiseVariable(FArchive& Archive)
 {
+	if (Archive.IsSaving())
+	{
+		FString Type = "BunsenBurner";
+		Archive << Type;
+	}
+	
 	if (Archive.IsLoading())
 		InitialiseWithNew();
 }
