@@ -11,6 +11,7 @@
 #include "ScriptRuntime/Commands/ChemicodeSubmitCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTransferCommand.h"
+#include "ScriptRuntime/Commands/GasTapStatusCommand.h"
 #include "Serialization/BufferArchive.h"
 
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
@@ -47,6 +48,8 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 				NewCommand = NewObject<UChemicodeBunsenBurnerCommand>(this);
 			else if (Type == "SetBunsenBurnerState")
 				NewCommand = NewObject<UBunsenBurnerStateCommand>(this);
+			else if (Type == "GasTapStatus")
+				NewCommand = NewObject<UGasTapStatusCommand>(this);
 			else
 			{
 				UE_LOG(LogChemicode, Error, TEXT("Invalid command type %s in script %s!"), *Type, *Name);

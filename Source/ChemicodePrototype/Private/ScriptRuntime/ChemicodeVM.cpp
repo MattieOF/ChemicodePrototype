@@ -11,6 +11,11 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 	RunTime = 0;
 	ClearError();
 	Variables.Empty();
+	GasTaps.Empty();
+
+	// Initialise VM
+	for (int i = 0; i < VM_GAS_TAP_COUNT; i++)
+		GasTaps.Add(NewObject<AGasTap>(this));
 
 	// Iterate through commands
 	for (UChemicodeCommand* Command : CurrentScript->Commands)

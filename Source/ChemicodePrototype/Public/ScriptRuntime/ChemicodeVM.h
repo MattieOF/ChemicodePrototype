@@ -2,13 +2,15 @@
 
 #pragma once
 
+#define VM_GAS_TAP_COUNT 3
+
 #include "CoreMinimal.h"
 #include "Commands/ChemicodeCommand.h"
 #include "ChemicodeScript.h"
+#include "GasTap.h"
 #include "Variables/ChemicodeVariable.h"
 #include "ResourceContainer.h"
 #include "UObject/Object.h"
-#include "Variables/ChemicodeTestTubeVariable.h"
 #include "ChemicodeVM.generated.h"
 
 USTRUCT(BlueprintType)
@@ -57,6 +59,8 @@ public:
 	UChemicodeCommand*                 ErrorSource = nullptr;
 	UPROPERTY(BlueprintReadWrite)
 	AResourceContainer*                Submission = nullptr;
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AGasTap*>                   GasTaps;
 
 	UFUNCTION(BlueprintCallable)
 	FChemicodeScriptOutput ExecuteScript(UChemicodeScript* Script);
@@ -64,4 +68,7 @@ public:
 	void ThrowError(FString Message, UChemicodeCommand* Source);
 	UFUNCTION(BlueprintCallable)
 	void ClearError();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FORCEINLINE int GetVMGasTapCount() { return VM_GAS_TAP_COUNT; }
 };
