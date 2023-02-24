@@ -28,5 +28,6 @@ void UGasTubeVariable::InitialiseWithNew()
 	const UChemicodeGameInstance* GameInstance = UChemicodeStatics::GetChemicodeGameInstance(GetWorld());
 	check(GameInstance->GasTubeClass != nullptr);
 	Value = NewObject<AResourceTube>(this, GameInstance->GasTubeClass);
+	Value->bSimulated = true;
 	Value->WorldRef = GetWorld();
 }

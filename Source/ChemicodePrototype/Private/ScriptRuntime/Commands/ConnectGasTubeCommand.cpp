@@ -17,7 +17,7 @@ bool UConnectGasTubeCommand::Execute(UChemicodeVM* VM)
 		return false;
 
 	// Connect
-	AResourceTube* Tube = Cast<UGasTubeVariable>(VM->Variables["Gas Tube"])->Value;
+	AResourceTube* Tube = Cast<UGasTubeVariable>(VM->Variables[Arguments["Gas Tube"]])->Value;
 	if (Tube->HasLHSConnection() || Tube->HasRHSConnection())
 	{
 		VM->ThrowError(FString::Printf(TEXT("Gas tube at %ls is already connected! Disconnect any objects first."), *Arguments["Gas Tube"]), this);
@@ -25,8 +25,13 @@ bool UConnectGasTubeCommand::Execute(UChemicodeVM* VM)
 	}
 
 	// Check containers are valid
-	AResourceContainer* LHS = Cast<UChemicodeTestTubeVariable>(VM->Variables["Left Connection"])->Value;
-	AResourceContainer* RHS = Cast<UChemicodeTestTubeVariable>(VM->Variables["Right Connection"])->Value;
+	AResourceContainer* LHS = Cast<UChemicodeTestTubeVariable>(VM->Variables[Arguments["Left Connection"]])->Value;
+	AResourceContainer* RHS = Cast<UChemicodeTestTubeVariable>(VM->Variables[Arguments["Right Connection"]])->Value;
+	if (LHS == RHS)
+	{
+		VM->ThrowError("Left connection and right connection are the same!", this);
+		return false;
+	}
 	if (LHS->IsConnectedToTube())
 	{
 		VM->ThrowError(FString::Printf(TEXT("Test tube at %ls is already connected to a gas tube!"), *Arguments["Left Connection"]), this);

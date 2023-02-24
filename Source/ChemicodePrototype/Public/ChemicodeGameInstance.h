@@ -7,6 +7,7 @@
 #include "Engine/GameInstance.h"
 #include "ChemicodeGameInstance.generated.h"
 
+class AResourceTube;
 class AResourceContainer;
 class UResourceData;
 
@@ -29,7 +30,7 @@ public:
 	TSubclassOf<ABunsenBurner> BunsenBurnerClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Class References")
-	TSubclassOf<ABunsenBurner> GasTubeClass;
+	TSubclassOf<AResourceTube> GasTubeClass;
 	
 	virtual void Init() override;
 };

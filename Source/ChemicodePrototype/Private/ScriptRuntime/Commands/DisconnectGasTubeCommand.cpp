@@ -12,7 +12,7 @@ bool UDisconnectGasTubeCommand::Execute(UChemicodeVM* VM)
 		return false;
 
 	// Disconnect tube
-	AResourceTube* Tube = Cast<UGasTubeVariable>(VM->Variables["Gas Tube"])->Value;
+	AResourceTube* Tube = Cast<UGasTubeVariable>(VM->Variables[Arguments["Gas Tube"]])->Value;
 	Tube->DisconnectObjects();
 	Tube->OnItemPickedUp.Broadcast(); // Broadcast on picked up to hack in callbacks to connected objects
 	
