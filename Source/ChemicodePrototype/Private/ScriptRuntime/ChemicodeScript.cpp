@@ -11,12 +11,18 @@
 #include "ScriptRuntime/Commands/ChemicodeSubmitCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTransferCommand.h"
+#include "Serialization/BufferArchive.h"
 
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
 {
 	Archive << Name;
 	int Count = Commands.Num();
 	Archive << Count;
+
+	// Clear state
+	if (Archive.IsLoading())
+		Commands.Empty();
+	
 	for (int i = 0; i < Count; i++)
 	{
 		if (Archive.IsSaving())
@@ -53,4 +59,60 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 			Commands.Add(NewCommand);
 		}
 	}
+}
+
+// Save functions from https://www.orfeasel.com/saving-and-loading-your-progress/
+bool UChemicodeScript::SaveToFile(FString FileName)
+{
+	// Serialise with buffer archive
+	FBufferArchive BinarySaveArchive;
+	SerialiseScript(BinarySaveArchive);
+
+	// Save to disk
+	const FString Path = *FString::Printf(TEXT("%lsScripts/%ls"), *FPaths::ProjectSavedDir(), *FileName);
+	const bool SaveResult = FFileHelper::SaveArrayToFile(BinarySaveArchive, *Path);
+	if (!SaveResult)
+	{
+		UE_LOG(LogChemicode, Error, TEXT("Failed to save script %s to %s!"), *Name, *Path);
+		return false;
+	}
+	
+	// Empty buffer
+	BinarySaveArchive.FlushCache();
+	BinarySaveArchive.Empty();
+
+	return true;
+}
+
+bool UChemicodeScript::LoadFromFile(FString FileName)
+{
+	TArray<uint8> BinaryArray;
+
+	// Load and verify file
+	const FString Path = *FString::Printf(TEXT("%lsScripts/%ls"), *FPaths::ProjectSavedDir(), *FileName);
+	const bool LoadFileResult = FFileHelper::LoadFileToArray(BinaryArray, *Path);
+	if (!LoadFileResult)
+	{
+		UE_LOG(LogChemicode, Error, TEXT("In Chemicode script loader, failed to open file %s!"), *Path);
+		return false;
+	}
+	if (BinaryArray.Num() <= 0)
+	{
+		UE_LOG(LogChemicode, Error, TEXT("In Chemicode script loader, file %s is empty!"), *Path);
+		return false;
+	}
+
+	// Create binary loader
+	FMemoryReader BinaryLoader = FMemoryReader(BinaryArray, true);
+	BinaryLoader.Seek(0);
+	
+	// Do the loading
+	SerialiseScript(BinaryLoader);
+
+	// Empty buffer
+	BinaryLoader.FlushCache();
+	BinaryArray.Empty();
+	BinaryLoader.Close();
+
+	return true;
 }

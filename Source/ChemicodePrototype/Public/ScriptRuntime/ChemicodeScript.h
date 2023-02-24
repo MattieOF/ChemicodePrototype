@@ -31,5 +31,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void RemoveAllCommands() { Commands.Empty(); }
 
+	// Serialisation functions
 	void SerialiseScript(FArchive& Ar);
+
+	UFUNCTION(BlueprintCallable)
+	bool SaveToFile(FString FileName = "ScriptTest.ccs");
+	
+	UFUNCTION(BlueprintCallable)
+	bool LoadFromFile(FString FileName = "ScriptTest.ccs");
 };

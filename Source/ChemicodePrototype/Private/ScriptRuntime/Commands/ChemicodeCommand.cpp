@@ -13,7 +13,10 @@ bool UChemicodeCommand::Execute(UChemicodeVM* VM)
 void UChemicodeCommand::SerialiseCommand(FArchive& Archive)
 {
 	if (Archive.IsSaving())
-		Archive << CommandName;
+	{
+		FString CmdName = GetCommandName();
+		Archive << CmdName;
+	}
 
 	Archive << Arguments;
 }
