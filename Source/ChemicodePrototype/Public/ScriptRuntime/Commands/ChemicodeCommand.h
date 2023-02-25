@@ -86,4 +86,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static TArray<FChemicodeCommandFormatToken> TokeniseFormat(FString FormatString);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FORCEINLINE FLinearColor GetCommandColour(TSubclassOf<UChemicodeCommand> CommandClass)
+	{ return CommandClass.GetDefaultObject()->GetBackgroundColour(); } 
 };
