@@ -4,6 +4,17 @@
 #include "ScriptRuntime/ChemicodeVM.h"
 #include "ChemicodePrototype/ChemicodePrototype.h"
 
+void UChemicodeCommand::PostInitProperties()
+{
+	Super::PostInitProperties();
+	auto Items = TokeniseFormat(GetFormat());
+	for (auto& Item : Items)
+	{
+		if (Item.TokenType == CCTTArgument)
+			Arguments.Add(Item.VariableName, GetDefaultArgumentValue(Item.VariableType));
+	}
+}
+
 bool UChemicodeCommand::Execute(UChemicodeVM* VM)
 {
 	UE_LOG(LogChemicode, Error, TEXT("Base chemicode command executed!"));
@@ -92,4 +103,53 @@ TArray<FChemicodeCommandFormatToken> UChemicodeCommand::TokeniseFormat(FString F
 	}
 	Output.Add(FChemicodeCommandFormatToken(TextBuffer));
 	return Output;
+}
+
+FString UChemicodeCommand::GetDefaultArgumentValue(FString Type)
+{
+	if (Type == "String")
+		return "";
+	else if (Type == "Float")
+		return "0";
+	else if (Type == "Resource")
+		return "Hydrogen";
+	else if (Type == "BBS")
+		return "0";
+	else if (Type == "BoolTF")
+		return "True";
+	else if (Type == "BoolOF")
+		return "True";
+	else if (Type == "BoolYN")
+		return "True";
+	else if (Type == "GasTap")
+		return "0";
+	else
+		return "";
+}
+
+FString UChemicodeCommand::CommandToString(UChemicodeCommand* Command)
+{
+	FStringBuilderBase Builder;
+	for (auto& Element : TokeniseFormat(Command->GetFormat()))
+	{
+		switch (Element.TokenType)
+		{
+		case CCTTArgument:
+			{
+				if (!Command->Arguments.Contains(Element.VariableName))
+				{
+					Builder.Append("Null");
+					break;	
+				}
+				FString Value = Command->Arguments[Element.VariableName];
+				Builder.Append(Value.IsEmpty() ? "Empty" : Value);
+				break;	
+			}
+		case CCTTText:
+			Builder.Append(Element.TextValue);
+			break;
+		default: break;
+		}
+	}
+	return Builder.GetData();
 }

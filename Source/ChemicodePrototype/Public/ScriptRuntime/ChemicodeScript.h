@@ -24,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void AddCommand(UChemicodeCommand* Command) { Commands.Add(Command); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void AddCommandAtIndex(UChemicodeCommand* Command, const int Index) { Commands.Insert(Command, Index); }
 	
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void RemoveCommand(UChemicodeCommand* Command) { Commands.Remove(Command); }

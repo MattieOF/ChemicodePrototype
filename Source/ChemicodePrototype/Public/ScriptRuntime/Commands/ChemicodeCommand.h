@@ -58,6 +58,8 @@ class CHEMICODEPROTOTYPE_API UChemicodeCommand : public UObject
 	GENERATED_BODY()
 
 public:
+	virtual void PostInitProperties() override;
+	
 	UPROPERTY(BlueprintReadWrite)
 	TMap<FString, FString> Arguments;
 
@@ -86,6 +88,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static TArray<FChemicodeCommandFormatToken> TokeniseFormat(FString FormatString);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FString GetDefaultArgumentValue(FString Type);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FString CommandToString(UChemicodeCommand* Command);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FORCEINLINE FLinearColor GetCommandColour(TSubclassOf<UChemicodeCommand> CommandClass)
