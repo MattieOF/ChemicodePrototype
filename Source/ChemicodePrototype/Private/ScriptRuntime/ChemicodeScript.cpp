@@ -12,11 +12,13 @@
 #include "ScriptRuntime/Commands/ChemicodeSubmitCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTestTubeCommand.h"
 #include "ScriptRuntime/Commands/ChemicodeTransferCommand.h"
+#include "ScriptRuntime/Commands/ClearBurnerCommand.h"
 #include "ScriptRuntime/Commands/ConnectBunsenBurnerCommand.h"
 #include "ScriptRuntime/Commands/ConnectGasTubeCommand.h"
 #include "ScriptRuntime/Commands/DisconnectGasTubeCommand.h"
 #include "ScriptRuntime/Commands/GasTapStatusCommand.h"
 #include "ScriptRuntime/Commands/GetGasTubeCommand.h"
+#include "ScriptRuntime/Commands/PlaceOnBurnerCommand.h"
 #include "ScriptRuntime/Commands/WaitCommand.h"
 
 void UChemicodeScript::SerialiseScript(FArchive& Archive)
@@ -65,6 +67,10 @@ void UChemicodeScript::SerialiseScript(FArchive& Archive)
 				NewCommand = NewObject<UWaitCommand>(this);
 			else if (Type == "ConnectBurner")
 				NewCommand = NewObject<UConnectBunsenBurnerCommand>(this);
+			else if (Type == "PlaceOnBurner")
+				NewCommand = NewObject<UPlaceOnBurnerCommand>(this);
+			else if (Type == "ClearBurner")
+				NewCommand = NewObject<UClearBurnerCommand>(this);
 			else
 			{
 				UE_LOG(LogChemicode, Error, TEXT("Invalid command type %s in script %s!"), *Type, *Name);

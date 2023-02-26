@@ -44,7 +44,7 @@ bool AChemicodeObject::AltInteractWith(AChemicodeObject* OtherObject)
 	return false;
 }
 
-void AChemicodeObject::FireTick(AChemicodeObject* Source)
+void AChemicodeObject::FireTick(AChemicodeObject* Source, float DeltaTime)
 {
 	return;
 }
@@ -52,6 +52,16 @@ void AChemicodeObject::FireTick(AChemicodeObject* Source)
 void AChemicodeObject::ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount)
 {
 	return;
+}
+
+bool AChemicodeObject::HasResource(UResourceData* Resource)
+{
+	return false;
+}
+
+FResourceMeasurement AChemicodeObject::GetResourceAmount(UResourceData* Resource)
+{
+	return FResourceMeasurement();
 }
 
 void AChemicodeObject::BeginPlay()

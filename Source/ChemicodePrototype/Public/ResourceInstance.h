@@ -69,3 +69,11 @@ public:
 	UPROPERTY()
 	UWorld* WorldRef;
 };
+
+struct FRemoveEmptyResourceInstances
+{
+	bool operator()(const UResourceInstance* RemovalCandidate) const
+	{
+		return RemovalCandidate->Measurement.Value <= 0;
+	}
+};

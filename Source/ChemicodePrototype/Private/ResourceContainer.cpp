@@ -40,8 +40,10 @@ void AResourceContainer::Tick(float DeltaSeconds)
 			bool Success;
 			const double DiffusionRate = Element->GetDecimalProperty("Diffusion Rate", Success);
 			if (DiffusionRate > 0)
-				Element->Measurement -= FResourceMeasurement(Element->Measurement.Unit, DiffusionRate * DeltaSeconds);
+				Element->Measurement -= FResourceMeasurement(Element->Measurement.Unit, FMath::Min(DiffusionRate * DeltaSeconds, Element->Measurement.Value));
 		}
+
+		Contents.RemoveAll(FRemoveEmptyResourceInstances());
 	}
 }
 
@@ -252,9 +254,9 @@ void AResourceContainer::ConnectTube(AResourceTube* Tube)
 	ConnectedTube = Tube;
 }
 
-void AResourceContainer::FireTick(AChemicodeObject* Source)
+void AResourceContainer::FireTick(AChemicodeObject* Source, float DeltaTime)
 {
-	OnFireTick(Source);
+	OnFireTick(Source, DeltaTime);
 }
 
 void AResourceContainer::ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount)
@@ -269,6 +271,19 @@ void AResourceContainer::ReceiveResource(UResourceData* Resource, FResourceMeasu
 			RemoveResource(Resource, Amount);
 		}
 	}
+}
+
+bool AResourceContainer::HasResource(UResourceData* Resource)
+{
+	return GetResource(Resource) != nullptr;
+}
+
+FResourceMeasurement AResourceContainer::GetResourceAmount(UResourceData* Resource)
+{
+	const UResourceInstance* Res = GetResource(Resource);
+	if (Res == nullptr)
+		return FResourceMeasurement();
+	return Res->Measurement;
 }
 
 bool AResourceContainer::TransferToContainer(AResourceContainer* Target, UResourceData* Res, FResourceMeasurement Amount)

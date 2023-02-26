@@ -47,7 +47,7 @@ void UChemicodeResourceItemVariable::Tick(float DeltaTime)
 
 void UChemicodeResourceItemVariable::InitialiseWithResource(UResourceData* Resource)
 {
-	Value = NewObject<AResourceItem>(this);
+	Value = NewObject<AResourceItem>(GetWorld()->GetCurrentLevel());
 	Value->Initialise(GetWorld()); // Begin play isn't called when creating it like this
 	Value->SetResource(Resource, false, false);
 }

@@ -5,6 +5,7 @@
 #include "ChemicodePawn.h"
 #include "ChemicodeStatics.h"
 #include "ResourceTube.h"
+#include "ChemicodePrototype/ChemicodePrototype.h"
 
 ABunsenBurner::ABunsenBurner()
 {
@@ -30,10 +31,7 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 
 	if (bShouldRemoveTarget)
 	{
-		TargetItem->OnItemPickedUp.Remove(TargetItemDelegateHandle);
-		TargetItemDelegateHandle.Reset();
-		TargetItem = nullptr;
-		bShouldRemoveTarget = false;
+		ClearItem();
 	}
 
 	const bool bHasGas = HasGas();
@@ -41,11 +39,19 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 		OnStateUpdated(State);
 	bHadGasLastFrame = bHasGas;
 
+	UE_LOG(LogChemicode, Log, TEXT("Ticking burner..."));
 	if (TargetItem)
 	{
-		TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
+		UE_LOG(LogChemicode, Log, TEXT("Has target item!"));
+		if (!bSimulated)
+			TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
+		if (ConnectedGasTap != nullptr)
+			UE_LOG(LogChemicode, Log, TEXT("Connected to gas tap!"));
 		if (bHasGas)
-			TargetItem->FireTick(this);
+		{
+			UE_LOG(LogChemicode, Log, TEXT("Has gas!"));
+			TargetItem->FireTick(this, DeltaSeconds);
+		}
 	}
 }
 
@@ -56,14 +62,20 @@ void ABunsenBurner::ConnectToGasTap(AGasTap* GasTap)
 	ConnectedGasTap = GasTap;
 	if (GasTap)
 	{
-		Cable->EndLocation = FVector::ZeroVector;
-		Cable->SetAttachEndTo(GasTap, "MainMesh", "Tap");
-		Cable->bAttachEnd = true;
+		if (!bSimulated)
+		{
+			Cable->EndLocation = FVector::ZeroVector;
+			Cable->SetAttachEndTo(GasTap, "MainMesh", "Tap");
+			Cable->bAttachEnd = true;
+		}
 		ConnectedGasTap->Connect();
 	} else
 	{
-		Cable->EndLocation = FVector(100, 0, 0);
-		Cable->bAttachEnd = false;
+		if (!bSimulated)
+		{
+			Cable->EndLocation = FVector(100, 0, 0);
+			Cable->bAttachEnd = false;
+		}
 	}
 }
 
@@ -71,6 +83,18 @@ void ABunsenBurner::SetState(EBunsenBurnerState NewState)
 {
 	State = NewState;
 	OnStateUpdated(NewState);
+}
+
+void ABunsenBurner::ClearItem()
+{
+	bShouldRemoveTarget = false;
+	
+	if (!TargetItem)
+		return;
+	
+	TargetItem->OnItemPickedUp.Remove(TargetItemDelegateHandle);
+	TargetItemDelegateHandle.Reset();
+	TargetItem = nullptr;
 }
 
 bool ABunsenBurner::Use()
@@ -99,8 +123,11 @@ bool ABunsenBurner::InteractWith(AChemicodeObject* OtherObject)
 		{
 			bShouldRemoveTarget = true;
 		});
-		TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
-		UChemicodeStatics::GetChemicodePawn(WorldRef ? WorldRef : GetWorld())->DropItem();
+		if (!bSimulated)
+		{
+			TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
+			UChemicodeStatics::GetChemicodePawn(WorldRef ? WorldRef : GetWorld())->DropItem();	
+		}
 		return true;
 	}
 

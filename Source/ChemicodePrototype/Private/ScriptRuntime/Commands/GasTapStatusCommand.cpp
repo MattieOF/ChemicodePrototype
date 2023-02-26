@@ -2,6 +2,7 @@
 
 #include "ScriptRuntime/Commands/GasTapStatusCommand.h"
 
+#include "ChemicodePrototype/ChemicodePrototype.h"
 #include "ScriptRuntime/ChemicodeVM.h"
 
 bool UGasTapStatusCommand::Execute(UChemicodeVM* VM)

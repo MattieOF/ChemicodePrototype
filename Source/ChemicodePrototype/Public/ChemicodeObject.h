@@ -25,7 +25,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE UOutlineComponent* GetOutline() const { return OutlineComponent; }
-	
+
 	/**
 	 * @return The main mesh of this object
 	 */
@@ -57,10 +57,16 @@ public:
 	void AltInteractionEnd();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void FireTick(AChemicodeObject* Source);
+	virtual void FireTick(AChemicodeObject* Source, float DeltaTime);
 
 	UFUNCTION(BlueprintCallable)
 	virtual void ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount);
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool HasResource(UResourceData* Resource);
+
+	UFUNCTION(BlueprintCallable) 
+	virtual FResourceMeasurement GetResourceAmount(UResourceData* Resource);
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText Name;

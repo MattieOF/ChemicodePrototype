@@ -23,18 +23,20 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool TransferResource(AChemicodeObject* From, UResourceData* Resource, FResourceMeasurement Amount,
-	                                  bool bMultiplyByDeltaTime = true)
+	FORCEINLINE bool TransferResource(AChemicodeObject* From, UResourceData* Resource, FResourceMeasurement Amount, float AsScale = 1,
+	                                  bool bMultiplyByDeltaTime = true, float DeltaTimeOverride = 0)
 	{
-		return TransferResourceAs(From, Resource, Resource, Amount, bMultiplyByDeltaTime);
+		return TransferResourceAs(From, Resource, Resource, Amount, AsScale, bMultiplyByDeltaTime, DeltaTimeOverride);
 	}
 	
 	UFUNCTION(BlueprintCallable)
 	bool TransferResourceAs(AChemicodeObject* From, UResourceData* Resource, UResourceData* As,
-	                        FResourceMeasurement Amount, float AsScale = 1, bool bMultiplyByDeltaTime = true);
+	                        FResourceMeasurement Amount, float AsScale = 1, bool bMultiplyByDeltaTime = true,
+	                        float DeltaTimeOverride = 0);
 	
 	UFUNCTION(BlueprintCallable)
-	bool TransferResources(AChemicodeObject* From, TArray<FMeasuredResource> Resources, bool bMultiplyByDeltaTime = true);
+	bool TransferResources(AChemicodeObject* From, TArray<FMeasuredResource> Resources,
+		float Scale = 1, bool bMultiplyByDeltaTime = true, float DeltaTimeOverride = 0);
 
 	UFUNCTION(BlueprintCallable)
 	bool ConnectObject(AChemicodeObject* Object);

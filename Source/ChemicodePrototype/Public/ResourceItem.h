@@ -99,7 +99,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE UInteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
 
-	virtual void FireTick(AChemicodeObject* Source) override;
+	virtual void FireTick(AChemicodeObject* Source, float DeltaTime) override;
 	
 	/**
 	 * @brief Set measurement of resource in this item to NewMeasurement. Also updates its unit.
@@ -107,6 +107,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void SetMeasurement(FResourceMeasurement NewMeasurement);
+
+	virtual bool HasResource(UResourceData* Resource) override;
+	virtual FResourceMeasurement GetResourceAmount(UResourceData* Resource) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EResourceItemState> DefaultItemState = Usable;

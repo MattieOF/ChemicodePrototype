@@ -60,12 +60,12 @@ void UInteractionComponent::OnInteractWith_Implementation(AResourceItem* Item)
 	}
 }
 
-void UInteractionComponent::FireTick_Implementation(AChemicodeObject* Source)
+void UInteractionComponent::FireTick_Implementation(AChemicodeObject* Source, float DeltaTime)
 {
 	if (OwnerAsResourceItem)
 	{
 		OwnerAsResourceItem->SetMeasurement(OwnerAsResourceItem->Resource->Measurement - FResourceMeasurement(
-			OwnerMeasurementUnit, BurnRate * GetWorld()->DeltaTimeSeconds));
+			OwnerMeasurementUnit, DeltaTime));
 	}
 }
 

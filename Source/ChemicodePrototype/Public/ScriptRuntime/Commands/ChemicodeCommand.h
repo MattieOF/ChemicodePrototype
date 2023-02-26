@@ -84,7 +84,11 @@ public:
 	virtual bool CheckVariableNameIsValid(UChemicodeVM* VM, FString Name);
 
 	UFUNCTION(BlueprintCallable)
-	virtual bool CheckInputVariableNameIsValid(UChemicodeVM* VM, FString Name, TSubclassOf<UChemicodeVariable> RequiredClass);
+	virtual bool CheckInputVariableNameIsValid(UChemicodeVM* VM, FString Name, TSubclassOf<UChemicodeVariable> ValidClass);
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool CheckInputVariableNameIsValidMultiType(UChemicodeVM* VM, FString Name,
+	                                                    TArray<TSubclassOf<UChemicodeVariable>> ValidClasses);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static TArray<FChemicodeCommandFormatToken> TokeniseFormat(FString FormatString);

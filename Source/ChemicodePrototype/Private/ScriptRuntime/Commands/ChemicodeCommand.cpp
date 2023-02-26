@@ -53,7 +53,7 @@ bool UChemicodeCommand::CheckVariableNameIsValid(UChemicodeVM* VM, FString Key)
 }
 
 bool UChemicodeCommand::CheckInputVariableNameIsValid(UChemicodeVM* VM, FString Name,
-	TSubclassOf<UChemicodeVariable> RequiredClass)
+	TSubclassOf<UChemicodeVariable> ValidClass)
 {
 	// Check argument exists and is not empty
 	if (!Arguments.Contains(Name) || Arguments[Name].IsEmpty())
@@ -70,10 +70,75 @@ bool UChemicodeCommand::CheckInputVariableNameIsValid(UChemicodeVM* VM, FString 
 	}
 
 	// Check the variable types match
-	if (!VM->Variables[Arguments[Name]]->IsA(RequiredClass))
+	if (!VM->Variables[Arguments[Name]]->IsA(ValidClass))
 	{
 		VM->ThrowError(FString::Printf(TEXT("Variable %s should be a %s, but is a %s!"), *Arguments[Name],
-			*RequiredClass.GetDefaultObject()->GetTypeName(), *VM->Variables[Arguments[Name]]->GetTypeName()), this);
+			*ValidClass.GetDefaultObject()->GetTypeName(), *VM->Variables[Arguments[Name]]->GetTypeName()), this);
+		return false;
+	}
+
+	return true;
+}
+
+bool UChemicodeCommand::CheckInputVariableNameIsValidMultiType(UChemicodeVM* VM, FString Name,
+	TArray<TSubclassOf<UChemicodeVariable>> ValidClasses)
+{
+	// Check argument exists and is not empty
+	if (!Arguments.Contains(Name) || Arguments[Name].IsEmpty())
+	{
+		VM->ThrowError(FString::Printf(TEXT("Argument %s is undefined or empty!"), *Name), this);
+		return false;
+	}
+	
+	// Check it exists and is not empty
+	if (!VM->Variables.Contains(Arguments[Name]))
+	{
+		VM->ThrowError(FString::Printf(TEXT("There is no variable called %s!"), *Arguments[Name]), this);
+		return false;
+	}
+
+	// Check there are some valid classes
+	if (ValidClasses.Num() == 0)
+	{
+		VM->ThrowError(FString::Printf(TEXT("DEV ISSUE: No valid types for parameter %s!"), *Name), this);
+		return false;
+	}
+
+	// Check the variable types match
+	bool bValid = false;
+	for (const TSubclassOf<UChemicodeVariable>& Class : ValidClasses)
+	{
+		if (VM->Variables[Arguments[Name]]->IsA(Class))
+		{
+			bValid = true;
+			break;
+		}
+	} 
+	
+	if (!bValid)
+	{
+		FString ValidTypes = "";
+		if (ValidClasses.Num() == 1)
+			ValidTypes = ValidClasses[0].GetDefaultObject()->GetTypeName();
+		else if (ValidClasses.Num() == 2)
+		{
+			ValidTypes = FString::Printf(TEXT("%s or %s"), *ValidClasses[0].GetDefaultObject()->GetTypeName(),
+				*ValidClasses[1].GetDefaultObject()->GetTypeName());
+		}
+		else
+		{
+			for (int i = 0; i < ValidClasses.Num(); i++)
+			{
+				if (i == ValidClasses.Num() - 1)
+					ValidTypes += ", or";
+				else if (i != 0)
+					ValidTypes += ", ";
+				ValidTypes += ValidClasses[i].GetDefaultObject()->GetTypeName();
+			}
+		}
+		
+		VM->ThrowError(FString::Printf(TEXT("Variable %s should be a %s, but is a %s!"), *Arguments[Name],
+			*ValidTypes, *VM->Variables[Arguments[Name]]->GetTypeName()), this);
 		return false;
 	}
 

@@ -87,9 +87,9 @@ bool AResourceItem::InteractWith(AChemicodeObject* OtherObject)
 	return true;
 }
 
-void AResourceItem::FireTick(AChemicodeObject* Source)
+void AResourceItem::FireTick(AChemicodeObject* Source, float DeltaTime)
 {
-	InteractionComponent->FireTick(Source);
+	InteractionComponent->FireTick(Source, DeltaTime);
 }
 
 void AResourceItem::SetMeasurement(FResourceMeasurement NewMeasurement)
@@ -100,6 +100,18 @@ void AResourceItem::SetMeasurement(FResourceMeasurement NewMeasurement)
 		Resource->Measurement.Value = 0;
 		Resource->ResourceItemState = Empty;
 	}
+}
+
+bool AResourceItem::HasResource(UResourceData* InResource)
+{
+	return Resource->Data == InResource;
+}
+
+FResourceMeasurement AResourceItem::GetResourceAmount(UResourceData* InResource)
+{
+	if (!HasResource(InResource))
+		return FResourceMeasurement();
+	return Resource->Measurement;
 }
 
 #if WITH_EDITOR

@@ -44,8 +44,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnStateUpdated(EBunsenBurnerState NewState);
 
+	UFUNCTION(BlueprintCallable)
+	void ClearItem();
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool HasGas() { return ConnectedGasTap && ConnectedGasTap->IsOpen(); }
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool HasItem() { return TargetItem != nullptr; }
 
 	// Interaction implementations
 	virtual bool Use() override;
@@ -56,6 +61,8 @@ public:
 
 	UPROPERTY()
 	UWorld* WorldRef = nullptr;
+
+	bool bSimulated = false;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(MakeEditWidget=true))

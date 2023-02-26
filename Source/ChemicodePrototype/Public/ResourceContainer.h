@@ -137,12 +137,12 @@ public:
 	void ConnectTube(AResourceTube* Tube);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnFireTick(AChemicodeObject* Source);
+	void OnFireTick(AChemicodeObject* Source, float DeltaTime);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	bool OnReceiveResource(UResourceData* Resource, FResourceMeasurement Amount);
 
-	virtual void FireTick(AChemicodeObject* Source) override;
+	virtual void FireTick(AChemicodeObject* Source, float DeltaTime) override;
 
 	virtual void ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount) override;
 
@@ -192,6 +192,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool IsConnectedToTube() const { return ConnectedTube != nullptr; }
+
+	virtual bool HasResource(UResourceData* Resource) override;
+	virtual FResourceMeasurement GetResourceAmount(UResourceData* Resource) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FContainerInteraction> Interactions;

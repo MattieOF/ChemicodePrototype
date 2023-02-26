@@ -31,6 +31,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Class References")
 	TSubclassOf<AResourceTube> GasTubeClass;
-	
+
 	virtual void Init() override;
 };

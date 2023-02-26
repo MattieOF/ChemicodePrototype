@@ -64,7 +64,7 @@ public:
 	FInteraction GetInteractionWith(AChemicodeObject* Item);
 
 	UFUNCTION(BlueprintNativeEvent, Category = Events)
-	void FireTick(AChemicodeObject* Source);
+	void FireTick(AChemicodeObject* Source, float DeltaTime);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float BurnRate = 150000;

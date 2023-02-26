@@ -66,7 +66,8 @@ void AResourceTube::Tick(float DeltaSeconds)
 }
 
 bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Resource, UResourceData* As,
-                                       FResourceMeasurement Amount, float AsScale, bool bMultiplyByDeltaTime)
+                                       FResourceMeasurement Amount, float AsScale, bool bMultiplyByDeltaTime,
+                                       float DeltaTimeOverride)
 {
 	// TODO: Prevent transferring more than the source has
 	AChemicodeObject* To = nullptr;
@@ -79,10 +80,9 @@ bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Re
 		return false;
 
 	if (bMultiplyByDeltaTime)
-	{
-		Amount.Value *= (WorldRef ? WorldRef : GetWorld())->DeltaTimeSeconds;
-	}
-	UE_LOG(LogChemicode, Log, TEXT("%lld"), Amount.Value);
+		Amount.Value *= DeltaTimeOverride == 0 ? (WorldRef ? WorldRef : GetWorld())->DeltaTimeSeconds : DeltaTimeOverride;
+
+	Amount.Value = FMath::Min(Amount.Value, From->GetResourceAmount(Resource).Value);
 
 	To->ReceiveResource(As, Amount * AsScale);
 	Amount.Value = -Amount.Value;
@@ -92,11 +92,11 @@ bool AResourceTube::TransferResourceAs(AChemicodeObject* From, UResourceData* Re
 }
 
 bool AResourceTube::TransferResources(AChemicodeObject* From,
-                                      TArray<FMeasuredResource> Resources, bool bMultiplyByDeltaTime)
+                                      TArray<FMeasuredResource> Resources, float Scale, bool bMultiplyByDeltaTime, float DeltaTimeOverride)
 {
 	for (const auto Element : Resources)
 	{
-		if (!TransferResource(From, Element.Resource, Element.Amount, bMultiplyByDeltaTime))
+		if (!TransferResource(From, Element.Resource, Element.Amount, Scale, bMultiplyByDeltaTime, DeltaTimeOverride))
 			return false;	
 	}
 
