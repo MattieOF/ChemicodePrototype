@@ -3,6 +3,7 @@
 #include "ScriptRuntime/ChemicodeVM.h"
 
 #include "ChemicodeStatics.h"
+#include "ChemicodePrototype/ChemicodePrototype.h"
 #include "ScriptRuntime/ChemicodeScript.h"
 
 FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
@@ -14,6 +15,11 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 	ClearError();
 	Variables.Empty();
 	GasTaps.Empty();
+
+	// Start timer
+	int Seconds;
+	float PartialSeconds;
+	UGameplayStatics::GetAccurateRealTime(Seconds, PartialSeconds);
 
 	// Initialise VM
 	for (int i = 0; i < VM_GAS_TAP_COUNT; i++)
@@ -46,6 +52,12 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 		PrevRunTime = RunTime;
 	}
 
+	// End timer
+	int EndSeconds;
+	float EndPartialSeconds;
+	UGameplayStatics::GetAccurateRealTime(EndSeconds, EndPartialSeconds);
+	UE_LOG(LogChemicode, Log, TEXT("Script execution took %fs"), (EndPartialSeconds + EndSeconds) - (PartialSeconds + Seconds));
+	
 	// Return output
 	FChemicodeScriptOutput Output;
 	Output.Successful = true;
