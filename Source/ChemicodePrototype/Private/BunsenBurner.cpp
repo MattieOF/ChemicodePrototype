@@ -39,19 +39,12 @@ void ABunsenBurner::Tick(float DeltaSeconds)
 		OnStateUpdated(State);
 	bHadGasLastFrame = bHasGas;
 
-	UE_LOG(LogChemicode, Log, TEXT("Ticking burner..."));
 	if (TargetItem)
 	{
-		UE_LOG(LogChemicode, Log, TEXT("Has target item!"));
 		if (!bSimulated)
 			TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );
-		if (ConnectedGasTap != nullptr)
-			UE_LOG(LogChemicode, Log, TEXT("Connected to gas tap!"));
 		if (bHasGas)
-		{
-			UE_LOG(LogChemicode, Log, TEXT("Has gas!"));
 			TargetItem->FireTick(this, DeltaSeconds);
-		}
 	}
 }
 

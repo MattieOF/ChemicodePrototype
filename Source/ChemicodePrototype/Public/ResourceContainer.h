@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ContainerCondition.h"
 #include "ResourceData.h"
 #include "ResourceInstance.h"
 #include "ResourceItem.h"
@@ -11,27 +12,12 @@
 #include "ResourceContainer.generated.h"
 
 USTRUCT(BlueprintType)
-struct FContainerInteractionCondition
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UResourceData* Resource;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin=0, ClampMax=1))
-	float MinProportion;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin=0, ClampMax=1))
-	float MaxProportion;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin=0))
-	int MinimumAmount;
-};
-
-USTRUCT(BlueprintType)
 struct FContainerInteraction
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FContainerInteractionCondition> Conditions;
+	TArray<FContainerCondition> Conditions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName FunctionName;
 };
@@ -115,7 +101,7 @@ public:
 	bool ReplaceResource(UResourceData* Resource, UResourceData* NewResource, FResourceMeasurement Amount, float Scale = 1);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool SatisfiesCondition(FContainerInteractionCondition Condition)
+	FORCEINLINE bool SatisfiesCondition(const FContainerCondition Condition)
 	{
 		const auto Resource = GetResource(Condition.Resource);
 		return Resource != nullptr
@@ -147,35 +133,35 @@ public:
 	virtual void ReceiveResource(UResourceData* Resource, FResourceMeasurement Amount) override;
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void SetPropertyHiddenOnAll(FName PropertyName, bool bNewHidden)
+	FORCEINLINE void SetPropertyHiddenOnAll(const FName PropertyName, const bool bNewHidden)
 	{
 		for (const auto& Element : Contents)
 			Element->SetPropertyHidden(PropertyName, bNewHidden);
 	}
 	
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void SetDecimalPropertyOnAll(FName PropertyName, double Value)
+	FORCEINLINE void SetDecimalPropertyOnAll(const FName PropertyName, const double Value)
 	{
 		for (const auto& Element : Contents)
 			Element->SetDecimalProperty(PropertyName, Value);
 	}
 	
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void SetStringPropertyOnAll(FName PropertyName, FString Value)
+	FORCEINLINE void SetStringPropertyOnAll(const FName PropertyName, const FString Value)
 	{
 		for (const auto& Element : Contents)
 			Element->SetStringProperty(PropertyName, Value);
 	}
 	
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void SetBoolPropertyOnAll(FName PropertyName, bool Value)
+	FORCEINLINE void SetBoolPropertyOnAll(const FName PropertyName, const bool Value)
 	{
 		for (const auto& Element : Contents)
 			Element->SetBoolProperty(PropertyName, Value);
 	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE double GetTotalDecimalPropertyValue(FName PropertyName)
+	FORCEINLINE double GetTotalDecimalPropertyValue(const FName PropertyName)
 	{
 		double Sum = 0;
 		bool Success;
@@ -185,7 +171,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE double GetAverageDecimalPropertyValue(FName PropertyName)
+	FORCEINLINE double GetAverageDecimalPropertyValue(const FName PropertyName)
 	{
 		return GetTotalDecimalPropertyValue(PropertyName) / Contents.Num();
 	}

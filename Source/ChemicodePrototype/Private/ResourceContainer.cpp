@@ -184,8 +184,6 @@ bool AResourceContainer::ReplaceResources(TArray<UResourceData*> ResourcesToRepl
 bool AResourceContainer::ReplaceResource(UResourceData* Resource, UResourceData* NewResource,
 	FResourceMeasurement Amount, float Scale)
 {
-	UE_LOG(LogChemicode, Log, TEXT("Replace %lld of %s with %s (scale %f)"), Amount.Value, *Resource->Name.ToString(), *NewResource->Name.ToString(), Scale);
-	
 	const UResourceInstance* ResourceInst = GetResource(Resource);
 	if (!ResourceInst) return false;
 

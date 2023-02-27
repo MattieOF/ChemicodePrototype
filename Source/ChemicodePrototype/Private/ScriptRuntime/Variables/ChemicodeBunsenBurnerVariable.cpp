@@ -31,6 +31,4 @@ void UChemicodeBunsenBurnerVariable::InitialiseWithNew()
 	Value = NewObject<ABunsenBurner>(GetWorld()->GetCurrentLevel(), GameInstance->BunsenBurnerClass);
 	Value->bSimulated = true;
 	Value->WorldRef = GetWorld();
-	if (Value->GetWorld())
-		UE_LOG(LogChemicode, Log, TEXT("World is not null :)"));
 }
