@@ -1,6 +1,8 @@
 ﻿// copyright lolol
 
 #include "ScriptRuntime/ChemicodeVM.h"
+
+#include "ChemicodeStatics.h"
 #include "ScriptRuntime/ChemicodeScript.h"
 
 FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
@@ -49,6 +51,10 @@ FChemicodeScriptOutput UChemicodeVM::ExecuteScript(UChemicodeScript* Script)
 	Output.Successful = true;
 	Output.RunTime = RunTime;
 	Output.Result = Submission;
+
+	// Do a GC. If we don't, FPS continually rises
+	UChemicodeStatics::ForceFullPurgeGC();
+	
 	return Output;
 }
 
