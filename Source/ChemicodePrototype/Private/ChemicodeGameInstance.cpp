@@ -27,4 +27,9 @@ void UChemicodeGameInstance::Init()
 		UResourceData* Resource = Cast<UResourceData>(Asset.GetAsset());
 		Resources.Add(Resource->Name.ToString(), Resource);
 	}
+
+	// Load campaign data and progress
+	MainCampaign = NewObject<UCampaign>(this);
+	MainCampaign->LoadAssignments(MainCampaignData);
+	MainCampaign->LoadProgress();
 }

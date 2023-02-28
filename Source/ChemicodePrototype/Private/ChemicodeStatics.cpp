@@ -173,3 +173,9 @@ float UChemicodeStatics::GetZUnderOrigin(AActor* Object)
 	const FVector Difference = Origin - ObjectOrigin;
 	return Extents.Z - Difference.Z;
 }
+
+FString UChemicodeStatics::GetLetterFromNum(int Num)
+{
+	static FString Alphabet = "abcdefghijklmnopqrstuvwxyz";
+	return FString(&Alphabet[Num]);
+}

@@ -144,4 +144,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FORCEINLINE void ForceFullPurgeGC() { GEngine->ForceGarbageCollection(true); }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static char GetLetterFromNum(int Num);
 };

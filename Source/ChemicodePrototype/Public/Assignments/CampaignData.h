@@ -28,5 +28,6 @@ class CHEMICODEPROTOTYPE_API UCampaignData : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCampaignDataItem> Data;
 };
