@@ -36,7 +36,7 @@ class CHEMICODEPROTOTYPE_API UCampaign : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCampaignAssignment* RootAssignment;
 
 	UFUNCTION(BlueprintCallable)

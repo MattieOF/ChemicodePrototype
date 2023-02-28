@@ -146,5 +146,5 @@ public:
 	static FORCEINLINE void ForceFullPurgeGC() { GEngine->ForceGarbageCollection(true); }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	static char GetLetterFromNum(int Num);
+	static FString GetLetterFromNum(int Num);
 };

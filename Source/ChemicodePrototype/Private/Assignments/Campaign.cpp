@@ -15,7 +15,7 @@ void UCampaign::LoadAssignments(UCampaignData* Data)
 		if (Extensions <= 0)
 		{
 			CurrentAssignment->ThisAssignment = Data->Data[i].Assignment;
-			if (i == Data->Data.Num() - 1)
+			if (i != Data->Data.Num() - 1)
 			{
 				CurrentAssignment->Next = NewObject<UCampaignAssignment>(this);
 				CurrentAssignment = CurrentAssignment->Next;
