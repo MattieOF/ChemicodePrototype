@@ -26,9 +26,13 @@ public:
 
 	// Utility to get CamPlanes objects from the game world
 	// TODO: Maybe make it a map or something and use some FNames to get them
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	ACameraPlane* GetTableCamPlane();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	ACameraPlane* GetCabinetCamPlane();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	ACameraPlane* GetComputerCamPlane();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	ACameraPlane* GetBinCamPlane();
 
 	/**

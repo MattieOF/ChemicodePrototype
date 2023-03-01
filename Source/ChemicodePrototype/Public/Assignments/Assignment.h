@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CameraPlane.h"
 #include "ResourceContainer.h"
 #include "UObject/Object.h"
 #include "Assignment.generated.h"
@@ -27,4 +28,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static bool ConditionsSatisfied(AResourceContainer* Container, TArray<FContainerCondition> Conditions, FString& Message);
+
+	UFUNCTION(BlueprintCallable)
+	virtual ACameraPlane* GetDefaultCamPlane(UWorld* World);
 };

@@ -6,6 +6,7 @@
 #include "CameraPlaneCam.h"
 #include "ChemicodeGameMode.h"
 #include "ChemicodeStatics.h"
+#include "GeneralShopItem.h"
 #include "OutlineComponent.h"
 #include "ResourceContainer.h"
 #include "ResourceData.h"
@@ -36,14 +37,13 @@ void AChemicodePawn::BeginPlay()
 
 	// Initialise array of object types used by traces checking for item objects
 	ItemObjectTypeArray.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
-	
+
 	// Show the cursor
 	PlayerController->bShowMouseCursor = true;
 	PlayerController->bEnableClickEvents = true;
 	PlayerController->bEnableMouseOverEvents = true;
 
-	// Set view target to initial CamPlane
-	PlayerController->SetViewTarget(GameMode->GetTableCamPlane()->GetCamPositionActorChecked());
+	// Set initial CamPlane
 	CurrentCamPlane = GameMode->GetTableCamPlane();
 
 	// Create resource info widget and hide it
@@ -61,7 +61,7 @@ void AChemicodePawn::BeginPlay()
 void AChemicodePawn::Tick(float DeltaTime)
 {
 	SCOPE_CYCLE_COUNTER(STAT_CCPawnTick);
-	
+
 	Super::Tick(DeltaTime);
 
 	// Tick cooldowns
@@ -84,10 +84,12 @@ void AChemicodePawn::Tick(float DeltaTime)
 
 	// If holding an item, move it towards the cursors position over the table
 	FHitResult HitResult;
-	if (bInteractionEnabled && HeldItem && !AltInteractionItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult)) // Channel 1 is for the table
+	if (bInteractionEnabled && HeldItem && !AltInteractionItem && PlayerController->
+		GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult) && HitResult.Normal == FVector::UpVector)
+	// Channel 1 is for the table
 	{
 		TargetItemPosition = HitResult.ImpactPoint;
-		
+
 		// Move the item in direction
 		const auto Direction = (HitResult.ImpactPoint - HeldItem->GetActorLocation()).GetUnsafeNormal();
 		const auto DistanceToMove = FVector::Distance(HeldItem->GetActorLocation(), TargetItemPosition);
@@ -107,11 +109,11 @@ void AChemicodePawn::Tick(float DeltaTime)
 		IgnoredActors.Add(HeldItem);
 
 		TArray<AActor*> OutActors;
-		
+
 		UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
 		                                       AChemicodeObject::StaticClass(), IgnoredActors, OutActors);
 		//DrawDebugBox(GetWorld(), Position, Bounds, FColor::Red);
-		
+
 		if (OutActors.Num() == 0 || !HeldItem->bRequireFreeSpace)
 			HeldItem->SetActorLocation(Position);
 		else
@@ -129,7 +131,7 @@ void AChemicodePawn::Tick(float DeltaTime)
 				// DrawDebugPoint(GetWorld(), Position, 5, FColor::Red, false, 1);
 				OutActors.Empty();
 				UKismetSystemLibrary::BoxOverlapActors(GetWorld(), Position, Bounds, ItemObjectTypeArray,
-													   AChemicodeObject::StaticClass(), IgnoredActors, OutActors);
+				                                       AChemicodeObject::StaticClass(), IgnoredActors, OutActors);
 				if (OutActors.Num() == 0)
 				{
 					HeldItem->SetActorLocation(Position);
@@ -137,23 +139,33 @@ void AChemicodePawn::Tick(float DeltaTime)
 				}
 			}
 		}
-	} else if (AltInteractionItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult))
+	}
+	else if (AltInteractionItem && PlayerController->GetHitResultUnderCursor(COLLISION_CHANNEL_TABLE, false, HitResult))
 		AltInteractionItem->UpdateAltInteractionPosition(HitResult.ImpactPoint);
 
 	// Check for hovered resource items
-	if (bInteractionEnabled && CurrentCamPlane == GameMode->GetTableCamPlane())
+	if (bInteractionEnabled)
 	{
 		FHitResult Result;
-		
+
 		TArray<AActor*> IgnoredActors;
 		if (HeldItem)
 			IgnoredActors.Add(HeldItem);
 
-		if (UChemicodeStatics::GetHitResultAtCursor(PlayerController, ItemObjectTypeArray, false, Result, IgnoredActors))
+		if (UChemicodeStatics::GetHitResultAtCursor(PlayerController, ItemObjectTypeArray, false, Result,
+		                                            IgnoredActors))
 		{
 			auto Item = Cast<AChemicodeObject>(Result.GetActor());
-			if (AltInteractionItem && AltInteractionItem == Item)
+			if (CurrentCamPlane != GameMode->GetTableCamPlane() && !Cast<AGeneralShopItem>(Item))
+			{
 				HighlightItem(nullptr);
+				return;
+			}
+			if (AltInteractionItem && AltInteractionItem == Item)
+			{
+				HighlightItem(nullptr);
+				return;
+			}	
 			if (Item && HighlightedItem != Item)
 				HighlightItem(Item);
 			else if (Item == nullptr)
@@ -168,7 +180,7 @@ void AChemicodePawn::LookUp()
 {
 	if (!bInteractionEnabled)
 		return;
-	
+
 	if (CurrentCamPlane == GameMode->GetTableCamPlane() && LookCooldown <= 0)
 	{
 		SetCamPlane(GameMode->GetCabinetCamPlane());
@@ -180,7 +192,7 @@ void AChemicodePawn::LookDown()
 {
 	if (!bInteractionEnabled)
 		return;
-	
+
 	if (CurrentCamPlane == GameMode->GetCabinetCamPlane() && LookCooldown <= 0)
 	{
 		SetCamPlane(GameMode->GetTableCamPlane());
@@ -192,20 +204,22 @@ void AChemicodePawn::LookLeft()
 {
 	if (!bInteractionEnabled)
 		return;
-	
-	if ((CurrentCamPlane == GameMode->GetCabinetCamPlane() || CurrentCamPlane == GameMode->GetTableCamPlane()) && LookCooldown <= 0)
+
+	if ((CurrentCamPlane == GameMode->GetCabinetCamPlane() || CurrentCamPlane == GameMode->GetTableCamPlane()) &&
+		LookCooldown <= 0)
 	{
 		if (!GameMode->bComputerEnabled)
 		{
 			GameMode->AddNotification(FNotification(FText::FromString("Computer disabled"),
-			                                        FText::FromString("This is not an automation assignment!"), 3,
+			                                        FText::FromString("This is not a scripting assignment!"), 3,
 			                                        NTError));
 			return;
 		}
-		
+
 		SetCamPlane(GameMode->GetComputerCamPlane());
-		LookCooldown = .75f;	
-	} else if (CurrentCamPlane == GameMode->GetBinCamPlane() && LookCooldown <= 0)
+		LookCooldown = .75f;
+	}
+	else if (CurrentCamPlane == GameMode->GetBinCamPlane() && LookCooldown <= 0)
 	{
 		if (PrevCamPlane != GameMode->GetTableCamPlane() && PrevCamPlane != GameMode->GetCabinetCamPlane())
 			SetCamPlane(GameMode->GetTableCamPlane());
@@ -219,7 +233,7 @@ void AChemicodePawn::LookRight()
 {
 	if (!bInteractionEnabled)
 		return;
-	
+
 	if (CurrentCamPlane == GameMode->GetComputerCamPlane() && LookCooldown <= 0)
 	{
 		ACameraPlane* Target;
@@ -228,8 +242,10 @@ void AChemicodePawn::LookRight()
 		else
 			Target = PrevCamPlane;
 		SetCamPlane(Target);
-		LookCooldown = .75f;	
-	} else if ((CurrentCamPlane == GameMode->GetTableCamPlane() || CurrentCamPlane == GameMode->GetCabinetCamPlane()) && LookCooldown <= 0)
+		LookCooldown = .75f;
+	}
+	else if ((CurrentCamPlane == GameMode->GetTableCamPlane() || CurrentCamPlane == GameMode->GetCabinetCamPlane()) &&
+		LookCooldown <= 0)
 	{
 		SetCamPlane(GameMode->GetBinCamPlane());
 		LookCooldown = .75f;
@@ -264,13 +280,14 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 		BlendTime, VTBlend_EaseInOut, 2);
 	ResourceLostHover();
 	HighlightItem(nullptr);
-	
+	OnCamPlaneChanged.Broadcast(NewCamPlane);
+
 	if (HeldItem)
 	{
 		HeldItem->OnItemPlaced.Broadcast();
 		DropItem();
 	}
-	
+
 	if (AltInteractionItem)
 	{
 		AltInteractionItem->GetOutline()->HideOutline();
@@ -287,7 +304,7 @@ bool AChemicodePawn::ResourceHovered(UResourceData* Resource)
 
 	// Set resource values in UI
 	InfoWidget->SetResource(Resource);
-	
+
 	if (bResourceInfoVisible) // Don't play show anim again if we're already visible.
 		return true;
 	InfoWidget->Show();
@@ -302,11 +319,25 @@ void AChemicodePawn::TryBuyResource(UResourceData* Resource)
 		UE_LOG(LogChemicode, Error, TEXT("Null resource in AChemicodePawn::TryBuyResource!"));
 		return;
 	}
-	
+
 	LookDown(); // Look back at the table
-	const auto Item = Cast<AResourceItem>(GetWorld()->SpawnActor(Resource->ResourceItemClass, &TargetItemPosition, &FRotator::ZeroRotator));
+	const auto Item = Cast<AResourceItem>(
+		GetWorld()->SpawnActor(Resource->ResourceItemClass, &TargetItemPosition, &FRotator::ZeroRotator));
 	FVector Center, Bounds;
-	Item->SetResourceAndInteraction(Resource, Resource->DefaultInteraction ? Resource->DefaultInteraction : UInteractionComponent::StaticClass(), false);
+	Item->SetResourceAndInteraction(Resource, Resource->DefaultInteraction
+		                                          ? Resource->DefaultInteraction
+		                                          : UInteractionComponent::StaticClass(), false);
+	Item->GetActorBounds(true, Center, Bounds);
+	Item->AddActorLocalOffset(FVector(0, 0, Bounds.Z + 1));
+	HoldItem(Item);
+}
+
+void AChemicodePawn::HoldNewItem(TSubclassOf<AChemicodeObject> ObjectClass)
+{
+	LookDown();
+	const auto Item = Cast<AChemicodeObject>(
+		GetWorld()->SpawnActor(ObjectClass, &TargetItemPosition, &FRotator::ZeroRotator));
+	FVector Center, Bounds;
 	Item->GetActorBounds(true, Center, Bounds);
 	Item->AddActorLocalOffset(FVector(0, 0, Bounds.Z + 1));
 	HoldItem(Item);
@@ -330,7 +361,7 @@ void AChemicodePawn::HighlightItem(AChemicodeObject* Item)
 	HighlightedItem = Item;
 	if (HighlightedItem)
 		HighlightedItem->GetOutline()->ShowOutline();
-	
+
 	RefreshTooltip();
 }
 
@@ -348,7 +379,7 @@ void AChemicodePawn::HoldItem(AChemicodeObject* Item)
 		HeldItem->OnItemPlaced.Broadcast();
 		DropItem();
 	}
-	
+
 	HighlightItem(nullptr); // De-highlight now so it doesn't happen later and remain un-highlighted
 	HeldItem = Item;
 	Item->OnItemPickedUp.Broadcast();
@@ -381,7 +412,7 @@ void AChemicodePawn::EnableInteraction()
 void AChemicodePawn::RefreshTooltip()
 {
 	SCOPE_CYCLE_COUNTER(STAT_CCUpdateTooltip);
-	
+
 	// Prevent deref of nullptr if tooltip widget is null for some reason
 	if (!TooltipWidget)
 		return;
@@ -402,7 +433,7 @@ void AChemicodePawn::RefreshTooltip()
 	AResourceItem* HighlightedAsRI = Cast<AResourceItem>(HighlightedItem);
 	const AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
 	const AResourceContainer* HighlightedAsRC = Cast<AResourceContainer>(HighlightedItem);
-	
+
 	// Set resource to account for changes
 	if (HighlightedAsRI)
 		TooltipWidget->SetResource(HighlightedAsRI->Resource->Data, HighlightedAsRI);
@@ -412,10 +443,11 @@ void AChemicodePawn::RefreshTooltip()
 		TooltipWidget->SetBasicObject(HighlightedItem);
 
 	// Check for changes in interactions
-	UInteractionComponent* InteractionComponent = Cast<UInteractionComponent>(HighlightedItem->GetComponentByClass(UInteractionComponent::StaticClass()));
+	UInteractionComponent* InteractionComponent = Cast<UInteractionComponent>(
+		HighlightedItem->GetComponentByClass(UInteractionComponent::StaticClass()));
 	if (HeldItem && InteractionComponent)
 	{
-		const FInteraction Interaction = InteractionComponent->GetInteractionWith(HeldItem); 
+		const FInteraction Interaction = InteractionComponent->GetInteractionWith(HeldItem);
 		if (Interaction.bIsValid)
 			TooltipWidget->SetInteraction(Interaction);
 		else
@@ -437,7 +469,8 @@ void AChemicodePawn::MoveVertical(float Value)
 
 void AChemicodePawn::OnScroll(float Value)
 {
-	CurrentCamPlane->GetCamPositionActor()->SetFOV(FMath::Clamp(CurrentCamPlane->GetCamPositionActor()->GetFOV() + (Value * 5), FOVMin, FOVMax));
+	CurrentCamPlane->GetCamPositionActor()->SetFOV(
+		FMath::Clamp(CurrentCamPlane->GetCamPositionActor()->GetFOV() + (Value * 5), FOVMin, FOVMax));
 }
 
 void AChemicodePawn::OnUse()
@@ -462,7 +495,7 @@ void AChemicodePawn::OnInteract()
 
 	AResourceItem* HeldAsRI = Cast<AResourceItem>(HeldItem);
 	AResourceContainer* HighlightedAsRC = Cast<AResourceContainer>(HighlightedItem);
-	
+
 	if (HeldAsRI && HighlightedAsRC && HeldAsRI->GetInteractionComponent()->CanDepositInto(HighlightedAsRC))
 	{
 		HighlightedAsRC->TransferFromItem(HeldAsRI, 50000); // Deposit 50g/50ml
@@ -471,7 +504,7 @@ void AChemicodePawn::OnInteract()
 	{
 		HighlightedItem->InteractWith(HeldItem);
 	}
-	else if (HighlightedItem != nullptr && CurrentCamPlane == GameMode->GetTableCamPlane())
+	else if (HighlightedItem != nullptr)
 	{
 		FHitResult Result;
 		if (PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result))
@@ -510,7 +543,7 @@ void AChemicodePawn::OnAltInteractUp()
 			HighlightedItem->AltInteractWith(AltInteractionItem);
 		else
 			AltInteractionItem->AltInteract();
-		
+
 		AltInteractionItem->AltInteractionEnd();
 		AltInteractionItem->GetOutline()->HideOutline();
 		AltInteractionItem = nullptr;

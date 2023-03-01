@@ -2,6 +2,8 @@
 
 #include "ChemicodeGameInstance.h"
 
+#include "ChemicodePawn.h"
+#include "ChemicodeStatics.h"
 #include "ResourceData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 
@@ -32,4 +34,12 @@ void UChemicodeGameInstance::Init()
 	MainCampaign = NewObject<UCampaign>(this);
 	MainCampaign->LoadAssignments(MainCampaignData);
 	MainCampaign->LoadProgress();
+}
+
+void UChemicodeGameInstance::BeginAssignment(UAssignment* Assignment)
+{
+	AChemicodePawn* Pawn = UChemicodeStatics::GetChemicodePawn(GetWorld());
+	Pawn->EnableInteraction();
+	Pawn->SetCamPlane(Assignment->GetDefaultCamPlane(GetWorld()));
+	CurrentAssignment = Assignment;	
 }

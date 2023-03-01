@@ -2,6 +2,7 @@
 
 #include "Assignments/PracticalAssignment.h"
 
+#include "ChemicodeStatics.h"
 #include "ResourceContainer.h"
 
 bool UPracticalAssignment::IsCompleted(UObject* Submission, FString& Message)
@@ -16,4 +17,9 @@ bool UPracticalAssignment::IsCompleted(UObject* Submission, FString& Message)
 	}
 
 	return ConditionsSatisfied(Container, SubmissionConditions, Message);
+}
+
+ACameraPlane* UPracticalAssignment::GetDefaultCamPlane(UWorld* World)
+{
+	return UChemicodeStatics::GetChemicodeGameMode(World)->GetTableCamPlane();
 }

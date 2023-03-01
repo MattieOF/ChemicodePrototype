@@ -17,6 +17,7 @@ AResourceTube::AResourceTube()
 	Cable->bEnableCollision = true;
 	Cable->CastShadow = false;
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
+	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Box->SetCollisionResponseToChannel(COLLISION_CHANNEL_BLOCKITEM, ECR_Block);
 	Box->MoveIgnoreActors.Add(this);
 	Box->SetupAttachment(Cable);
@@ -50,7 +51,7 @@ void AResourceTube::Tick(float DeltaSeconds)
 	// -- WORLD EFFECTS ONLY BELOW HERE --
 	if (bSimulated)
 		return;
-	
+
 	// Get start and end locations
 	TArray<FVector> Locations;
 	Cable->GetCableParticleLocations(Locations);

@@ -52,3 +52,8 @@ bool UAssignment::ConditionsSatisfied(AResourceContainer* Container, TArray<FCon
 	
 	return true;
 }
+
+ACameraPlane* UAssignment::GetDefaultCamPlane(UWorld* World)
+{
+	return UChemicodeStatics::GetChemicodeGameMode(World)->GetTableCamPlane();
+}

@@ -36,6 +36,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Utilities", BlueprintPure, meta=(WorldContext="World"))
 	static FORCEINLINE UChemicodeGameInstance* GetChemicodeGameInstance(UObject* World) { return Cast<UChemicodeGameInstance>(UGameplayStatics::GetGameInstance(World)); }
+	
+	/**
+	 * @brief Get the current assignment being played
+	 * @param World World context object
+	 * @return The current assignment
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Utilities", BlueprintPure, meta=(WorldContext="World"))
+	static FORCEINLINE UAssignment* GetCurrentAssignment(UObject* World) { return GetChemicodeGameInstance(World)->CurrentAssignment; }
 
 	/**
 	 * @brief Gets the current gamemode object as a Chemicode gamemode object

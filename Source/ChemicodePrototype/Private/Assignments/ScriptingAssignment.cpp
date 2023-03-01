@@ -2,6 +2,7 @@
 
 #include "Assignments/ScriptingAssignment.h"
 
+#include "ChemicodeStatics.h"
 #include "ScriptRuntime/ChemicodeVM.h"
 
 bool UScriptingAssignment::IsCompleted(UObject* Submission, FString& Message)
@@ -33,4 +34,9 @@ bool UScriptingAssignment::IsCompleted(UObject* Submission, FString& Message)
 	}
 
 	return ConditionsSatisfied(Output.Result, SubmissionConditions, Message);
+}
+
+ACameraPlane* UScriptingAssignment::GetDefaultCamPlane(UWorld* World)
+{
+	return UChemicodeStatics::GetChemicodeGameMode(World)->GetComputerCamPlane();
 }

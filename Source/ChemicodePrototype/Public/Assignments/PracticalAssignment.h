@@ -17,6 +17,8 @@ class CHEMICODEPROTOTYPE_API UPracticalAssignment : public UAssignment
 
 public:
 	virtual bool IsCompleted(UObject* Submission, FString& Message) override;
+	
+	virtual ACameraPlane* GetDefaultCamPlane(UWorld* World) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FContainerCondition> SubmissionConditions;

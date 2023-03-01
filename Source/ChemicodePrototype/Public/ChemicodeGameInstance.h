@@ -21,6 +21,8 @@ class CHEMICODEPROTOTYPE_API UChemicodeGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+	virtual void Init() override;
+	
 	UPROPERTY(BlueprintReadOnly)
 	TMap<FString, UResourceData*> Resources;
 
@@ -39,5 +41,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Campaign")
 	UCampaign* MainCampaign;
 
-	virtual void Init() override;
+	UPROPERTY(BlueprintReadOnly, Category = "Assignment")
+	UAssignment* CurrentAssignment;
+
+	UFUNCTION(BlueprintCallable, Category = "Assignment")
+	void BeginAssignment(UAssignment* Assignment);
 };

@@ -15,6 +15,8 @@ class ACameraPlane;
 class UResourceInfoWidget;
 class AChemicodeGameMode;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCamPlaneChanged, ACameraPlane*, NewCamPlane);
+
 UCLASS(ClassGroup=(Chemicode), Blueprintable)
 class CHEMICODEPROTOTYPE_API AChemicodePawn : public APawn
 {
@@ -101,6 +103,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void TryBuyResource(UResourceData* Resource);
+
+	UFUNCTION(BlueprintCallable)
+	void HoldNewItem(TSubclassOf<AChemicodeObject> ObjectClass);
 	
 	/**
 	 * @brief De-highlights previous highlighted item and highlights a new one.
@@ -186,6 +191,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FTimerHandle CurrentInteractionTimer;
+
+	UPROPERTY(BlueprintReadWrite, BlueprintAssignable)
+	FOnCamPlaneChanged OnCamPlaneChanged;
 
 private:
 	// Movement input functions
