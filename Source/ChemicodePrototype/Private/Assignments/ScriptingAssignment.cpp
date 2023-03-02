@@ -7,6 +7,8 @@
 
 bool UScriptingAssignment::IsCompleted(UObject* Submission, FString& Message)
 {
+	check(VM != nullptr);
+	
 	// Check submission is a script
 	UChemicodeScript* Script = Cast<UChemicodeScript>(Submission);
 	if (!Script)
@@ -16,7 +18,6 @@ bool UScriptingAssignment::IsCompleted(UObject* Submission, FString& Message)
 	}
 
 	// Run script
-	UChemicodeVM* VM = NewObject<UChemicodeVM>(this);
 	FChemicodeScriptOutput Output = VM->ExecuteScript(Script);
 
 	// Check script was successful

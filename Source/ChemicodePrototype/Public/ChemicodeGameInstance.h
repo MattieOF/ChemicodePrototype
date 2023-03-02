@@ -12,6 +12,8 @@ class AResourceTube;
 class AResourceContainer;
 class UResourceData;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAssignmentChanged, UAssignment*, Assignment);
+
 /**
  * Game instance for Chemicode.
  */
@@ -50,6 +52,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Assignment")
 	bool bIsPracticalAssignment = false;
 
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Assignment")
+	FOnAssignmentChanged OnAssignmentChanged;
+
 	UFUNCTION(BlueprintCallable, Category = "Assignment")
 	void BeginAssignment(UAssignment* Assignment);
+
+	UFUNCTION(BlueprintCallable, Category = "Assignment")
+	void ClearAssignment();
 };

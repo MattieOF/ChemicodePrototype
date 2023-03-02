@@ -44,8 +44,19 @@ void UChemicodeGameInstance::BeginAssignment(UAssignment* Assignment)
 	CurrentAssignment = Assignment;
 	bIsPracticalAssignment = Cast<UPracticalAssignment>(Assignment) != nullptr;
 	bIsScriptingAssignment = Cast<UScriptingAssignment>(Assignment) != nullptr;
+
+	OnAssignmentChanged.Broadcast(Assignment);
 	
 	AChemicodePawn* Pawn = UChemicodeStatics::GetChemicodePawn(GetWorld());
 	Pawn->EnableInteraction();
 	Pawn->SetCamPlane(Assignment->GetDefaultCamPlane(GetWorld()));
+}
+
+void UChemicodeGameInstance::ClearAssignment()
+{
+	CurrentAssignment = nullptr;
+	bIsPracticalAssignment = false;
+	bIsScriptingAssignment = false;
+
+	OnAssignmentChanged.Broadcast(nullptr);
 }

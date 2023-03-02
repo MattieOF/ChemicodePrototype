@@ -17,7 +17,7 @@ class CHEMICODEPROTOTYPE_API UChemicodeScript : public UObject
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	FString Name;
+	FString Name = "Untitled Script";
 	
 	UPROPERTY(BlueprintReadWrite)
 	TArray<UChemicodeCommand*> Commands;

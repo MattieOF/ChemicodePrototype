@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Assignment.h"
+#include "ScriptRuntime/ChemicodeVM.h"
 #include "ScriptingAssignment.generated.h"
 
 /**
@@ -21,4 +22,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FContainerCondition> SubmissionConditions;
+
+	UPROPERTY(BlueprintReadWrite)
+	UChemicodeVM* VM = nullptr;
 };
