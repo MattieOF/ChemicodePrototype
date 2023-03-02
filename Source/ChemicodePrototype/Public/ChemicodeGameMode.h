@@ -32,8 +32,10 @@ public:
 	ACameraPlane* GetCabinetCamPlane();
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	ACameraPlane* GetComputerCamPlane();
+	// UFUNCTION(BlueprintCallable, BlueprintPure)
+	// ACameraPlane* GetBinCamPlane();
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	ACameraPlane* GetBinCamPlane();
+	ACameraPlane* GetSubmissionCamPlane();
 
 	/**
 	 * @return Current notification panel object 
@@ -74,8 +76,10 @@ private:
 	ACameraPlane *CabinetCamPlane;
 	UPROPERTY()
 	ACameraPlane *ComputerCamPlane;
+	// UPROPERTY()
+	// ACameraPlane *BinCamPlane;
 	UPROPERTY()
-	ACameraPlane *BinCamPlane;
+	ACameraPlane *SubmissionCamPlane;
 	
 	/**
 	 * @brief Current notification panel object

@@ -31,6 +31,28 @@ void UCampaign::LoadAssignments(UCampaignData* Data)
 	}
 }
 
+void UCampaign::SetAssignmentCompleted(UAssignment* Assignment)
+{
+	UCampaignAssignment* CurrentAssignment = RootAssignment;
+	while (CurrentAssignment != nullptr)
+	{
+		if (CurrentAssignment->ThisAssignment == Assignment)
+		{
+			CurrentAssignment->bCompleted = true;
+			return;
+		}
+		
+		for (UCampaignAssignment* Extension : CurrentAssignment->Extensions)
+		{
+			if (Extension->ThisAssignment == Assignment)
+				Extension->bCompleted = true;
+			return;
+		}
+
+		CurrentAssignment = CurrentAssignment->Next;
+	}
+}
+
 void UCampaign::SaveProgress(FString Filename)
 {
 	TMap<FString, bool> Completion;

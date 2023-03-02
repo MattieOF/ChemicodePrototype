@@ -52,6 +52,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool HasItem() { return TargetItem != nullptr; }
 
+	UFUNCTION()
+	void OnTargetDestroyed(AActor* Target);
+
 	// Interaction implementations
 	virtual bool Use() override;
 	virtual bool AltInteract() override;

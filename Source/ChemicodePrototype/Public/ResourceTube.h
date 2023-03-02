@@ -51,6 +51,9 @@ public:
 	FORCEINLINE bool HasLHSConnection() const { return LHSConnection != nullptr; }
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool HasRHSConnection() const { return RHSConnection != nullptr; }
+
+	UFUNCTION()
+	void OnConnectionDestroyed(AActor* Connection);
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool bSimulated = false;

@@ -12,6 +12,7 @@ AGeneralShopItem::AGeneralShopItem()
 
 	bHoldable = false;
 	bResourceLike = false;
+	bNonTable = true;
 }
 
 bool AGeneralShopItem::Interact()

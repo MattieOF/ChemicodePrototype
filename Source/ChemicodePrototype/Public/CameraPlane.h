@@ -66,6 +66,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* StaticMeshComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanHoldResources = false;
+
 private:
 	/**
 	 * @brief Initialise CamPlane; fill in variables such as Forward vector.

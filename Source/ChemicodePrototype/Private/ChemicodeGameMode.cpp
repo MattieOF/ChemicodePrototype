@@ -45,11 +45,18 @@ ACameraPlane* AChemicodeGameMode::GetComputerCamPlane()
 	return ComputerCamPlane;
 }
 
-ACameraPlane* AChemicodeGameMode::GetBinCamPlane()
+// ACameraPlane* AChemicodeGameMode::GetBinCamPlane()
+// {
+// 	if (!BinCamPlane)
+// 		FindCamPlanes();
+// 	return BinCamPlane;
+// }
+
+ACameraPlane* AChemicodeGameMode::GetSubmissionCamPlane()
 {
-	if (!BinCamPlane)
+	if (!SubmissionCamPlane)
 		FindCamPlanes();
-	return BinCamPlane;
+	return SubmissionCamPlane;
 }
 
 void AChemicodeGameMode::FindCamPlanes()
@@ -65,7 +72,10 @@ void AChemicodeGameMode::FindCamPlanes()
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACameraPlane::StaticClass(), "ComputerCamPlane", Result);
 	check(Result.Num() == 1);
 	ComputerCamPlane = Cast<ACameraPlane>(Result[0]);
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACameraPlane::StaticClass(), "BinCamPlane", Result);
+	// UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACameraPlane::StaticClass(), "BinCamPlane", Result);
+	// check(Result.Num() == 1);
+	// BinCamPlane = Cast<ACameraPlane>(Result[0]);
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ACameraPlane::StaticClass(), "SubmissionCamPlane", Result);
 	check(Result.Num() == 1);
-	BinCamPlane = Cast<ACameraPlane>(Result[0]);
+	SubmissionCamPlane = Cast<ACameraPlane>(Result[0]);
 }

@@ -44,6 +44,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Assignment")
 	UAssignment* CurrentAssignment;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Assignment")
+	bool bIsScriptingAssignment = false;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Assignment")
+	bool bIsPracticalAssignment = false;
+
 	UFUNCTION(BlueprintCallable, Category = "Assignment")
 	void BeginAssignment(UAssignment* Assignment);
 };

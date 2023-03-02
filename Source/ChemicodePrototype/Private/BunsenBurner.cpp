@@ -87,7 +87,15 @@ void ABunsenBurner::ClearItem()
 	
 	TargetItem->OnItemPickedUp.Remove(TargetItemDelegateHandle);
 	TargetItemDelegateHandle.Reset();
+	if (!TargetItem->IsActorBeingDestroyed())
+		TargetItem->OnDestroyed.RemoveDynamic(this, &ABunsenBurner::OnTargetDestroyed);
 	TargetItem = nullptr;
+}
+
+void ABunsenBurner::OnTargetDestroyed(AActor* Target)
+{
+	bShouldRemoveTarget = true;
+	Target->SetActorLocation(GetActorLocation() + FVector(0, 0, UChemicodeStatics::GetZUnderOrigin(Target)));
 }
 
 bool ABunsenBurner::Use()
@@ -116,6 +124,7 @@ bool ABunsenBurner::InteractWith(AChemicodeObject* OtherObject)
 		{
 			bShouldRemoveTarget = true;
 		});
+		TargetItem->OnDestroyed.AddDynamic(this, &ABunsenBurner::OnTargetDestroyed);
 		if (!bSimulated)
 		{
 			TargetItem->SetActorLocation( GetActorLocation() + ItemOffset + FVector( 0, 0, UChemicodeStatics::GetZUnderOrigin(TargetItem) ) );

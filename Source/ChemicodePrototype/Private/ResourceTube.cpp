@@ -109,6 +109,7 @@ bool AResourceTube::ConnectObject(AChemicodeObject* Object)
 	if (!LHSConnection)
 	{
 		LHSConnection = Object;
+		LHSConnection->OnDestroyed.AddDynamic(this, &AResourceTube::OnConnectionDestroyed);
 		if (!bSimulated)
 		{
 			Cable->SetAttachEndToComponent(Object->GetMainMesh(), "TubeConnection");
@@ -119,6 +120,7 @@ bool AResourceTube::ConnectObject(AChemicodeObject* Object)
 	} else if (!RHSConnection)
 	{
 		RHSConnection = Object;
+		RHSConnection->OnDestroyed.AddDynamic(this, &AResourceTube::OnConnectionDestroyed);
 		if (!bSimulated)
 		{
 			SetActorLocation(Object->GetMainMesh()->GetSocketLocation("TubeConnection"));
@@ -132,6 +134,10 @@ bool AResourceTube::ConnectObject(AChemicodeObject* Object)
 
 void AResourceTube::DisconnectObjects()
 {
+	if (LHSConnection && !LHSConnection->IsActorBeingDestroyed())
+		LHSConnection->OnDestroyed.RemoveDynamic(this, &AResourceTube::OnConnectionDestroyed);
+	if (RHSConnection && !RHSConnection->IsActorBeingDestroyed())
+		RHSConnection->OnDestroyed.RemoveDynamic(this, &AResourceTube::OnConnectionDestroyed);
 	LHSConnection = nullptr;
 	RHSConnection = nullptr;
 	Cable->bAttachEnd = false;
@@ -144,4 +150,9 @@ void AResourceTube::GetActorBounds(bool bOnlyCollidingComponents, FVector& Origi
 	const auto Bounds = Cable->GetLocalBounds();
 	Origin = Cable->GetComponentLocation();
 	BoxExtent = Bounds.BoxExtent;
+}
+
+void AResourceTube::OnConnectionDestroyed(AActor* Connection)
+{
+	DisconnectObjects();
 }

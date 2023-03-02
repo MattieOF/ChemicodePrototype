@@ -43,6 +43,9 @@ public:
 	void LoadAssignments(UCampaignData* Data);
 
 	UFUNCTION(BlueprintCallable)
+	void SetAssignmentCompleted(UAssignment* Assignment);
+
+	UFUNCTION(BlueprintCallable)
 	void SaveProgress(FString Filename = "Progress.ccsav");
 	
 	UFUNCTION(BlueprintCallable)

@@ -71,7 +71,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FText Name;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta=(MultiLine = true))
 	FText Description;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -85,6 +85,9 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bRequireFreeSpace = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bNonTable = false;
 
 	FOnItemPickedUp OnItemPickedUp;
 	

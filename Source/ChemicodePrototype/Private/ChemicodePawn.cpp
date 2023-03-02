@@ -33,7 +33,8 @@ void AChemicodePawn::BeginPlay()
 
 	// Init references
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	GameMode = Cast<AChemicodeGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GameMode = UChemicodeStatics::GetChemicodeGameMode(GetWorld());
+	GameInstance = UChemicodeStatics::GetChemicodeGameInstance(GetWorld());
 
 	// Initialise array of object types used by traces checking for item objects
 	ItemObjectTypeArray.Add(UEngineTypes::ConvertToObjectType(COLLISION_CHANNEL_BLOCKITEM));
@@ -156,7 +157,9 @@ void AChemicodePawn::Tick(float DeltaTime)
 		                                            IgnoredActors))
 		{
 			auto Item = Cast<AChemicodeObject>(Result.GetActor());
-			if (CurrentCamPlane != GameMode->GetTableCamPlane() && !Cast<AGeneralShopItem>(Item))
+			if (!Item)
+				return;
+			if (CurrentCamPlane != GameMode->GetTableCamPlane() && !Item->bNonTable)
 			{
 				HighlightItem(nullptr);
 				return;
@@ -197,6 +200,16 @@ void AChemicodePawn::LookDown()
 	{
 		SetCamPlane(GameMode->GetTableCamPlane());
 		LookCooldown = .75f;
+	} 
+	else if (CurrentCamPlane == GameMode->GetTableCamPlane() && LookCooldown <= 0)
+	{
+		SetCamPlane(GameMode->GetSubmissionCamPlane());
+		LookCooldown = .75f;
+	}
+	else if (CurrentCamPlane == GameMode->GetSubmissionCamPlane() && LookCooldown <= 0)
+	{
+		SetCamPlane(GameMode->GetTableCamPlane());
+		LookCooldown = .75f;
 	}
 }
 
@@ -208,25 +221,22 @@ void AChemicodePawn::LookLeft()
 	if ((CurrentCamPlane == GameMode->GetCabinetCamPlane() || CurrentCamPlane == GameMode->GetTableCamPlane()) &&
 		LookCooldown <= 0)
 	{
-		if (!GameMode->bComputerEnabled)
-		{
-			GameMode->AddNotification(FNotification(FText::FromString("Computer disabled"),
-			                                        FText::FromString("This is not a scripting assignment!"), 3,
-			                                        NTError));
-			return;
-		}
-
 		SetCamPlane(GameMode->GetComputerCamPlane());
 		LookCooldown = .75f;
 	}
-	else if (CurrentCamPlane == GameMode->GetBinCamPlane() && LookCooldown <= 0)
-	{
-		if (PrevCamPlane != GameMode->GetTableCamPlane() && PrevCamPlane != GameMode->GetCabinetCamPlane())
-			SetCamPlane(GameMode->GetTableCamPlane());
-		else
-			SetCamPlane(PrevCamPlane);
-		LookCooldown = .75f;
-	}
+	// else if (CurrentCamPlane == GameMode->GetBinCamPlane() && LookCooldown <= 0)
+	// {
+	// 	if (PrevCamPlane != GameMode->GetTableCamPlane() && PrevCamPlane != GameMode->GetCabinetCamPlane())
+	// 		SetCamPlane(GameMode->GetTableCamPlane());
+	// 	else
+	// 		SetCamPlane(PrevCamPlane);
+	// 	LookCooldown = .75f;
+	// }
+	// else if (CurrentCamPlane == GameMode->GetSubmissionCamPlane() && LookCooldown <= 0)
+	// {
+	// 	SetCamPlane(GameMode->GetBinCamPlane());
+	// 	LookCooldown = .75f;
+	// }
 }
 
 void AChemicodePawn::LookRight()
@@ -244,12 +254,18 @@ void AChemicodePawn::LookRight()
 		SetCamPlane(Target);
 		LookCooldown = .75f;
 	}
-	else if ((CurrentCamPlane == GameMode->GetTableCamPlane() || CurrentCamPlane == GameMode->GetCabinetCamPlane()) &&
-		LookCooldown <= 0)
-	{
-		SetCamPlane(GameMode->GetBinCamPlane());
-		LookCooldown = .75f;
-	}
+	// else if ((CurrentCamPlane == GameMode->GetTableCamPlane() || CurrentCamPlane == GameMode->GetCabinetCamPlane()) &&
+	// 	LookCooldown <= 0)
+	// {
+	// 	SetCamPlane(GameMode->GetBinCamPlane());
+	// 	LookCooldown = .75f;
+	// }
+	// else if (CurrentCamPlane == GameMode->GetBinCamPlane() &&
+	// 	LookCooldown <= 0)
+	// {
+	// 	SetCamPlane(GameMode->GetSubmissionCamPlane());
+	// 	LookCooldown = .75f;
+	// }
 }
 
 // Called to bind functionality to input
@@ -274,6 +290,22 @@ void AChemicodePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 {
+	if (NewCamPlane == GameMode->GetComputerCamPlane() && !GameInstance->bIsScriptingAssignment)
+	{
+		GameMode->AddNotification(FNotification(FText::FromString("Computer disabled"),
+												FText::FromString("The computer isn't needed on practical assignments"), 3,
+												NTError));
+		return;
+	}
+
+	if (NewCamPlane == GameMode->GetSubmissionCamPlane() && !GameInstance->bIsPracticalAssignment)
+	{
+		GameMode->AddNotification(FNotification(FText::FromString("Pedestal disabled"),
+												FText::FromString("The pedestal isn't needed on scripting assignments"), 3,
+												NTError));
+		return;
+	}
+	
 	PrevCamPlane = CurrentCamPlane;
 	CurrentCamPlane = NewCamPlane;
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetViewTargetWithBlend(NewCamPlane->GetCamPositionActor(),
@@ -282,7 +314,7 @@ void AChemicodePawn::SetCamPlane(ACameraPlane* NewCamPlane, float BlendTime)
 	HighlightItem(nullptr);
 	OnCamPlaneChanged.Broadcast(NewCamPlane);
 
-	if (HeldItem)
+	if (HeldItem && !NewCamPlane->bCanHoldResources)
 	{
 		HeldItem->OnItemPlaced.Broadcast();
 		DropItem();
@@ -510,6 +542,8 @@ void AChemicodePawn::OnInteract()
 		if (PlayerController->GetHitResultUnderCursorForObjects(ItemObjectTypeArray, false, Result))
 		{
 			auto Item = Cast<AChemicodeObject>(Result.GetActor());
+			if (!Item)
+				return;
 			if (Item->bHoldable)
 				HoldItem(Item);
 			else

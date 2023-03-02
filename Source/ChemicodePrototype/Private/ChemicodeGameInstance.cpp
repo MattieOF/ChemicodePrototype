@@ -6,18 +6,21 @@
 #include "ChemicodeStatics.h"
 #include "ResourceData.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Assignments/PracticalAssignment.h"
+#include "Assignments/ScriptingAssignment.h"
 
 void UChemicodeGameInstance::Init()
 {
 	Super::Init();
 
 	// Get the asset registry module
-	const FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked< FAssetRegistryModule >(FName("AssetRegistry"));
+	const FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(
+		FName("AssetRegistry"));
 	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
 
 	// Since asset registry scanning is asyncronous, we initiate a synchronous scan 
 	// of the ResourceData directory to ensure they've all been discovered.
-	TArray< FString > ContentPaths;
+	TArray<FString> ContentPaths;
 	ContentPaths.Add(TEXT("/Game/Resources/Data"));
 	AssetRegistry.ScanPathsSynchronous(ContentPaths);
 
@@ -38,8 +41,11 @@ void UChemicodeGameInstance::Init()
 
 void UChemicodeGameInstance::BeginAssignment(UAssignment* Assignment)
 {
+	CurrentAssignment = Assignment;
+	bIsPracticalAssignment = Cast<UPracticalAssignment>(Assignment) != nullptr;
+	bIsScriptingAssignment = Cast<UScriptingAssignment>(Assignment) != nullptr;
+	
 	AChemicodePawn* Pawn = UChemicodeStatics::GetChemicodePawn(GetWorld());
 	Pawn->EnableInteraction();
 	Pawn->SetCamPlane(Assignment->GetDefaultCamPlane(GetWorld()));
-	CurrentAssignment = Assignment;	
 }

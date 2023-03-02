@@ -7,6 +7,7 @@
 #include "GameFramework/Pawn.h"
 #include "ChemicodePawn.generated.h"
 
+class UChemicodeGameInstance;
 // Forward declarations
 class UResourceItemTooltipWidget;
 class AResourceItem;
@@ -240,6 +241,11 @@ private:
 	 */
 	UPROPERTY()
 	AChemicodeGameMode* GameMode;
+	/**
+	 * @brief Reference to the game instance object
+	 */
+	UPROPERTY()
+	UChemicodeGameInstance* GameInstance;
 	/**
 	 * @brief The current CamPlane
 	 */
