@@ -535,6 +535,7 @@ void AChemicodePawn::OnInteract()
 	else if (HeldItem != nullptr && HighlightedItem != nullptr)
 	{
 		HighlightedItem->InteractWith(HeldItem);
+		HighlightedItem->OnInteractWith(HeldItem);
 	}
 	else if (HighlightedItem != nullptr)
 	{
@@ -547,7 +548,10 @@ void AChemicodePawn::OnInteract()
 			if (Item->bHoldable)
 				HoldItem(Item);
 			else
+			{
 				Item->Interact();
+				Item->OnInteract();
+			}
 		}
 	}
 	else if (HeldItem != nullptr)

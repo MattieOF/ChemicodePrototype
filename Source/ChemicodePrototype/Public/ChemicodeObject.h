@@ -38,11 +38,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual bool Interact();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInteract();
+
 	UFUNCTION(BlueprintCallable)
 	virtual bool AltInteract();
 	
 	UFUNCTION(BlueprintCallable)
 	virtual bool InteractWith(AChemicodeObject* OtherObject);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInteractWith(AChemicodeObject* OtherObject);
 
 	UFUNCTION(BlueprintCallable)
 	virtual bool AltInteractWith(AChemicodeObject* OtherObject);

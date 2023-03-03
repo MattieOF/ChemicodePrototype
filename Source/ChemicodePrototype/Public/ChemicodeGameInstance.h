@@ -28,6 +28,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TMap<FString, UResourceData*> Resources;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<UResourceData*> PurchaseableResources;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Class References")
 	TSubclassOf<AResourceContainer> TestTubeClass;
 	
